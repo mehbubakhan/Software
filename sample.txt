@@ -1,0 +1,18 @@
+Welcome to the Software Repository
+===================================
+
+This is a sample text file created for the repository.
+
+Project Information:
+- Repository: Software
+- Created: April 30, 2026
+- Purpose: Development and testing
+
+Branches Available:
+- pial
+- prova
+- adi
+- eva
+- devlopment
+
+Feel free to add more content to this file as needed.
