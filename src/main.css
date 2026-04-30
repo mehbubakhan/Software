@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+}
+
+/* Simple daycare theme colors */
+.bg-daycare { background-color: #FFFBF0; }
+.text-accent { color: #2b6cb0; }
