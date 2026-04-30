@@ -1,0 +1,34 @@
+import React from 'react'
+import { Routes, Route } from 'react-router-dom'
+import Home from '../pages/Home'
+import Login from '../pages/Login'
+import Signup from '../pages/Signup'
+import ParentSignup from '../pages/ParentSignup'
+import DaycareSignup from '../pages/DaycareSignup'
+import NannySignup from '../pages/NannySignup'
+import TransportSignup from '../pages/TransportSignup'
+import ParentDashboard from '../pages/dashboard/ParentDashboard'
+import AdminDashboard from '../pages/dashboard/AdminDashboard'
+import NannyDashboard from '../pages/dashboard/NannyDashboard'
+import ProtectedRoute from '../components/ProtectedRoute'
+import RoleRedirect from '../components/RoleRedirect'
+
+export default function AppRoutes(){
+  return (
+    <Routes>
+      <Route path="/" element={<Home/>} />
+      <Route path="/login" element={<Login/>} />
+      <Route path="/signup" element={<Signup/>} />
+      <Route path="/signup/parent" element={<ParentSignup/>} />
+      <Route path="/signup/daycare" element={<DaycareSignup/>} />
+      <Route path="/signup/nanny" element={<NannySignup/>} />
+      <Route path="/signup/transport" element={<TransportSignup/>} />
+
+      <Route path="/role-redirect" element={<RoleRedirect/>} />
+
+      <Route path="/dashboard/parent/*" element={<ProtectedRoute roles={["parent"]}><ParentDashboard/></ProtectedRoute>} />
+      <Route path="/dashboard/admin/*" element={<ProtectedRoute roles={["admin"]}><AdminDashboard/></ProtectedRoute>} />
+      <Route path="/dashboard/nanny/*" element={<ProtectedRoute roles={["nanny"]}><NannyDashboard/></ProtectedRoute>} />
+    </Routes>
+  )
+}
