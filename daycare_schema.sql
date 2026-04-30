@@ -2,6 +2,8 @@
 -- SQL schema for `daycare_management_system`
 -- Run in phpMyAdmin or via mysql CLI:
 -- CREATE DATABASE daycare_management_system; USE daycare_management_system;
+CREATE DATABASE daycare_db;
+USE daycare_db;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
