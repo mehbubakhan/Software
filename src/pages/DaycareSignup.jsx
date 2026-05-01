@@ -7,7 +7,7 @@ export default function DaycareSignup(){
   const [form, setForm] = useState({ name: '', email: '', password: '', daycareName: '' })
   const submit = async e => {
     e.preventDefault()
-        try{ 
+    try{ 
       await api.post('/auth/signup', { ...form, role: 'daycare' })
       alert('Registered') 
     }catch(err){

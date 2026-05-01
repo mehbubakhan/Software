@@ -1,6 +1,9 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Home from '../pages/Home'
+import React from 'react'
+import { Routes, Route } from 'react-router-dom'
+import Home from '../pages/Home'
 import Login from '../pages/Login'
 import Signup from '../pages/Signup'
 import ParentSignup from '../pages/ParentSignup'
@@ -50,6 +53,16 @@ export default function AppRoutes(){
         <Route path="availability" element={<Availability/>} />
         <Route path="safety" element={<Safety/>} />
       </Route>
+    </Routes>
+  )
+}
+         <Route path="children/:id" element={<ChildDetail/>} />
+         <Route path="update" element={<Update/>} />
+         <Route path="applications" element={<Applications/>} />
+         <Route path="apply" element={<ApplyForWork/>} />
+         <Route path="profile" element={<Profile/>} />
+         <Route path="availability" element={<Availability/>} />
+         <Route path="safety" element={<Safety/>} />
     </Routes>
   )
 }
