@@ -9,9 +9,12 @@ export default function ParentSignup(){
   const submit = async (e) => {
     e.preventDefault()
     try{
-      await api.post('/auth/signup', { ...form, role: 'parent' })
+      const res = await api.post('/auth/signup', { ...form, role: 'parent' })
       alert('Registered - proceed to login')
-    }catch(err){ alert('Error') }
+    }catch(err){ 
+      const msg = err.response?.data?.message || err.response?.data?.error || err.message || 'Signup failed'
+      alert(msg)
+    }
   }
 
   return (
