@@ -17,4 +17,15 @@ const byChild = async (req, res) => {
   }catch(err){ return res.status(500).json({ ok:false, error: err.message }) }
 }
 
+const byNanny = async (req, res) => {
+  try{
+    const nanny_id = req.user.id
+    const { status } = req.query // optional filter inside details.status
+    const [rows] = await require('../config/db').query('SELECT * FROM activities WHERE nanny_id = ? ORDER BY created_at DESC', [nanny_id])
+    const data = rows.map(r => ({ ...r, details: JSON.parse(r.details) }))
+    const filtered = status ? data.filter(d => d.details && d.details.status === status) : data
+    return res.json({ ok:true, data: filtered })
+  }catch(err){ return res.status(500).json({ ok:false, error: err.message }) }
+}
+
 module.exports = { add, byChild }
