@@ -14,4 +14,9 @@ const listByJob = async (job_id) => {
   return rows
 }
 
-module.exports = { applyJob, updateApplication, listByJob }
+const listByNanny = async (nanny_id) => {
+  const [rows] = await pool.query('SELECT a.*, j.title as job_title FROM applications a JOIN jobs j ON a.job_id = j.id WHERE a.nanny_id = ?', [nanny_id])
+  return rows
+}
+
+module.exports = { applyJob, updateApplication, listByJob, listByNanny }
