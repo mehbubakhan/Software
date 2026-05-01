@@ -7,5 +7,6 @@ router.use('/jobs', require('./jobs'))
 router.use('/activities', require('./activities'))
 router.use('/dashboard', require('./dashboard'))
 router.use('/children', require('./children'))
+router.use('/applications', require('./applications'))
 
 module.exports = router
