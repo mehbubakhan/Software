@@ -5,12 +5,16 @@ export default function ApplyForWork(){
   const [jobs, setJobs] = useState([])
   useEffect(()=>{ load() },[])
   const load = async ()=>{
-    const r = await api.get('/jobs/open')
-    if(r.data.ok) setJobs(r.data.data)
+    try{
+      const r = await api.get('/jobs/open')
+      if(r.data.ok) setJobs(r.data.data)
+    }catch(err){ console.error('Failed to load jobs', err); setJobs([]) }
   }
   const apply = async (job_id)=>{
-    await api.post('/jobs/apply', { job_id })
-    load()
+    try{
+      await api.post('/jobs/apply', { job_id })
+      load()
+    }catch(err){ console.error('Failed to apply', err); alert('Failed to apply: '+(err.response?.data?.message||err.message)) }
   }
   return (
     <div>

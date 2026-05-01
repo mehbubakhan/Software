@@ -9,15 +9,19 @@ export default function Update(){
 
   const submit = async e =>{
     e.preventDefault()
-    await api.post('/activities', { child_id: childId, type, details: { text: details, status: 'pending' } })
-    setDetails('')
-    loadActivities()
+    try{
+      await api.post('/activities', { child_id: childId, type, details: { text: details, status: 'pending' } })
+      setDetails('')
+      loadActivities()
+    }catch(err){ console.error('Failed to create activity', err); alert('Failed to create activity: '+(err.response?.data?.message||err.message)) }
   }
 
   const loadActivities = async ()=>{
     if(!childId) return
-    const r = await api.get(`/activities/child/${childId}`)
-    if(r.data.ok) setActivities(r.data.data)
+    try{
+      const r = await api.get(`/activities/child/${childId}`)
+      if(r.data.ok) setActivities(r.data.data)
+    }catch(err){ console.error('Failed to load activities', err); setActivities([]) }
   }
 
   return (

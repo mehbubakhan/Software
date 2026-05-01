@@ -6,8 +6,10 @@ export default function Children(){
   const [children, setChildren] = useState([])
   useEffect(()=>{ fetchAssigned() },[])
   const fetchAssigned = async ()=>{
-    const r = await api.get('/children/assigned')
-    if(r.data.ok) setChildren(r.data.data)
+    try{
+      const r = await api.get('/children/assigned')
+      if(r.data.ok) setChildren(r.data.data)
+    }catch(err){ console.error('Failed to load assigned children', err); setChildren([]) }
   }
   return (
     <div>

@@ -8,8 +8,10 @@ export default function ChildDetail(){
   const [timetable, setTimetable] = useState('')
   useEffect(()=>{ fetchDetail() },[id])
   const fetchDetail = async ()=>{
-    const r = await api.get(`/children/${id}`)
-    if(r.data.ok) setData(r.data.data)
+    try{
+      const r = await api.get(`/children/${id}`)
+      if(r.data.ok) setData(r.data.data)
+    }catch(err){ console.error('Failed to load child detail', err); setData({ child: { name: 'Unknown' }, activities: [] }) }
   }
   const submitTimetable = async e =>{
     e.preventDefault()
