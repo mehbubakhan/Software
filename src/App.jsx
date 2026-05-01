@@ -6,7 +6,7 @@ import AppRoutes from './routes/Routes'
 function App(){
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-daycare">
+      <div className="min-h-screen bg-auth-splash text-slate-900">
         <Navbar />
         <AppRoutes />
       </div>
