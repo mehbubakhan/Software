@@ -6,7 +6,10 @@ const { createChild } = require('../models/Child')
 const signup = async (req, res) => {
   try{
     console.log('Signup request:', req.body)
-    const { name, email, password, role, childName, dob } = req.body
+    const { password, role, dob } = req.body
+    const name = req.body.name?.trim()
+    const email = req.body.email?.trim().toLowerCase()
+    const childName = req.body.childName?.trim()
     if (!name || !email || !password || !role) {
       return res.status(400).json({ ok:false, message: 'Missing required fields' })
     }
@@ -16,7 +19,7 @@ const signup = async (req, res) => {
     const hash = await bcrypt.hash(password, salt)
     const user = await createUser({ name, email, passwordHash: hash, role })
     if (role === 'parent' && childName) {
-      await createChild({ name: childName, parent_id: user.id, dob })
+      await createChild({ name: childName, parent_id: user.id, dob: dob || null })
     }
     console.log('User created:', user.id)
     return res.json({ ok:true, user })
@@ -29,7 +32,8 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   try{
     console.log('Login request:', req.body)
-    const { email, password } = req.body
+    const email = req.body.email?.trim().toLowerCase()
+    const { password } = req.body
     if (!email || !password) {
       return res.status(400).json({ ok:false, message: 'Email and password required' })
     }
