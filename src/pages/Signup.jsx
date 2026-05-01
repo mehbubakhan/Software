@@ -4,9 +4,11 @@ import { Link } from 'react-router-dom'
 export default function Signup(){
   const roles = [
     {label: 'Parent', to: '/signup/parent', note: 'Track your child and updates', color: 'from-rose-400 to-orange-400'},
-    {label: 'Daycare Admin', to: '/signup/daycare', note: 'Manage admissions and rooms', color: 'from-cyan-400 to-blue-500'},
     {label: 'Nanny', to: '/signup/nanny', note: 'Find care work and activities', color: 'from-emerald-400 to-teal-500'},
-    {label: 'Transport Staff', to: '/signup/transport', note: 'Coordinate safe daily rides', color: 'from-violet-400 to-fuchsia-500'}
+    {label: 'Daycare', to: '/signup/daycare', note: 'Manage care rooms and daycare setup', color: 'from-cyan-400 to-blue-500'},
+    {label: 'Admin', to: '/signup/admin', note: 'Oversee users, requests, and operations', color: 'from-slate-700 to-slate-950'},
+    {label: 'Marketplace Seller', to: '/signup/marketplace-seller', note: 'Offer daycare products and services', color: 'from-amber-400 to-orange-500'},
+    {label: 'Orphanage Manager', to: '/signup/orphanage-manager', note: 'Coordinate orphanage and adoption support', color: 'from-violet-400 to-fuchsia-500'}
   ]
 
   return (
