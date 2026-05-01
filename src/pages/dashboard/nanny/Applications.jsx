@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import api from '../../../services/api'
+import SOSButton from '../../../components/SOSButton'
 
 export default function Applications(){
   const [apps, setApps] = useState([])
@@ -37,6 +38,7 @@ export default function Applications(){
 
   return (
     <div>
+      <SOSButton />
       <h3 className="text-xl font-bold mb-4">Applications</h3>
       <ul className="space-y-2">
         {apps.map(a=> (

@@ -6,7 +6,11 @@ import { Outlet, Link, useLocation } from 'react-router-dom'
 const items = [
   {label:'Assigned Children', path:'/dashboard/nanny/children'},
   {label:'Activity Update', path:'/dashboard/nanny/update'},
-  {label:'Applications', path:'/dashboard/nanny/applications'}
+  {label:'Applications', path:'/dashboard/nanny/applications'},
+  {label:'Profile', path:'/dashboard/nanny/profile'},
+  {label:'Availability', path:'/dashboard/nanny/availability'},
+  {label:'Safety', path:'/dashboard/nanny/safety'},
+  {label:'Apply for Work', path:'/dashboard/nanny/apply'}
 ]
 
 export default function NannyDashboard(){

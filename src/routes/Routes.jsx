@@ -15,6 +15,9 @@ import ChildDetail from '../pages/dashboard/nanny/ChildDetail'
 import Update from '../pages/dashboard/nanny/Update'
 import Applications from '../pages/dashboard/nanny/Applications'
 import ApplyForWork from '../pages/dashboard/nanny/ApplyForWork'
+import Profile from '../pages/dashboard/nanny/Profile'
+import Availability from '../pages/dashboard/nanny/Availability'
+import Safety from '../pages/dashboard/nanny/Safety'
 import ProtectedRoute from '../components/ProtectedRoute'
 import RoleRedirect from '../components/RoleRedirect'
 
@@ -39,6 +42,9 @@ export default function AppRoutes(){
         <Route path="update" element={<Update/>} />
         <Route path="applications" element={<Applications/>} />
         <Route path="apply" element={<ApplyForWork/>} />
+        <Route path="profile" element={<Profile/>} />
+        <Route path="availability" element={<Availability/>} />
+        <Route path="safety" element={<Safety/>} />
       </Route>
     </Routes>
   )
