@@ -12,6 +12,7 @@ export default function Sidebar({ items = [], variant = 'default' }){
               <li key={i.path}>
                 <NavLink
                   to={i.path}
+                  end={i.path === '/dashboard/parent'}
                   className={({ isActive }) =>
                     `block px-6 text-xl font-black transition duration-200 focus:outline-none focus-visible:text-cyan-700 ${
                       isActive ? 'text-cyan-700' : 'text-slate-700 hover:text-cyan-700'
