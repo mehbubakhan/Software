@@ -14,7 +14,8 @@ export default function Login(){
       const res = await login(form)
       if (res.user) nav('/role-redirect')
     }catch(err){
-      alert('Login failed')
+      const msg = err.response?.data?.message || err.response?.data?.error || err.message || 'Login failed'
+      alert(msg)
     }
   }
 
