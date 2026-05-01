@@ -1,6 +1,7 @@
 import React from 'react'
 import Sidebar from '../../components/Sidebar'
 import Card from '../../components/Card'
+import { Outlet, Link, useLocation } from 'react-router-dom'
 
 const items = [
   {label:'Assigned Children', path:'/dashboard/nanny/children'},
@@ -9,6 +10,7 @@ const items = [
 ]
 
 export default function NannyDashboard(){
+  const loc = useLocation()
   return (
     <div className="min-h-[calc(100vh-68px)] md:flex">
       <Sidebar items={items} />
@@ -18,10 +20,15 @@ export default function NannyDashboard(){
           <h2 className="mt-2 text-3xl font-black text-slate-950">Daily care workspace</h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Keep assigned children and activity updates easy to find throughout the day.</p>
         </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card title="Assigned Children">Anna, Tom</Card>
-          <Card title="Activity Update">Submit daily notes</Card>
-        </div>
+
+        {loc.pathname === '/dashboard/nanny' || loc.pathname === '/dashboard/nanny/' ? (
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card title={ <Link to="children" className="text-slate-900">Assigned Children</Link> }>See assigned children</Card>
+            <Card title={ <Link to="update" className="text-slate-900">Activity Update</Link> }>Submit daily notes</Card>
+          </div>
+        ) : (
+          <Outlet />
+        )}
       </main>
     </div>
   )

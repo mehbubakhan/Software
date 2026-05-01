@@ -6,5 +6,6 @@ router.use('/admissions', require('./admissions'))
 router.use('/jobs', require('./jobs'))
 router.use('/activities', require('./activities'))
 router.use('/dashboard', require('./dashboard'))
+router.use('/children', require('./children'))
 
 module.exports = router

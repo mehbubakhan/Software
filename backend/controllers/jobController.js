@@ -10,6 +10,13 @@ const postJob = async (req, res) => {
   }catch(err){ return res.status(500).json({ ok:false, error: err.message }) }
 }
 
+const listOpenJobs = async (req, res) => {
+  try{
+    const jobs = await findOpen()
+    return res.json({ ok:true, data: jobs })
+  }catch(err){ return res.status(500).json({ ok:false, error: err.message }) }
+}
+
 const applyForJob = async (req, res) => {
   try{
     const { job_id } = req.body
@@ -38,3 +45,4 @@ const decideApplication = async (req, res) => {
 }
 
 module.exports = { postJob, applyForJob, listApplications, decideApplication }
+
