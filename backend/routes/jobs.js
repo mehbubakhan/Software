@@ -6,6 +6,7 @@ const { postJob, applyForJob, listApplications, decideApplication } = require('.
 
 router.post('/post', auth, permit('admin'), postJob)
 router.post('/apply', auth, permit('nanny'), applyForJob)
+router.get('/open', auth, permit('nanny','parent','admin'), require('../controllers/jobController').listOpenJobs)
 router.get('/:job_id/applications', auth, permit('admin'), listApplications)
 router.post('/applications/:id/decide', auth, permit('admin'), decideApplication)
 

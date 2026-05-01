@@ -13,4 +13,21 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+api.interceptors.response.use(
+  res => res,
+  err => {
+    if(err.response){
+      const code = err.response.status
+      if(code === 401){
+        // redirect to login for unauthorized
+        try{ window.location.href = '/login' }catch(e){}
+      }
+      // attach friendly message
+      const message = err.response.data?.message || err.message || 'Request failed'
+      return Promise.reject(new Error(message))
+    }
+    return Promise.reject(err)
+  }
+)
+
 export default api
