@@ -9,3 +9,35 @@ html, body, #root {
 /* Simple daycare theme colors */
 .bg-daycare { background-color: #FFFBF0; }
 .text-accent { color: #2b6cb0; }
+
+.bg-auth-splash {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(45, 212, 191, 0.42), transparent 28%),
+    radial-gradient(circle at 86% 12%, rgba(244, 114, 182, 0.38), transparent 30%),
+    radial-gradient(circle at 68% 88%, rgba(251, 191, 36, 0.34), transparent 32%),
+    linear-gradient(135deg, #f8fafc 0%, #ecfeff 42%, #fff7ed 100%);
+}
+
+.auth-shape {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(2px);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.auth-shape-one {
+  width: 13rem;
+  height: 13rem;
+  left: -4rem;
+  bottom: 4rem;
+  background: conic-gradient(from 120deg, #22d3ee, #a78bfa, #f472b6, #22d3ee);
+}
+
+.auth-shape-two {
+  width: 10rem;
+  height: 10rem;
+  right: 8%;
+  top: 8rem;
+  background: conic-gradient(from 80deg, #facc15, #fb7185, #38bdf8, #facc15);
+}
