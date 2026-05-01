@@ -1,4 +1,4 @@
-const { createJob, closeJob, findById } = require('../models/Job')
+const { createJob, closeJob, findById, findOpen } = require('../models/Job')
 const { applyJob, updateApplication, listByJob } = require('../models/Application')
 
 const postJob = async (req, res) => {
@@ -44,5 +44,5 @@ const decideApplication = async (req, res) => {
   }catch(err){ return res.status(500).json({ ok:false, error: err.message }) }
 }
 
-module.exports = { postJob, applyForJob, listApplications, decideApplication }
+module.exports = { postJob, applyForJob, listApplications, decideApplication, listOpenJobs }
 
