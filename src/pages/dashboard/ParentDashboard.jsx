@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import Sidebar from '../../components/Sidebar'
 import api from '../../services/api'
 
 const items = [
+  { label: 'Overview', path: '/dashboard/parent' },
   { label: 'Admission', path: '/dashboard/parent/admission' },
   { label: 'Activities', path: '/dashboard/parent/activities' },
   { label: 'Packages', path: '/dashboard/parent/packages' },
@@ -39,6 +40,58 @@ function Panel({ children, className = '' }) {
     <div className={`rounded-2xl border border-white/70 bg-white/80 p-5 shadow-lg shadow-cyan-900/5 backdrop-blur-xl ${className}`}>
       {children}
     </div>
+  )
+}
+
+function OverviewView() {
+  const summary = [
+    { label: 'Admission', value: 'Pending Review', color: 'from-cyan-500 to-blue-500' },
+    { label: 'Today', value: '4 Updates', color: 'from-emerald-500 to-teal-500' },
+    { label: 'Package', value: 'Full Day', color: 'from-amber-400 to-orange-500' }
+  ]
+
+  return (
+    <>
+      <SectionHeader label="Parent Dashboard" title="Your child care overview">
+        Track admission, daily activity, package choices, and demo safety tools from one parent workspace.
+      </SectionHeader>
+      <div className="grid gap-5 lg:grid-cols-3">
+        {summary.map(item => (
+          <Panel key={item.label}>
+            <span className={`mb-5 block h-2 w-20 rounded-full bg-gradient-to-r ${item.color}`} />
+            <p className="text-sm font-black uppercase tracking-[0.16em] text-slate-500">{item.label}</p>
+            <h3 className="mt-3 text-2xl font-black text-slate-950">{item.value}</h3>
+          </Panel>
+        ))}
+      </div>
+      <div className="mt-5 grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
+        <Panel>
+          <h3 className="text-lg font-black text-slate-950">Latest Activity</h3>
+          <div className="mt-5 space-y-4">
+            {activities.slice(0, 3).map(item => (
+              <div key={item.title} className="flex items-start gap-4">
+                <span className={`mt-1 h-3 w-3 rounded-full ${item.tone}`} />
+                <div>
+                  <p className="font-black text-slate-800">{item.title}</p>
+                  <p className="text-sm font-semibold text-slate-500">{item.time} - {item.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+        <Panel>
+          <h3 className="text-lg font-black text-slate-950">Quick Status</h3>
+          <div className="mt-5 space-y-4">
+            {['Admission form ready', 'CCTV demo available', 'GPS route preview active'].map((item, index) => (
+              <div key={item} className="flex items-center gap-3">
+                <span className={`grid h-8 w-8 place-items-center rounded-full text-xs font-black text-white ${index === 0 ? 'bg-cyan-500' : index === 1 ? 'bg-fuchsia-500' : 'bg-emerald-500'}`}>{index + 1}</span>
+                <span className="font-bold text-slate-700">{item}</span>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      </div>
+    </>
   )
 }
 
@@ -201,7 +254,7 @@ function GpsView() {
             <div className="absolute left-[18%] top-[62%] h-3 w-[62%] rotate-[-18deg] rounded-full bg-cyan-500" />
             <div className="absolute left-[19%] top-[62%] grid h-11 w-11 place-items-center rounded-full bg-slate-950 text-sm font-black text-white">D</div>
             <div className="absolute right-[16%] top-[38%] grid h-11 w-11 place-items-center rounded-full bg-fuchsia-500 text-sm font-black text-white">H</div>
-            <div className="absolute left-[50%] top-[49%] grid h-12 w-12 place-items-center rounded-full bg-white text-2xl shadow-xl">↗</div>
+            <div className="absolute left-[50%] top-[49%] grid h-12 w-12 place-items-center rounded-full bg-white text-sm font-black shadow-xl">NE</div>
           </div>
         </Panel>
         <Panel>
@@ -229,7 +282,7 @@ export default function ParentDashboard() {
       <Sidebar items={items} variant="parent-workspace" />
       <main className="flex-1 p-4 sm:p-6 lg:p-8">
         <Routes>
-          <Route index element={<Navigate to="admission" replace />} />
+          <Route index element={<OverviewView />} />
           <Route path="admission" element={<AdmissionView />} />
           <Route path="activities" element={<ActivitiesView />} />
           <Route path="packages" element={<PackagesView />} />
