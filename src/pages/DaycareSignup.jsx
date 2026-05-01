@@ -8,7 +8,7 @@ export default function DaycareSignup(){
   const submit = async e => {
     e.preventDefault()
     try{ 
-      await api.post('/auth/signup', { ...form, role: 'admin' })
+      await api.post('/auth/signup', { ...form, role: 'daycare' })
       alert('Registered') 
     }catch(err){
       const msg = err.response?.data?.message || err.response?.data?.error || err.message || 'Signup failed'
