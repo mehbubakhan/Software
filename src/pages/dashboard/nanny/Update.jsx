@@ -5,12 +5,14 @@ export default function Update(){
   const [childId, setChildId] = useState('')
   const [type, setType] = useState('note')
   const [details, setDetails] = useState('')
+  const [photoUrl, setPhotoUrl] = useState('')
+  const [notify, setNotify] = useState(false)
   const [activities, setActivities] = useState([])
 
   const submit = async e =>{
     e.preventDefault()
     try{
-      await api.post('/activities', { child_id: childId, type, details: { text: details, status: 'pending' } })
+      await api.post('/activities', { child_id: childId, type, details: { text: details, status: 'pending', photo_url: photoUrl, notify } })
       setDetails('')
       loadActivities()
     }catch(err){ console.error('Failed to create activity', err); alert('Failed to create activity: '+(err.response?.data?.message||err.message)) }
@@ -34,6 +36,8 @@ export default function Update(){
           <option value="task">Task</option>
           <option value="timetable">Timetable</option>
         </select>
+        <input value={photoUrl} onChange={e=>setPhotoUrl(e.target.value)} placeholder="Photo URL (optional)" className="p-2 border rounded w-full" />
+        <label className="flex items-center space-x-2"><input type="checkbox" checked={notify} onChange={e=>setNotify(e.target.checked)} /> <span className="text-sm">Send update to parents</span></label>
         <textarea value={details} onChange={e=>setDetails(e.target.value)} className="w-full p-2 border rounded" placeholder="Details" />
         <div>
           <button type="submit" className="px-4 py-2 bg-emerald-600 text-white rounded mr-2">Create</button>
