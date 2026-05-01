@@ -12,6 +12,7 @@ export default function RoleRedirect(){
     if (user.role === 'parent') navigate('/dashboard/parent')
     else if (user.role === 'admin' || user.role === 'daycare') navigate('/dashboard/admin')
     else if (user.role === 'nanny') navigate('/dashboard/nanny')
+    else if (user.role === 'orphanage_manager') navigate('/dashboard/orphanage-manager')
     else navigate('/')
   }, [user, navigate])
 

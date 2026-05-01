@@ -11,6 +11,7 @@ import RoleSignup from '../pages/RoleSignup'
 import ParentDashboard from '../pages/dashboard/ParentDashboard'
 import AdminDashboard from '../pages/dashboard/AdminDashboard'
 import NannyDashboard from '../pages/dashboard/NannyDashboard'
+import OrphanageManagerDashboard from '../pages/dashboard/OrphanageManagerDashboard'
 import Children from '../pages/dashboard/nanny/Children'
 import ChildDetail from '../pages/dashboard/nanny/ChildDetail'
 import Update from '../pages/dashboard/nanny/Update'
@@ -40,6 +41,7 @@ export default function AppRoutes(){
 
       <Route path="/dashboard/parent/*" element={<ProtectedRoute roles={["parent"]}><ParentDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/admin/*" element={<ProtectedRoute roles={["admin","daycare"]}><AdminDashboard/></ProtectedRoute>} />
+      <Route path="/dashboard/orphanage-manager/*" element={<ProtectedRoute roles={["orphanage_manager"]}><OrphanageManagerDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/nanny/*" element={<ProtectedRoute roles={["nanny"]}><NannyDashboard/></ProtectedRoute>}>
         <Route path="children" element={<Children/>} />
         <Route path="children/:id" element={<ChildDetail/>} />
