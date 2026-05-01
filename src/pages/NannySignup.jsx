@@ -7,7 +7,13 @@ export default function NannySignup(){
   const [form, setForm] = useState({ name: '', email: '', password: '', experience: '' })
   const submit = async e =>{
     e.preventDefault()
-    try{ await api.post('/auth/signup', { ...form, role: 'nanny' }); alert('Registered') }catch(e){alert('Error')}
+    try{ 
+      await api.post('/auth/signup', { ...form, role: 'nanny' })
+      alert('Registered') 
+    }catch(err){
+      const msg = err.response?.data?.message || err.response?.data?.error || err.message || 'Signup failed'
+      alert(msg)
+    }
   }
   return (
     <div className="relative min-h-[calc(100vh-68px)] overflow-hidden px-4 py-10 sm:px-6 lg:px-8">
