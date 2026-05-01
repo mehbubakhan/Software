@@ -5,7 +5,7 @@ const { listByChild, addActivity } = require('../models/Activity')
 const assignedToNanny = async (req, res) => {
   try{
     const nanny_id = req.user.id
-    const [rows] = await pool.query('SELECT DISTINCT c.* FROM activities a JOIN children c ON a.child_id = c.id WHERE a.nanny_id = ?', [nanny_id])
+    const [rows] = await pool.query('SELECT DISTINCT c.*, u.name as parent_name, u.email as parent_email FROM activities a JOIN children c ON a.child_id = c.id JOIN users u ON c.parent_id = u.id WHERE a.nanny_id = ?', [nanny_id])
     return res.json({ ok:true, data: rows })
   }catch(err){ return res.status(500).json({ ok:false, error: err.message }) }
 }
@@ -13,7 +13,8 @@ const assignedToNanny = async (req, res) => {
 const detail = async (req, res) => {
   try{
     const { id } = req.params
-    const child = await findById(id)
+    const [rows] = await pool.query('SELECT c.*, u.name as parent_name, u.email as parent_email FROM children c JOIN users u ON c.parent_id = u.id WHERE c.id = ?', [id])
+    const child = rows[0]
     if(!child) return res.status(404).json({ ok:false, error: 'Child not found' })
     const activities = await listByChild(id)
     return res.json({ ok:true, data: { child, activities } })
