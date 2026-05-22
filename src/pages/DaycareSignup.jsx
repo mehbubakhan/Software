@@ -1,18 +1,27 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import FormInput from '../components/FormInput'
 import api from '../services/api'
+import { useAuth } from '../context/AuthContext'
 
 export default function DaycareSignup(){
   const [form, setForm] = useState({ name: '', email: '', password: '', daycareName: '' })
+  const [submitting, setSubmitting] = useState(false)
+  const navigate = useNavigate()
+  const { login } = useAuth()
+
   const submit = async e => {
     e.preventDefault()
-    try{ 
+    setSubmitting(true)
+    try{
       await api.post('/auth/signup', { ...form, role: 'daycare' })
-      alert('Registered') 
+      await login({ role: 'daycare', email: form.email, password: form.password })
+      navigate('/dashboard/admin')
     }catch(err){
       const msg = err.response?.data?.message || err.response?.data?.error || err.message || 'Signup failed'
       alert(msg)
+    } finally {
+      setSubmitting(false)
     }
   }
   return (
@@ -27,7 +36,9 @@ export default function DaycareSignup(){
           <FormInput label="Email" type="email" placeholder="you@example.com" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
           <FormInput label="Password" type="password" placeholder="Create a password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} />
           <FormInput label="Daycare Name" placeholder="Center name" value={form.daycareName} onChange={e => setForm({...form, daycareName: e.target.value})} />
-          <button className="mt-3 w-full rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 px-5 py-3 font-bold text-white shadow-lg shadow-blue-500/25 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl" type="submit">Create Account</button>
+          <button disabled={submitting} className="mt-3 w-full rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 px-5 py-3 font-bold text-white shadow-lg shadow-blue-500/25 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-70" type="submit">
+            {submitting ? 'Creating...' : 'Create Account'}
+          </button>
         </form>
         <Link to="/signup" className="mt-5 inline-flex text-sm font-bold text-cyan-700 transition hover:text-fuchsia-600">Back to roles</Link>
       </div>
