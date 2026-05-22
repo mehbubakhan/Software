@@ -15,27 +15,41 @@ export default function Sidebar({ items = [], variant = 'default' }){
 
   if (variant === 'parent-workspace') {
     return (
-      <aside className="w-full border-b border-cyan-100 bg-gradient-to-b from-cyan-50 to-slate-50 px-4 py-5 md:min-h-[calc(100vh-68px)] md:w-72 md:border-b-0 md:border-r md:px-5">
-        <p className="text-sm font-black uppercase tracking-[0.24em] text-fuchsia-500">Parent Module</p>
-        <nav className="mt-5">
-          <ul className="flex gap-2 overflow-x-auto pb-1 md:block md:space-y-2 md:overflow-visible md:pb-0">
+      <aside className="flex flex-col w-full bg-[#0F111A] border-b border-[#1A1D27] md:min-h-[calc(100vh-68px)] md:w-[280px] md:border-b-0 md:border-r">
+        <div className="flex items-center gap-3 p-6 pb-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded bg-fuchsia-600 text-sm font-bold text-white">M</div>
+          <div>
+            <h1 className="font-bold text-white">Minimate</h1>
+            <p className="text-xs text-slate-400">Parent Portal</p>
+          </div>
+        </div>
+        
+        <nav className="flex-1 overflow-y-auto p-4">
+          <ul className="flex gap-2 overflow-x-auto pb-1 md:block md:space-y-1 md:overflow-visible md:pb-0">
             {items.map(i => (
               <li key={i.path} className="shrink-0 md:shrink">
                 <NavLink
                   to={i.path}
                   end={i.path === '/dashboard/parent'}
                   className={({ isActive }) =>
-                    `block rounded-lg px-4 py-3 text-sm font-bold transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 ${
-                      isActive ? 'bg-white text-cyan-700 shadow-sm' : 'text-slate-700 hover:bg-white/70 hover:text-cyan-700'
+                    `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition duration-200 focus:outline-none ${
+                      isActive ? 'bg-fuchsia-600/20 text-fuchsia-400' : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
                     }`
                   }
                 >
+                  <span className="text-lg opacity-80">▹</span>
                   {i.label}
                 </NavLink>
               </li>
             ))}
           </ul>
         </nav>
+        
+        <div className="p-6 pt-2">
+          <button className="w-full rounded-xl bg-fuchsia-600 py-3 font-bold text-white transition hover:bg-fuchsia-500 shadow-[0_0_15px_rgba(192,38,211,0.4)]">
+            Child mode
+          </button>
+        </div>
       </aside>
     )
   }

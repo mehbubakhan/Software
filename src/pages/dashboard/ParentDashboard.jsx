@@ -57,6 +57,15 @@ function ProfileView() {
             alert('Profile updated successfully.')
           }}
         >
+          <div className="mb-6 flex items-center gap-5">
+            <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-fuchsia-500 bg-slate-100">
+              <span className="flex h-full w-full items-center justify-center text-3xl">👤</span>
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">Profile Photo</h2>
+              <input type="file" className="mt-2 text-sm text-slate-500 file:mr-4 file:rounded-full file:border-0 file:bg-fuchsia-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-fuchsia-700 hover:file:bg-fuchsia-100" />
+            </div>
+          </div>
           <h2 className="text-lg font-bold text-slate-900">Account Details</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             {[
@@ -175,7 +184,7 @@ function MessagesView() {
 
 export default function ParentDashboard() {
   return (
-    <div className="min-h-[calc(100vh-68px)] bg-slate-50 md:flex">
+    <div className="min-h-[calc(100vh-68px)] bg-[#0B0E14] text-white md:flex">
       <Sidebar items={items} variant="parent-workspace" />
       <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
         <Routes>

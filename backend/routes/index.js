@@ -11,5 +11,7 @@ router.use('/applications', require('./applications'))
 router.use('/nanny', require('./nanny'))
 router.use('/safety', require('./safety'))
 router.use('/sos', require('./sos'))
-
+router.use('/marketplace', require('./marketplace'))
+router.use('/adoption', require('./adoption'))
+router.use('/learning', require('./learning'))
 module.exports = router
