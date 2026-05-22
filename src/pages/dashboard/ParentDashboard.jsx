@@ -4,7 +4,7 @@ import Sidebar from '../../components/Sidebar'
 import { useAuth } from '../../context/AuthContext'
 import Overview from './parent/Overview'
 import HireNanny from './parent/HireNanny'
-import DaycareManagement from './parent/DaycareManagement'
+import DaycareLayout from './parent/DaycareLayout'
 import SafetyMonitoring from './parent/SafetyMonitoring'
 import LearningPlatform from './parent/LearningPlatform'
 import Marketplace from './parent/Marketplace'
@@ -192,7 +192,7 @@ export default function ParentDashboard() {
           <Route index element={<Overview />} />
           <Route path="profile" element={<ProfileView />} />
           <Route path="hire-nanny/*" element={<HireNanny />} />
-          <Route path="daycare" element={<DaycareManagement />} />
+          <Route path="daycare/*" element={<DaycareLayout />} />
           <Route path="safety" element={<SafetyMonitoring />} />
           <Route path="gps" element={<SafetyMonitoring />} />
           <Route path="sos" element={<SafetyMonitoring />} />
