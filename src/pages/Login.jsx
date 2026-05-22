@@ -4,14 +4,27 @@ import { useAuth } from '../context/AuthContext'
 import FormInput from '../components/FormInput'
 
 export default function Login(){
-  const [form, setForm] = useState({ email: '', password: '' })
+  const [form, setForm] = useState({ role: '', email: '', password: '' })
   const { login } = useAuth()
   const nav = useNavigate()
+
+  const roleOptions = [
+    { label: 'Parent', value: 'parent' },
+    { label: 'Nanny', value: 'nanny' },
+    { label: 'Daycare Admin', value: 'daycare' },
+    { label: 'Marketplace Seller', value: 'marketplace_seller' },
+    { label: 'Orphanage Manager/Adoption', value: 'orphanage_manager' },
+    { label: 'System Admin', value: 'admin' }
+  ]
 
   const submit = async (e) => {
     e.preventDefault()
     try{
       const res = await login(form)
+      if (form.role && res.user?.role !== form.role) {
+        alert('The selected role does not match this account.')
+        return
+      }
       if (res.user) nav('/role-redirect')
     }catch(err){
       const msg = err.response?.data?.message || err.response?.data?.error || err.message || 'Login failed'
@@ -48,10 +61,24 @@ export default function Login(){
           <div className="mb-8">
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-fuchsia-500">Login</p>
             <h2 className="mt-2 text-3xl font-black text-slate-950">Good to see you</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">Use your account email and password to continue.</p>
+            <p className="mt-2 text-sm leading-6 text-slate-600">Choose your role, then enter your email and password to continue.</p>
           </div>
 
           <form onSubmit={submit}>
+            <label className="mb-4 block">
+              <span className="text-sm font-semibold text-slate-700">Choose your role</span>
+              <select
+                className="mt-2 block w-full rounded-xl border border-slate-200 bg-white/85 px-4 py-3 text-slate-900 shadow-sm outline-none transition duration-200 hover:border-cyan-300 focus:border-fuchsia-400 focus:bg-white focus:ring-4 focus:ring-fuchsia-100"
+                value={form.role}
+                onChange={e => setForm({ ...form, role: e.target.value })}
+                required
+              >
+                <option value="">Select your role</option>
+                {roleOptions.map(option => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </label>
             <FormInput label="Email" type="email" placeholder="you@example.com" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
             <FormInput label="Password" type="password" placeholder="Enter your password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} />
             <button className="mt-3 w-full rounded-xl bg-gradient-to-r from-cyan-500 via-blue-500 to-fuchsia-500 px-5 py-3 font-bold text-white shadow-lg shadow-blue-500/25 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-fuchsia-500/25 focus:outline-none focus:ring-4 focus:ring-cyan-200" type="submit">
