@@ -86,6 +86,7 @@ export default function AgencyNannies() {
                 </div>
 
                 <button 
+                  onClick={() => navigate('/dashboard/parent/hire-nanny/individuals')}
                   className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition mt-auto"
                 >
                   View Nannies
