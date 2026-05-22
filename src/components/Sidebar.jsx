@@ -70,6 +70,36 @@ export default function Sidebar({ items = [], variant = 'default' }){
     )
   }
 
+  if (variant === 'marketplace-workspace') {
+    return (
+      <aside className="w-full border-b border-slate-100 bg-white px-5 py-7 shadow-sm md:sticky md:top-0 md:h-[calc(100vh-68px)] md:w-[382px] md:overflow-y-auto md:border-b-0 md:border-r">
+        <p className="text-lg font-black uppercase tracking-[0.32em] text-amber-500">Marketplace</p>
+        <nav className="mt-7">
+          <ul className="flex gap-3 overflow-x-auto pb-2 md:block md:space-y-6 md:overflow-visible md:pb-0">
+            {items.map(i => {
+              const hash = i.path.includes('#') ? `#${i.path.split('#')[1]}` : ''
+              const active = hash ? activeHash === hash : activeHash === ''
+              return (
+                <li key={i.path} className="shrink-0 md:shrink">
+                  <a
+                    href={i.path}
+                    className={`block rounded-2xl px-6 py-4 text-lg font-black text-slate-700 transition duration-200 md:text-xl ${
+                      active
+                        ? 'border border-amber-200 bg-white text-amber-700 shadow-lg shadow-amber-900/10'
+                        : 'border border-transparent hover:border-amber-100 hover:bg-amber-50 hover:text-amber-700'
+                    }`}
+                  >
+                    {i.label}
+                  </a>
+                </li>
+              )
+            })}
+          </ul>
+        </nav>
+      </aside>
+    )
+  }
+
   return (
     <aside className="w-full border-b border-white/70 bg-white/65 p-4 backdrop-blur-xl md:min-h-[calc(100vh-68px)] md:w-64 md:border-b-0 md:border-r">
       <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-fuchsia-500">Workspace</p>
