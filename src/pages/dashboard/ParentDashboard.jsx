@@ -8,7 +8,7 @@ import DaycareLayout from './parent/DaycareLayout'
 import SafetyMonitoring from './parent/SafetyMonitoring'
 import LearningPlatform from './parent/LearningPlatform'
 import Marketplace from './parent/Marketplace'
-import AdoptionSystem from './parent/AdoptionSystem'
+import AdoptionLayout from './parent/AdoptionLayout'
 import Reports from './parent/Reports'
 import ChildProfile from './parent/ChildProfile'
 
@@ -198,7 +198,7 @@ export default function ParentDashboard() {
           <Route path="sos" element={<SafetyMonitoring />} />
           <Route path="learning" element={<LearningPlatform />} />
           <Route path="marketplace" element={<Marketplace />} />
-          <Route path="adoption" element={<AdoptionSystem />} />
+          <Route path="adoption/*" element={<AdoptionLayout />} />
           <Route path="notifications" element={<NotificationsView />} />
           <Route path="messages" element={<MessagesView />} />
           <Route path="reports" element={<Reports />} />
