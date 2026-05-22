@@ -6,7 +6,7 @@ const {
   getPackages, createPackage, getApplications, updateApplication, getChildren,
   getStaff, addStaff, getTransport, addTransport, getDailyReports, addDailyReport
 } = require('../controllers/daycareController');
-const authMiddleware = require('../middleware/authMiddleware');
+const authMiddleware = require('../middleware/auth');
 
 // Public / Parent-facing routes
 router.get('/', getDaycares);
