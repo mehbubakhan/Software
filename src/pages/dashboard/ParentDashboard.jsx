@@ -191,7 +191,7 @@ export default function ParentDashboard() {
         <Routes>
           <Route index element={<Overview />} />
           <Route path="profile" element={<ProfileView />} />
-          <Route path="hire-nanny" element={<HireNanny />} />
+          <Route path="hire-nanny/*" element={<HireNanny />} />
           <Route path="daycare" element={<DaycareManagement />} />
           <Route path="safety" element={<SafetyMonitoring />} />
           <Route path="gps" element={<SafetyMonitoring />} />
