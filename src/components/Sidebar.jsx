@@ -4,18 +4,18 @@ import { Link, NavLink } from 'react-router-dom'
 export default function Sidebar({ items = [], variant = 'default' }){
   if (variant === 'parent-workspace') {
     return (
-      <aside className="w-full border-b border-cyan-100 bg-gradient-to-b from-cyan-50 to-slate-50 px-6 py-7 md:min-h-[calc(100vh-68px)] md:w-[366px] md:border-b-0 md:border-r">
-        <p className="text-lg font-black uppercase tracking-[0.32em] text-fuchsia-500">Workspace</p>
-        <nav className="mt-11">
-          <ul className="space-y-14">
+      <aside className="w-full border-b border-cyan-100 bg-gradient-to-b from-cyan-50 to-slate-50 px-4 py-5 md:min-h-[calc(100vh-68px)] md:w-72 md:border-b-0 md:border-r md:px-5">
+        <p className="text-sm font-black uppercase tracking-[0.24em] text-fuchsia-500">Parent Module</p>
+        <nav className="mt-5">
+          <ul className="flex gap-2 overflow-x-auto pb-1 md:block md:space-y-2 md:overflow-visible md:pb-0">
             {items.map(i => (
-              <li key={i.path}>
+              <li key={i.path} className="shrink-0 md:shrink">
                 <NavLink
                   to={i.path}
                   end={i.path === '/dashboard/parent'}
                   className={({ isActive }) =>
-                    `block px-6 text-xl font-black transition duration-200 focus:outline-none focus-visible:text-cyan-700 ${
-                      isActive ? 'text-cyan-700' : 'text-slate-700 hover:text-cyan-700'
+                    `block rounded-lg px-4 py-3 text-sm font-bold transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 ${
+                      isActive ? 'bg-white text-cyan-700 shadow-sm' : 'text-slate-700 hover:bg-white/70 hover:text-cyan-700'
                     }`
                   }
                 >
