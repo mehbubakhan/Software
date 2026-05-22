@@ -192,6 +192,48 @@ const renderIcon = (iconName) => {
     )
   }
 
+  if (variant === 'daycare-workspace') {
+    return (
+      <aside className="w-full border-b border-slate-100 bg-white px-5 py-7 shadow-sm md:sticky md:top-0 md:h-[calc(100vh-68px)] md:w-[280px] md:overflow-y-auto md:border-b-0 md:border-r">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="flex h-8 w-8 items-center justify-center rounded bg-purple-600 text-sm font-bold text-white">DC</div>
+          <div>
+            <h1 className="font-bold text-slate-800">DaycareHub</h1>
+            <p className="text-xs text-slate-400">View Public Profile</p>
+          </div>
+        </div>
+        
+        <nav className="flex-1">
+          <ul className="flex gap-2 overflow-x-auto pb-1 md:block md:space-y-2 md:overflow-visible md:pb-0">
+            {items.map(i => (
+              <li key={i.path} className="shrink-0 md:shrink">
+                <NavLink
+                  to={i.path}
+                  end={i.path === '/dashboard/daycare'}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition duration-200 focus:outline-none ${
+                      isActive ? 'bg-purple-50 text-purple-700 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-purple-600'
+                    }`
+                  }
+                >
+                  {renderIcon(i.icon)}
+                  {i.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        
+        <div className="mt-8 pt-4 border-t border-slate-100">
+          <button className="flex items-center gap-2 text-sm font-medium text-red-500 hover:text-red-600 px-4 py-2">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+            Logout
+          </button>
+        </div>
+      </aside>
+    )
+  }
+
   return (
     <aside className="w-full border-b border-white/70 bg-white/65 p-4 backdrop-blur-xl md:min-h-[calc(100vh-68px)] md:w-64 md:border-b-0 md:border-r">
       <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-fuchsia-500">Workspace</p>

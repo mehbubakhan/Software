@@ -1,3 +1,5 @@
+const DaycareModel = require('../models/DaycareModel')
+
 const getDaycares = (req, res) => {
   const daycares = [
     {
@@ -209,10 +211,172 @@ const processPayment = (req, res) => {
   res.json({ success: true, message: "Payment processed successfully", transactionId: "TXN" + Math.floor(Math.random() * 1000000) });
 };
 
+// Daycare Portal Features
+const ensureDaycare = async (req, res, next) => {
+  try {
+    const daycare = await DaycareModel.getDaycareByOwnerId(req.user.id)
+    if (!daycare) {
+      return res.status(404).json({ message: 'Daycare profile not found' })
+    }
+    req.daycare = daycare
+    next()
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message })
+  }
+}
+
+const getDashboardStats = async (req, res) => {
+  try {
+    const stats = await DaycareModel.getDashboardStats(req.daycare.id)
+    res.json(stats)
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching stats', error: err.message })
+  }
+}
+
+const getProfile = async (req, res) => {
+  res.json(req.daycare)
+}
+
+const updateProfile = async (req, res) => {
+  try {
+    await DaycareModel.updateDaycare(req.daycare.id, req.body)
+    res.json({ message: 'Profile updated successfully' })
+  } catch (err) {
+    res.status(500).json({ message: 'Error updating profile', error: err.message })
+  }
+}
+
+const createProfile = async (req, res) => {
+  try {
+    const existing = await DaycareModel.getDaycareByOwnerId(req.user.id)
+    if (existing) return res.status(400).json({ message: 'Daycare already exists for this user' })
+    const id = await DaycareModel.createDaycare(req.user.id, req.body)
+    res.status(201).json({ id, message: 'Daycare created' })
+  } catch (err) {
+    res.status(500).json({ message: 'Error creating daycare', error: err.message })
+  }
+}
+
+const getPackages = async (req, res) => {
+  try {
+    const packages = await DaycareModel.getPackages(req.daycare.id)
+    res.json(packages)
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching packages', error: err.message })
+  }
+}
+
+const createPackage = async (req, res) => {
+  try {
+    await DaycareModel.createPackage(req.daycare.id, req.body)
+    res.status(201).json({ message: 'Package created' })
+  } catch (err) {
+    res.status(500).json({ message: 'Error creating package', error: err.message })
+  }
+}
+
+const getApplications = async (req, res) => {
+  try {
+    const apps = await DaycareModel.getApplications(req.daycare.id)
+    res.json(apps)
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching applications', error: err.message })
+  }
+}
+
+const updateApplication = async (req, res) => {
+  try {
+    await DaycareModel.updateApplicationStatus(req.params.id, req.body.status)
+    res.json({ message: 'Application updated' })
+  } catch (err) {
+    res.status(500).json({ message: 'Error updating application', error: err.message })
+  }
+}
+
+const getChildren = async (req, res) => {
+  try {
+    const children = await DaycareModel.getChildren(req.daycare.id)
+    res.json(children)
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching children', error: err.message })
+  }
+}
+
+const getStaff = async (req, res) => {
+  try {
+    const staff = await DaycareModel.getStaff(req.daycare.id)
+    res.json(staff)
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching staff', error: err.message })
+  }
+}
+
+const addStaff = async (req, res) => {
+  try {
+    await DaycareModel.addStaff(req.daycare.id, req.body)
+    res.status(201).json({ message: 'Staff added' })
+  } catch (err) {
+    res.status(500).json({ message: 'Error adding staff', error: err.message })
+  }
+}
+
+const getTransport = async (req, res) => {
+  try {
+    const transports = await DaycareModel.getTransport(req.daycare.id)
+    res.json(transports)
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching transport', error: err.message })
+  }
+}
+
+const addTransport = async (req, res) => {
+  try {
+    await DaycareModel.addTransport(req.daycare.id, req.body)
+    res.status(201).json({ message: 'Transport added' })
+  } catch (err) {
+    res.status(500).json({ message: 'Error adding transport', error: err.message })
+  }
+}
+
+const getDailyReports = async (req, res) => {
+  try {
+    const reports = await DaycareModel.getDailyReports(req.daycare.id)
+    res.json(reports)
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching reports', error: err.message })
+  }
+}
+
+const addDailyReport = async (req, res) => {
+  try {
+    await DaycareModel.addDailyReport(req.daycare.id, req.body)
+    res.status(201).json({ message: 'Report added' })
+  } catch (err) {
+    res.status(500).json({ message: 'Error adding report', error: err.message })
+  }
+}
+
 module.exports = {
   getDaycares,
   getDaycareById,
   getChildReport,
   submitApplication,
-  processPayment
+  processPayment,
+  ensureDaycare,
+  getDashboardStats,
+  getProfile,
+  updateProfile,
+  createProfile,
+  getPackages,
+  createPackage,
+  getApplications,
+  updateApplication,
+  getChildren,
+  getStaff,
+  addStaff,
+  getTransport,
+  addTransport,
+  getDailyReports,
+  addDailyReport
 };

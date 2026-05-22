@@ -19,6 +19,16 @@ import MarketplaceBuyerDashboard from '../pages/dashboard/MarketplaceBuyerDashbo
 import CartAndWishlist from '../pages/dashboard/CartAndWishlist'
 import OrderTracking from '../pages/dashboard/OrderTracking'
 import ContactSupport from '../pages/dashboard/ContactSupport'
+import DaycareLayout from '../pages/dashboard/daycare/DaycareLayout'
+import DaycareDashboard from '../pages/dashboard/daycare/DaycareDashboard'
+import DaycareProfile from '../pages/dashboard/daycare/DaycareProfile'
+import ProgramsAndPackages from '../pages/dashboard/daycare/ProgramsAndPackages'
+import BookingManagement from '../pages/dashboard/daycare/BookingManagement'
+import ChildrenManagement from '../pages/dashboard/daycare/ChildrenManagement'
+import StaffManagement from '../pages/dashboard/daycare/StaffManagement'
+import TransportManagement from '../pages/dashboard/daycare/TransportManagement'
+import FeesAndPayment from '../pages/dashboard/daycare/FeesAndPayment'
+import DailyUpdates from '../pages/dashboard/daycare/DailyUpdates'
 import Children from '../pages/dashboard/nanny/Children'
 import ChildDetail from '../pages/dashboard/nanny/ChildDetail'
 import Update from '../pages/dashboard/nanny/Update'
@@ -50,7 +60,21 @@ export default function AppRoutes(){
       <Route path="/role-redirect" element={<RoleRedirect/>} />
 
       <Route path="/dashboard/parent/*" element={<ProtectedRoute roles={["parent"]}><ParentDashboard/></ProtectedRoute>} />
-      <Route path="/dashboard/admin/*" element={<ProtectedRoute roles={["admin","daycare"]}><AdminDashboard/></ProtectedRoute>} />
+      
+      {/* Daycare Portal Routes */}
+      <Route path="/dashboard/daycare/*" element={<ProtectedRoute roles={["daycare", "admin"]}><DaycareLayout/></ProtectedRoute>}>
+        <Route index element={<DaycareDashboard/>} />
+        <Route path="profile" element={<DaycareProfile/>} />
+        <Route path="packages" element={<ProgramsAndPackages/>} />
+        <Route path="bookings" element={<BookingManagement/>} />
+        <Route path="children" element={<ChildrenManagement/>} />
+        <Route path="staff" element={<StaffManagement/>} />
+        <Route path="transport" element={<TransportManagement/>} />
+        <Route path="payments" element={<FeesAndPayment/>} />
+        <Route path="reports" element={<DailyUpdates/>} />
+      </Route>
+      
+      <Route path="/dashboard/admin/*" element={<ProtectedRoute roles={["admin"]}><AdminDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/adoption/*" element={<ProtectedRoute roles={["orphanage_manager"]}><AdoptionDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/marketplace" element={<ProtectedRoute roles={["parent"]}><MarketplaceBuyerDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/marketplace/cart" element={<ProtectedRoute roles={["parent"]}><CartAndWishlist/></ProtectedRoute>} />
