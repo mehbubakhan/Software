@@ -1,11 +1,27 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 export default function Sidebar({ items = [], variant = 'default' }){
-  const [activeHash, setActiveHash] = React.useState(() => {
+  const [activeHash, setActiveHash] = useState(() => {
     if (typeof window === 'undefined') return ''
     return window.location.hash || ''
   })
+  
+  const { isChildMode, toggleChildMode } = useAuth() || {}
+  const [showPinModal, setShowPinModal] = useState(false)
+  const [pin, setPin] = useState('')
+
+  const handlePinSubmit = () => {
+    if (pin === '1234') { // Hardcoded prototype PIN
+      toggleChildMode(false)
+      setShowPinModal(false)
+      setPin('')
+    } else {
+      alert('Incorrect PIN')
+      setPin('')
+    }
+  }
 
   React.useEffect(() => {
     const updateHash = () => setActiveHash(window.location.hash || '')
@@ -46,10 +62,55 @@ export default function Sidebar({ items = [], variant = 'default' }){
         </nav>
         
         <div className="p-6 pt-2">
-          <button className="w-full rounded-xl bg-fuchsia-600 py-3 font-bold text-white transition hover:bg-fuchsia-500 shadow-[0_0_15px_rgba(192,38,211,0.4)]">
-            Child mode
-          </button>
+          {isChildMode ? (
+            <button 
+              onClick={() => setShowPinModal(true)}
+              className="w-full rounded-xl bg-slate-800 py-3 font-bold text-white transition hover:bg-slate-700 shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+            >
+              Exit Child Mode
+            </button>
+          ) : (
+            <button 
+              onClick={() => toggleChildMode(true)}
+              className="w-full rounded-xl bg-fuchsia-600 py-3 font-bold text-white transition hover:bg-fuchsia-500 shadow-[0_0_15px_rgba(192,38,211,0.4)]"
+            >
+              Child mode
+            </button>
+          )}
         </div>
+
+        {showPinModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+            <div className="bg-[#1A1D27] border border-[#2A2E3D] p-8 rounded-3xl w-full max-w-sm text-center">
+              <h2 className="text-xl font-bold text-white mb-2">Parent Verification</h2>
+              <p className="text-sm text-slate-400 mb-6">Enter PIN to exit Child Mode</p>
+              
+              <input 
+                type="password" 
+                maxLength="4"
+                value={pin}
+                onChange={(e) => setPin(e.target.value)}
+                className="w-full text-center text-2xl tracking-widest bg-[#0B0E14] border border-[#2A2E3D] rounded-xl p-4 text-white focus:outline-none focus:border-fuchsia-500 mb-4"
+                placeholder="****"
+              />
+              
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => { setShowPinModal(false); setPin(''); }}
+                  className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handlePinSubmit}
+                  className="flex-1 py-3 bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold rounded-xl transition"
+                >
+                  Verify
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </aside>
     )
   }
