@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 export default function Sidebar({ items = [], variant = 'default' }){
   if (variant === 'parent-workspace') {
@@ -35,9 +35,17 @@ export default function Sidebar({ items = [], variant = 'default' }){
       <ul className="flex gap-2 overflow-x-auto md:block md:space-y-2">
         {items.map(i => (
           <li key={i.path} className="shrink-0 md:shrink">
-            <Link to={i.path} className="block rounded-xl border border-transparent px-4 py-3 text-sm font-bold text-slate-700 transition duration-200 hover:-translate-y-0.5 hover:border-cyan-200 hover:bg-white hover:text-cyan-700 hover:shadow-md">
+            <NavLink
+              to={i.path}
+              end={i.path.endsWith('/nanny') || i.path.endsWith('/parent') || i.path.endsWith('/admin')}
+              className={({ isActive }) =>
+                `block rounded-lg border px-4 py-3 text-sm font-bold transition duration-200 hover:-translate-y-0.5 hover:border-cyan-200 hover:bg-white hover:text-cyan-700 hover:shadow-md ${
+                  isActive ? 'border-cyan-200 bg-white text-cyan-700 shadow-sm' : 'border-transparent text-slate-700'
+                }`
+              }
+            >
               {i.label}
-            </Link>
+            </NavLink>
           </li>
         ))}
       </ul>

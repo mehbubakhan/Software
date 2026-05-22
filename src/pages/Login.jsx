@@ -5,7 +5,7 @@ import FormInput from '../components/FormInput'
 
 export default function Login(){
   const [form, setForm] = useState({ role: '', email: '', password: '' })
-  const { login } = useAuth()
+  const { login, logout } = useAuth()
   const nav = useNavigate()
 
   const roleOptions = [
@@ -22,6 +22,7 @@ export default function Login(){
     try{
       const res = await login(form)
       if (form.role && res.user?.role !== form.role) {
+        logout()
         alert('The selected role does not match this account.')
         return
       }

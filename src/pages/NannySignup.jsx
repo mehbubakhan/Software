@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import FormInput from '../components/FormInput'
 import api from '../services/api'
+import { useAuth } from '../context/AuthContext'
+
+const languageOptions = ['Bangla', 'English', 'Hindi', 'Arabic', 'Other']
 
 export default function NannySignup(){
   const [form, setForm] = useState({
@@ -27,6 +30,7 @@ export default function NannySignup(){
     })
     const [submitting, setSubmitting] = useState(false)
     const navigate = useNavigate()
+    const { login } = useAuth()
 
     const setField = (key, value) => {
       setForm(prev => ({ ...prev, [key]: value }))
@@ -73,8 +77,8 @@ export default function NannySignup(){
           workPreference: form.workPreference,
           languagesSpoken: form.languagesSpoken,
         })
-        alert('Registered')
-        navigate('/login')
+        await login({ role: 'nanny', email: form.email, password: form.password })
+        navigate('/dashboard/nanny')
       } catch (err) {
         const msg = err.response?.data?.message || err.response?.data?.error || err.message || 'Signup failed'
         alert(msg)

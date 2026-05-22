@@ -12,6 +12,7 @@ import RoleSignup from '../pages/RoleSignup'
 import ParentDashboard from '../pages/dashboard/ParentDashboard'
 import AdminDashboard from '../pages/dashboard/AdminDashboard'
 import NannyDashboard from '../pages/dashboard/NannyDashboard'
+import Overview from '../pages/dashboard/nanny/Overview'
 import Children from '../pages/dashboard/nanny/Children'
 import ChildDetail from '../pages/dashboard/nanny/ChildDetail'
 import Update from '../pages/dashboard/nanny/Update'
@@ -20,6 +21,9 @@ import ApplyForWork from '../pages/dashboard/nanny/ApplyForWork'
 import Profile from '../pages/dashboard/nanny/Profile'
 import Availability from '../pages/dashboard/nanny/Availability'
 import Safety from '../pages/dashboard/nanny/Safety'
+import Communication from '../pages/dashboard/nanny/Communication'
+import Reviews from '../pages/dashboard/nanny/Reviews'
+import Payments from '../pages/dashboard/nanny/Payments'
 import ProtectedRoute from '../components/ProtectedRoute'
 import RoleRedirect from '../components/RoleRedirect'
 
@@ -42,6 +46,7 @@ export default function AppRoutes(){
       <Route path="/dashboard/parent/*" element={<ProtectedRoute roles={["parent"]}><ParentDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/admin/*" element={<ProtectedRoute roles={["admin","daycare"]}><AdminDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/nanny/*" element={<ProtectedRoute roles={["nanny"]}><NannyDashboard/></ProtectedRoute>}>
+        <Route index element={<Overview/>} />
         <Route path="children" element={<Children/>} />
         <Route path="children/:id" element={<ChildDetail/>} />
         <Route path="update" element={<Update/>} />
@@ -50,6 +55,9 @@ export default function AppRoutes(){
         <Route path="profile" element={<Profile/>} />
         <Route path="availability" element={<Availability/>} />
         <Route path="safety" element={<Safety/>} />
+        <Route path="communication" element={<Communication/>} />
+        <Route path="reviews" element={<Reviews/>} />
+        <Route path="payments" element={<Payments/>} />
       </Route>
     </Routes>
   )
