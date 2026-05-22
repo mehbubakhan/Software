@@ -14,15 +14,15 @@ export default function DaycareLayout() {
       {/* Directory listing */}
       <Route path="/" element={<DaycareDirectory />} />
       
+      {/* Enrolled Child Dashboard */}
+      <Route path="child/:childId" element={<ChildDaycareDashboard />} />
+
       {/* Specific Daycare Profile & Actions */}
       <Route path=":id" element={<DaycareProfile />} />
       <Route path=":id/apply" element={<DaycareApply />} />
       <Route path=":id/payment" element={<DaycarePayment />} />
       <Route path=":id/cctv" element={<DaycareCCTV />} />
       <Route path=":id/chat" element={<DaycareChat />} />
-      
-      {/* Enrolled Child Dashboard */}
-      <Route path="child/:childId" element={<ChildDaycareDashboard />} />
     </Routes>
   )
 }

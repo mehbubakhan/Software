@@ -6,9 +6,9 @@ const { getDaycares, getDaycareById, getChildReport, submitApplication, processP
 // const auth = require('../middleware/auth');
 
 router.get('/', getDaycares);
-router.get('/:id', getDaycareById);
 router.get('/child/:childId/report', getChildReport);
-router.post('/:id/apply', submitApplication);
 router.post('/payment', processPayment);
+router.get('/:id', getDaycareById);
+router.post('/:id/apply', submitApplication);
 
 module.exports = router;

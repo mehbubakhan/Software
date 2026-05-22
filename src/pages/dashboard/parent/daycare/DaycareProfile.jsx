@@ -49,7 +49,7 @@ export default function DaycareProfile() {
               <div className="flex items-center gap-3 text-sm">
                 <span className="text-yellow-400 text-lg leading-none">★</span>
                 <span className="font-bold">{daycare.rating}</span>
-                <span className="text-slate-400">({daycare.reviews} reviews)</span>
+                <span className="text-slate-400">({Array.isArray(daycare.reviews) ? daycare.reviews.length : daycare.reviews} reviews)</span>
                 <span className="bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded text-xs font-semibold flex items-center gap-1">🔴 Live CCTV</span>
               </div>
             </div>
@@ -308,7 +308,7 @@ export default function DaycareProfile() {
                 <div className="text-4xl font-bold">{daycare.rating}</div>
                 <div>
                   <div className="text-yellow-400 text-xl tracking-widest">★★★★★</div>
-                  <div className="text-sm text-slate-600">Based on {daycare.reviews} reviews</div>
+                  <div className="text-sm text-slate-600">Based on {Array.isArray(daycare.reviews) ? daycare.reviews.length : daycare.reviews} reviews</div>
                 </div>
               </div>
 
