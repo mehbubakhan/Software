@@ -15,6 +15,10 @@ import NannyDashboard from '../pages/dashboard/NannyDashboard'
 import Overview from '../pages/dashboard/nanny/Overview'
 import AdoptionDashboard from '../pages/dashboard/AdoptionDashboard'
 import MarketplaceSellerDashboard from '../pages/dashboard/MarketplaceSellerDashboard'
+import MarketplaceBuyerDashboard from '../pages/dashboard/MarketplaceBuyerDashboard'
+import CartAndWishlist from '../pages/dashboard/CartAndWishlist'
+import OrderTracking from '../pages/dashboard/OrderTracking'
+import ContactSupport from '../pages/dashboard/ContactSupport'
 import Children from '../pages/dashboard/nanny/Children'
 import ChildDetail from '../pages/dashboard/nanny/ChildDetail'
 import Update from '../pages/dashboard/nanny/Update'
@@ -48,6 +52,11 @@ export default function AppRoutes(){
       <Route path="/dashboard/parent/*" element={<ProtectedRoute roles={["parent"]}><ParentDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/admin/*" element={<ProtectedRoute roles={["admin","daycare"]}><AdminDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/adoption/*" element={<ProtectedRoute roles={["orphanage_manager"]}><AdoptionDashboard/></ProtectedRoute>} />
+      <Route path="/dashboard/marketplace" element={<ProtectedRoute roles={["parent"]}><MarketplaceBuyerDashboard/></ProtectedRoute>} />
+      <Route path="/dashboard/marketplace/cart" element={<ProtectedRoute roles={["parent"]}><CartAndWishlist/></ProtectedRoute>} />
+      <Route path="/dashboard/marketplace/wishlist" element={<ProtectedRoute roles={["parent"]}><CartAndWishlist/></ProtectedRoute>} />
+      <Route path="/dashboard/marketplace/orders/:tracking_number" element={<ProtectedRoute roles={["parent"]}><OrderTracking/></ProtectedRoute>} />
+      <Route path="/dashboard/marketplace/support" element={<ProtectedRoute roles={["parent"]}><ContactSupport/></ProtectedRoute>} />
       <Route path="/dashboard/marketplace-seller/*" element={<ProtectedRoute roles={["marketplace_seller"]}><MarketplaceSellerDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/nanny/*" element={<ProtectedRoute roles={["nanny"]}><NannyDashboard/></ProtectedRoute>}>
         <Route index element={<Overview/>} />
