@@ -8,7 +8,7 @@ export default function Signup(){
     {label: 'Daycare', to: '/signup/daycare', note: 'Manage care rooms and daycare setup', color: 'from-cyan-400 to-blue-500'},
     {label: 'Admin', to: '/signup/admin', note: 'Oversee users, requests, and operations', color: 'from-slate-700 to-slate-950'},
     {label: 'Marketplace Seller', to: '/signup/marketplace-seller', note: 'Offer daycare products and services', color: 'from-amber-400 to-orange-500'},
-    {label: 'Orphanage Manager', to: '/signup/orphanage-manager', note: 'Coordinate orphanage and adoption support', color: 'from-violet-400 to-fuchsia-500'}
+    {label: 'Orphanage Manager / Adoption', to: '/signup/orphanage-manager', note: 'Coordinate orphanage and adoption support', color: 'from-violet-400 to-fuchsia-500'}
   ]
 
   return (
