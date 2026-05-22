@@ -202,7 +202,7 @@ export default function ParentDashboard() {
           <Route path="notifications" element={<NotificationsView />} />
           <Route path="messages" element={<MessagesView />} />
           <Route path="reports" element={<Reports />} />
-          <Route path="child-profile" element={<ChildProfile />} />
+          <Route path="child-profile/:id" element={<ChildProfile />} />
         </Routes>
       </main>
     </div>
