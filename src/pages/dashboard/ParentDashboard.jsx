@@ -10,6 +10,7 @@ import LearningPlatform from './parent/LearningPlatform'
 import Marketplace from './parent/Marketplace'
 import AdoptionSystem from './parent/AdoptionSystem'
 import Reports from './parent/Reports'
+import ChildProfile from './parent/ChildProfile'
 
 const items = [
   { label: 'Overview', path: '/dashboard/parent' },
@@ -201,6 +202,7 @@ export default function ParentDashboard() {
           <Route path="notifications" element={<NotificationsView />} />
           <Route path="messages" element={<MessagesView />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="child-profile" element={<ChildProfile />} />
         </Routes>
       </main>
     </div>
