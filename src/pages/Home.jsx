@@ -20,7 +20,7 @@ export default function Home(){
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link to="/signup" className="rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-fuchsia-500 px-8 py-3.5 font-bold text-white shadow-lg shadow-blue-500/25 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-fuchsia-500/25">
-              Sign in
+              Sign up
             </Link>
             <Link to="/login" className="rounded-2xl border border-white/80 bg-white/90 px-8 py-3.5 font-bold text-slate-900 shadow-lg shadow-cyan-900/10 transition duration-200 hover:-translate-y-0.5 hover:border-cyan-300 hover:text-cyan-700 hover:shadow-xl">
               Log in
