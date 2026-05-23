@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function Sidebar({ items = [], variant = 'default' }){
@@ -135,8 +135,8 @@ const renderIcon = (iconName) => {
               const active = hash ? activeHash === hash : activeHash === ''
               return (
                 <li key={i.path} className="shrink-0 md:shrink">
-                  <a
-                    href={i.path}
+                  <Link
+                    to={i.path}
                     className={`block rounded-2xl px-6 py-4 text-lg font-black text-slate-700 transition duration-200 md:text-xl ${
                       active
                         ? 'border border-cyan-200 bg-white text-cyan-700 shadow-lg shadow-cyan-900/10'
@@ -144,7 +144,7 @@ const renderIcon = (iconName) => {
                     }`}
                   >
                     {i.label}
-                  </a>
+                  </Link>
                 </li>
               )
             })}
@@ -165,8 +165,8 @@ const renderIcon = (iconName) => {
               const active = hash ? activeHash === hash : activeHash === ''
               return (
                 <li key={i.path} className="shrink-0 md:shrink">
-                  <a
-                    href={i.path}
+                  <Link
+                    to={i.path}
                     className={`block rounded-2xl px-6 py-4 text-lg font-black text-slate-700 transition duration-200 md:text-xl ${
                       active
                         ? 'border border-amber-200 bg-white text-amber-700 shadow-lg shadow-amber-900/10'
@@ -174,7 +174,7 @@ const renderIcon = (iconName) => {
                     }`}
                   >
                     {i.label}
-                  </a>
+                  </Link>
                 </li>
               )
             })}
