@@ -18,13 +18,6 @@ export default function Navbar(){
           <Link to="/" className="text-xl font-black text-slate-950 transition hover:text-fuchsia-700">Minimate</Link>
         </div>
         
-        {/* Navigation Links */}
-        <div className="hidden md:flex items-center gap-8 text-sm font-bold uppercase tracking-widest text-slate-500">
-          <Link to="/dashboard/parent/hire-nanny" className="hover:text-slate-800 transition">Nanny</Link>
-          <Link to="/dashboard/parent/daycare" className="hover:text-slate-800 transition">Daycare</Link>
-          <Link to="/dashboard/parent/adoption" className="hover:text-slate-800 transition">Adoption</Link>
-          <Link to="/dashboard/parent/marketplace" className="hover:text-slate-800 transition">Shop</Link>
-        </div>
 
         {/* Right Side Actions */}
         <div className="flex items-center gap-6">
