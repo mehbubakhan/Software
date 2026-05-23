@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function Sidebar({ items = [], variant = 'default' }){
+  const navigate = useNavigate()
   const [activeHash, setActiveHash] = useState(() => {
     if (typeof window === 'undefined') return ''
     return window.location.hash || ''
@@ -79,21 +80,12 @@ const renderIcon = (iconName) => {
         </nav>
         
         <div className="p-6 pt-2">
-          {isChildMode ? (
-            <button 
-              onClick={() => setShowPinModal(true)}
-              className="w-full rounded-xl bg-slate-800 py-3 font-bold text-white transition hover:bg-slate-700 shadow-[0_0_15px_rgba(255,255,255,0.1)]"
-            >
-              Exit Child Mode
-            </button>
-          ) : (
-            <button 
-              onClick={() => toggleChildMode(true)}
-              className="w-full rounded-xl bg-fuchsia-600 py-3 font-bold text-white transition hover:bg-fuchsia-500 shadow-[0_0_15px_rgba(192,38,211,0.4)]"
-            >
-              Child mode
-            </button>
-          )}
+          <button 
+            onClick={() => navigate('/dashboard/child')}
+            className="w-full rounded-xl bg-fuchsia-600 py-3 font-bold text-white transition hover:bg-fuchsia-500 shadow-[0_0_15px_rgba(192,38,211,0.4)]"
+          >
+            Child mode
+          </button>
         </div>
 
         {showPinModal && (
