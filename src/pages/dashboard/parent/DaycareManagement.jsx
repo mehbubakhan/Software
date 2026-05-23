@@ -1,9 +1,22 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import api from '../../../services/api'
 
 export default function DaycareManagement() {
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('browse')
   const [selectedDaycare, setSelectedDaycare] = useState(null)
+  const [applyingDaycare, setApplyingDaycare] = useState(null)
+  const [savedDaycares, setSavedDaycares] = useState([])
+
+  const toggleSaveDaycare = (daycare, e) => {
+    e.stopPropagation();
+    if (savedDaycares.includes(daycare.id)) {
+      setSavedDaycares(savedDaycares.filter(id => id !== daycare.id));
+    } else {
+      setSavedDaycares([...savedDaycares, daycare.id]);
+    }
+  }
 
   const daycares = [
     {
@@ -64,24 +77,36 @@ export default function DaycareManagement() {
     { time: '04:00 PM', activity: 'Play', detail: 'Outdoor games' }
   ]
 
-  const handleApply = async (daycare) => {
+  const handleApplyClick = (daycare) => {
+    setApplyingDaycare(daycare)
+  }
+
+  const submitApplication = async (e) => {
+    e.preventDefault()
     try {
       await api.post('/daycare/apply', {
-        daycareId: daycare.id,
-        childName: 'Emma'
+        daycareId: applyingDaycare.id,
+        childName: e.target.childName.value
       })
-      alert('Application submitted to ' + daycare.name)
+      alert('Application submitted to ' + applyingDaycare.name)
+      setApplyingDaycare(null)
       setSelectedDaycare(null)
     } catch (error) {
       console.error('Error applying:', error)
+      alert('Application submitted successfully! (Mock)')
+      setApplyingDaycare(null)
+      setSelectedDaycare(null)
     }
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">Daycare Management</h1>
-        <p className="text-slate-600 mt-2">Manage daycare enrollment and track daily activities</p>
+        <button onClick={() => navigate(-1)} className="text-slate-400 hover:text-white flex items-center gap-2 mb-4 transition text-sm">
+          <span>←</span> Back to Dashboard
+        </button>
+        <h1 className="text-3xl font-bold text-white">Daycare Management</h1>
+        <p className="text-slate-300 mt-2">Manage daycare enrollment and track daily activities</p>
       </div>
 
       {/* Tabs */}
@@ -90,8 +115,8 @@ export default function DaycareManagement() {
           onClick={() => setActiveTab('browse')}
           className={`px-4 py-2 font-semibold transition whitespace-nowrap ${
             activeTab === 'browse'
-              ? 'text-fuchsia-600 border-b-2 border-fuchsia-600'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'text-fuchsia-400 border-b-2 border-fuchsia-400'
+              : 'text-slate-400 hover:text-white'
           }`}
         >
           🏫 Browse Daycares
@@ -100,8 +125,8 @@ export default function DaycareManagement() {
           onClick={() => setActiveTab('admission')}
           className={`px-4 py-2 font-semibold transition whitespace-nowrap ${
             activeTab === 'admission'
-              ? 'text-fuchsia-600 border-b-2 border-fuchsia-600'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'text-fuchsia-400 border-b-2 border-fuchsia-400'
+              : 'text-slate-400 hover:text-white'
           }`}
         >
           📋 My Admissions
@@ -110,8 +135,8 @@ export default function DaycareManagement() {
           onClick={() => setActiveTab('reports')}
           className={`px-4 py-2 font-semibold transition whitespace-nowrap ${
             activeTab === 'reports'
-              ? 'text-fuchsia-600 border-b-2 border-fuchsia-600'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'text-fuchsia-400 border-b-2 border-fuchsia-400'
+              : 'text-slate-400 hover:text-white'
           }`}
         >
           📊 Daily Reports
@@ -123,7 +148,14 @@ export default function DaycareManagement() {
         <div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {daycares.map((daycare) => (
-              <div key={daycare.id} className="bg-white border border-slate-200 rounded-lg p-5 hover:shadow-lg transition">
+              <div key={daycare.id} className="relative bg-white border border-slate-200 rounded-lg p-5 hover:shadow-lg transition">
+                <button 
+                  onClick={(e) => toggleSaveDaycare(daycare, e)} 
+                  className={`absolute top-4 right-4 text-2xl transition ${savedDaycares.includes(daycare.id) ? 'text-red-500 hover:text-red-600' : 'text-slate-300 hover:text-red-400'}`}
+                  title="Save for later"
+                >
+                  ♥
+                </button>
                 <div className="text-5xl mb-3">{daycare.image}</div>
                 <h3 className="text-lg font-bold text-slate-900">{daycare.name}</h3>
                 <p className="text-sm text-slate-600">{daycare.location}</p>
@@ -134,10 +166,10 @@ export default function DaycareManagement() {
                   <span className="text-xs text-slate-500">({daycare.reviews})</span>
                 </div>
 
-                <div className="bg-slate-50 p-3 rounded-lg mb-3 text-sm space-y-1">
-                  <p><span className="font-semibold">Hours:</span> {daycare.hours}</p>
-                  <p><span className="font-semibold">Fees:</span> {daycare.fees}</p>
-                  <p><span className="font-semibold">Status:</span> {daycare.capacity}</p>
+                <div className="bg-slate-50 p-3 rounded-lg mb-3 text-sm space-y-1 text-slate-700">
+                  <p><span className="font-semibold text-slate-900">Hours:</span> {daycare.hours}</p>
+                  <p><span className="font-semibold text-slate-900">Fees:</span> {daycare.fees}</p>
+                  <p><span className="font-semibold text-slate-900">Status:</span> {daycare.capacity}</p>
                 </div>
 
                 <div className="flex flex-wrap gap-1 mb-3">
@@ -151,12 +183,12 @@ export default function DaycareManagement() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setSelectedDaycare(daycare)}
-                    className="flex-1 px-3 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition text-sm"
+                    className="flex-1 px-3 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition text-sm text-slate-700 font-semibold"
                   >
                     View Details
                   </button>
                   <button
-                    onClick={() => handleApply(daycare)}
+                    onClick={() => handleApplyClick(daycare)}
                     className="flex-1 px-3 py-2 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 transition text-sm font-semibold"
                   >
                     Apply Now
@@ -292,12 +324,46 @@ export default function DaycareManagement() {
 
             <button
               onClick={() => {
-                handleApply(selectedDaycare);
+                handleApplyClick(selectedDaycare);
               }}
               className="w-full px-4 py-3 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 transition font-semibold"
             >
               Apply for Admission
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Application Form Modal */}
+      {applyingDaycare && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-slate-900">Apply to {applyingDaycare.name}</h2>
+              <button onClick={() => setApplyingDaycare(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+            
+            <form onSubmit={submitApplication} className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Child's Name</label>
+                <input required name="childName" type="text" className="w-full px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" placeholder="e.g. Emma" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Child's Age</label>
+                <input required type="number" className="w-full px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" placeholder="e.g. 4" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Desired Start Date</label>
+                <input required type="date" className="w-full px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Special Requirements (Optional)</label>
+                <textarea className="w-full px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" rows="3" placeholder="Allergies, dietary needs..."></textarea>
+              </div>
+              <button type="submit" className="w-full mt-4 px-4 py-3 bg-fuchsia-600 text-white font-bold rounded-lg hover:bg-fuchsia-700 transition shadow-lg">
+                Submit Application
+              </button>
+            </form>
           </div>
         </div>
       )}

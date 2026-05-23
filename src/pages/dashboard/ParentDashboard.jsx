@@ -28,12 +28,14 @@ const items = [
 
 function ProfileView() {
   const { user } = useAuth() || {}
+  const [isEditingPin, setIsEditingPin] = useState(false)
   const [profile, setProfile] = useState({
     name: user?.name || '',
     email: user?.email || '',
     phone: '',
     address: '',
     emergencyContact: '',
+    childModePin: '',
     childName: 'Emma',
     childAge: '4',
     childNotes: 'No allergies reported',
@@ -46,8 +48,8 @@ function ProfileView() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">Parent Profile</h1>
-        <p className="mt-2 text-slate-600">Manage parent details, child information, and emergency contacts.</p>
+        <h1 className="text-3xl font-bold text-white">Parent Profile</h1>
+        <p className="mt-2 text-slate-300">Manage parent details, child information, and emergency contacts.</p>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
@@ -79,7 +81,7 @@ function ProfileView() {
               <label key={key} className="block">
                 <span className="text-sm font-semibold text-slate-700">{label}</span>
                 <input
-                  className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500"
+                  className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500 text-slate-900"
                   value={profile[key]}
                   onChange={event => updateField(key, event.target.value)}
                   type={key === 'email' ? 'email' : 'text'}
@@ -87,7 +89,34 @@ function ProfileView() {
               </label>
             ))}
           </div>
-          <button className="mt-5 rounded-lg bg-fuchsia-600 px-5 py-2 font-semibold text-white hover:bg-fuchsia-700">
+
+          <h2 className="mt-6 text-lg font-bold text-slate-900">Security</h2>
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <label className="block">
+              <span className="text-sm font-semibold text-slate-700">Child Mode PIN</span>
+              <div className="flex gap-2 mt-2">
+                <input
+                  className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500 text-slate-900 disabled:bg-slate-100 disabled:text-slate-500"
+                  value={profile.childModePin}
+                  onChange={event => updateField('childModePin', event.target.value)}
+                  type="password"
+                  maxLength={4}
+                  placeholder="e.g. 1234"
+                  disabled={!isEditingPin}
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsEditingPin(!isEditingPin)}
+                  className="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition font-semibold"
+                >
+                  {isEditingPin ? 'Done' : 'Edit'}
+                </button>
+              </div>
+              <span className="text-xs text-slate-500 block mt-1">4-digit PIN required to exit Child Mode</span>
+            </label>
+          </div>
+
+          <button className="mt-6 rounded-lg bg-fuchsia-600 px-5 py-2 font-semibold text-white hover:bg-fuchsia-700">
             Save Profile
           </button>
         </form>
@@ -96,15 +125,15 @@ function ProfileView() {
           <h2 className="text-lg font-bold text-slate-900">Child Information</h2>
           <label className="mt-4 block">
             <span className="text-sm font-semibold text-slate-700">Child Name</span>
-            <input className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2" value={profile.childName} onChange={event => updateField('childName', event.target.value)} />
+            <input className="mt-2 w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500" value={profile.childName} onChange={event => updateField('childName', event.target.value)} />
           </label>
           <label className="mt-4 block">
             <span className="text-sm font-semibold text-slate-700">Age</span>
-            <input className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2" value={profile.childAge} onChange={event => updateField('childAge', event.target.value)} />
+            <input className="mt-2 w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500" value={profile.childAge} onChange={event => updateField('childAge', event.target.value)} />
           </label>
           <label className="mt-4 block">
             <span className="text-sm font-semibold text-slate-700">Care Notes</span>
-            <textarea className="mt-2 min-h-24 w-full rounded-lg border border-slate-300 px-3 py-2" value={profile.childNotes} onChange={event => updateField('childNotes', event.target.value)} />
+            <textarea className="mt-2 min-h-24 w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500" value={profile.childNotes} onChange={event => updateField('childNotes', event.target.value)} />
           </label>
         </section>
       </div>
@@ -123,8 +152,8 @@ function NotificationsView() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">Notifications</h1>
-        <p className="mt-2 text-slate-600">Safety alerts, order updates, meetup reminders, and child activity reports.</p>
+        <h1 className="text-3xl font-bold text-white">Notifications</h1>
+        <p className="mt-2 text-slate-300">Safety alerts, order updates, meetup reminders, and child activity reports.</p>
       </div>
       <div className="space-y-3">
         {notifications.map(item => (
@@ -154,8 +183,8 @@ function MessagesView() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">Messages</h1>
-        <p className="mt-2 text-slate-600">Communicate with nannies, daycare admins, orphanage managers, and support.</p>
+        <h1 className="text-3xl font-bold text-white">Messages</h1>
+        <p className="mt-2 text-slate-300">Communicate with nannies, daycare admins, orphanage managers, and support.</p>
       </div>
       <div className="grid gap-4 lg:grid-cols-[340px_1fr]">
         <aside className="space-y-2">
