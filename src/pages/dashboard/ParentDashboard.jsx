@@ -240,10 +240,103 @@ function ScheduleView() {
 }
 
 function SettingsView() {
+  const [settings, setSettings] = useState({
+    emailAlerts: true,
+    smsAlerts: false,
+    pushNotifications: true,
+    locationSharing: true,
+    twoFactor: false,
+    darkTheme: true
+  })
+
+  const toggleSetting = (key) => {
+    setSettings(prev => ({ ...prev, [key]: !prev[key] }))
+  }
+
+  const Toggle = ({ label, description, checked, onChange }) => (
+    <div className="flex items-center justify-between p-4 bg-[#151821] border border-[#2A2E3D] rounded-xl hover:border-fuchsia-500/50 transition">
+      <div>
+        <h3 className="text-white font-semibold">{label}</h3>
+        <p className="text-sm text-slate-400 mt-1">{description}</p>
+      </div>
+      <button 
+        onClick={onChange}
+        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${checked ? 'bg-fuchsia-600' : 'bg-slate-700'}`}
+      >
+        <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
+      </button>
+    </div>
+  )
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-slate-900">Settings</h1>
-      <p className="mt-2 text-slate-600">Manage your account settings.</p>
+    <div className="space-y-8 max-w-4xl">
+      <div>
+        <h1 className="text-3xl font-bold text-white">Settings</h1>
+        <p className="mt-2 text-slate-400">Manage your account preferences, notifications, and privacy.</p>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Notifications Section */}
+        <section className="space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xl">🔔</span>
+            <h2 className="text-xl font-bold text-white">Notifications</h2>
+          </div>
+          <Toggle 
+            label="Email Alerts" 
+            description="Receive daily summaries and important updates via email."
+            checked={settings.emailAlerts}
+            onChange={() => toggleSetting('emailAlerts')}
+          />
+          <Toggle 
+            label="SMS Alerts" 
+            description="Get text messages for urgent safety alerts."
+            checked={settings.smsAlerts}
+            onChange={() => toggleSetting('smsAlerts')}
+          />
+          <Toggle 
+            label="Push Notifications" 
+            description="Receive app notifications for live updates."
+            checked={settings.pushNotifications}
+            onChange={() => toggleSetting('pushNotifications')}
+          />
+        </section>
+
+        {/* Security & Privacy Section */}
+        <section className="space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xl">🔒</span>
+            <h2 className="text-xl font-bold text-white">Security & Privacy</h2>
+          </div>
+          <Toggle 
+            label="Live Location Sharing" 
+            description="Allow daycare and transport to see your child's location."
+            checked={settings.locationSharing}
+            onChange={() => toggleSetting('locationSharing')}
+          />
+          <Toggle 
+            label="Two-Factor Authentication" 
+            description="Require an extra code when logging in."
+            checked={settings.twoFactor}
+            onChange={() => toggleSetting('twoFactor')}
+          />
+        </section>
+      </div>
+
+      <div className="pt-6 border-t border-[#2A2E3D]">
+        <h2 className="text-xl font-bold text-white mb-4">Account Actions</h2>
+        <div className="flex flex-wrap gap-4">
+          <button className="px-5 py-2.5 bg-[#151821] border border-[#2A2E3D] text-white rounded-xl hover:bg-slate-800 transition font-semibold">
+            Change Password
+          </button>
+          <button className="px-5 py-2.5 bg-[#151821] border border-[#2A2E3D] text-white rounded-xl hover:bg-slate-800 transition font-semibold">
+            Manage Payment Methods
+          </button>
+          <button className="px-5 py-2.5 bg-red-950/30 border border-red-900/50 text-red-400 rounded-xl hover:bg-red-900/40 transition font-semibold ml-auto">
+            Deactivate Account
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
