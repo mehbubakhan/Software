@@ -7,6 +7,8 @@ import ShapesLearning from './child/ShapesLearning'
 import GamesHub from './child/GamesHub'
 import MemoryGame from './child/games/MemoryGame'
 import TicTacToe from './child/games/TicTacToe'
+import PuzzleGame from './child/games/PuzzleGame'
+import WordSearch from './child/games/WordSearch'
 import VideoLibrary from './child/VideoLibrary'
 import LearnTogether from './child/LearnTogether'
 import RewardsShop from './child/RewardsShop'
@@ -109,6 +111,8 @@ export default function ChildDashboard() {
           <Route path="games" element={<GamesHub {...props} />} />
           <Route path="games/memory" element={<MemoryGame {...props} />} />
           <Route path="games/tictactoe" element={<TicTacToe {...props} />} />
+          <Route path="games/puzzle" element={<PuzzleGame {...props} />} />
+          <Route path="games/wordsearch" element={<WordSearch {...props} />} />
           <Route path="videos" element={<VideoLibrary {...props} />} />
           <Route path="learn-together" element={<LearnTogether {...props} />} />
           <Route path="rewards" element={<RewardsShop {...props} />} />

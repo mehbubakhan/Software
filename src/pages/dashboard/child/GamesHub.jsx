@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom'
 export default function GamesHub({ playClick }) {
   const games = [
     { name: 'Memory Game', icon: '🧠', color: 'bg-fuchsia-500', path: '/dashboard/child/games/memory' },
-    { name: 'Puzzle Game', icon: '🧩', color: 'bg-green-500', path: '#' },
+    { name: 'Puzzle Game', icon: '🧩', color: 'bg-green-500', path: '/dashboard/child/games/puzzle' },
     { name: 'Shape Match', icon: '🔺', color: 'bg-blue-500', path: '/dashboard/child/shapes' },
     { name: 'Tic-Tac-Toe', icon: '⭕', color: 'bg-red-500', path: '/dashboard/child/games/tictactoe' },
-    { name: 'Word Search', icon: '🔍', color: 'bg-amber-500', path: '#' },
+    { name: 'Word Search', icon: '🔍', color: 'bg-amber-500', path: '/dashboard/child/games/wordsearch' },
     { name: 'Coloring Book', icon: '🎨', color: 'bg-cyan-500', path: '/dashboard/child/draw' },
   ]
 
