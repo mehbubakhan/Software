@@ -6,8 +6,16 @@ const LEVELS = {
   HARD: { size: 5, reward: 60 }
 }
 
+const TYPES = {
+  NUMBERS: { label: '🔢', items: Array.from({length: 25}, (_, i) => String(i + 1)) },
+  LETTERS: { label: '🔤', items: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('') },
+  ANIMALS: { label: '🐶', items: ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🐤','🦆','🦅','🦉','🦇','🐺','🐗'] },
+  FRUITS: { label: '🍎', items: ['🍎','🍐','🍊','🍋','🍌','🍉','🍇','🍓','🍈','🍒','🍑','🥭','🍍','🥥','🥝','🍅','🍆','🥑','🥦','🥬','🥒','🌶','🌽','🥕','🥔'] }
+}
+
 export default function PuzzleGame({ playClick, addCoins, speak }) {
   const [level, setLevel] = useState('EASY')
+  const [type, setType] = useState('NUMBERS')
   const [board, setBoard] = useState([])
   const [isWon, setIsWon] = useState(false)
 
@@ -19,7 +27,7 @@ export default function PuzzleGame({ playClick, addCoins, speak }) {
 
   useEffect(() => {
     initializeGame()
-  }, [level])
+  }, [level, type])
 
   const initializeGame = () => {
     let currentBoard = [...solvedState]
@@ -77,26 +85,49 @@ export default function PuzzleGame({ playClick, addCoins, speak }) {
     }
   }
 
+  const getTileContent = (val) => {
+    if (val === 0) return null
+    return TYPES[type].items[val - 1]
+  }
+
   return (
-    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 max-w-2xl mx-auto text-center mt-12">
-      <div className="flex justify-between items-center mb-6">
+    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 max-w-3xl mx-auto text-center mt-12">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <h2 className="text-3xl font-bold text-green-600">Puzzle Game 🧩</h2>
-        <div className="flex gap-2">
-          {['EASY', 'MEDIUM', 'HARD'].map(l => (
-            <button
-              key={l}
-              onClick={() => { playClick(); setLevel(l) }}
-              className={`px-4 py-1 rounded-full text-sm font-bold transition ${
-                level === l ? 'bg-green-500 text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-              }`}
-            >
-              {l}
-            </button>
-          ))}
+        
+        <div className="flex flex-col sm:flex-row gap-4 items-center">
+          <div className="flex gap-2 p-1 bg-slate-100 rounded-full">
+            {Object.keys(TYPES).map(t => (
+              <button
+                key={t}
+                onClick={() => { playClick(); setType(t) }}
+                className={`px-3 py-1 rounded-full text-lg transition ${
+                  type === t ? 'bg-white shadow-md' : 'hover:bg-slate-200 opacity-60'
+                }`}
+                title={t}
+              >
+                {TYPES[t].label}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex gap-2">
+            {['EASY', 'MEDIUM', 'HARD'].map(l => (
+              <button
+                key={l}
+                onClick={() => { playClick(); setLevel(l) }}
+                className={`px-4 py-1 rounded-full text-sm font-bold transition ${
+                  level === l ? 'bg-green-500 text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                }`}
+              >
+                {l}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <p className="text-slate-500 mb-8">Slide the tiles to order the numbers!</p>
+      <p className="text-slate-500 mb-8">Slide the tiles into the correct sequence!</p>
 
       {isWon ? (
         <div className="mb-8 p-6 bg-green-50 border border-green-200 rounded-2xl">
@@ -118,9 +149,9 @@ export default function PuzzleGame({ playClick, addCoins, speak }) {
           >
             {board.map((tile, index) => {
               // Adjust sizes based on grid
-              let sizeClass = "w-20 h-20 sm:w-24 sm:h-24 text-3xl"
-              if (level === 'MEDIUM') sizeClass = "w-16 h-16 sm:w-20 sm:h-20 text-2xl"
-              if (level === 'HARD') sizeClass = "w-12 h-12 sm:w-16 sm:h-16 text-xl"
+              let sizeClass = "w-20 h-20 sm:w-24 sm:h-24 text-4xl"
+              if (level === 'MEDIUM') sizeClass = "w-16 h-16 sm:w-20 sm:h-20 text-3xl"
+              if (level === 'HARD') sizeClass = "w-12 h-12 sm:w-16 sm:h-16 text-2xl"
 
               return (
                 <div 
@@ -129,10 +160,10 @@ export default function PuzzleGame({ playClick, addCoins, speak }) {
                   className={`${sizeClass} flex items-center justify-center font-black rounded-lg transition-transform ${
                     tile === 0 
                       ? 'bg-transparent' 
-                      : 'bg-white text-green-500 shadow-sm cursor-pointer hover:scale-[1.02] border-b-4 border-green-100'
+                      : 'bg-white text-green-600 shadow-sm cursor-pointer hover:scale-[1.02] border-b-4 border-green-100'
                   }`}
                 >
-                  {tile !== 0 && tile}
+                  {getTileContent(tile)}
                 </div>
               )
             })}
