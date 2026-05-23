@@ -4,26 +4,26 @@ import Sidebar from '../../components/Sidebar'
 import { useAuth } from '../../context/AuthContext'
 import Overview from './parent/Overview'
 import HireNanny from './parent/HireNanny'
-import DaycareManagement from './parent/DaycareManagement'
+import DaycareLayout from './parent/DaycareLayout'
 import SafetyMonitoring from './parent/SafetyMonitoring'
 import LearningPlatform from './parent/LearningPlatform'
 import Marketplace from './parent/Marketplace'
-import AdoptionSystem from './parent/AdoptionSystem'
+import AdoptionLayout from './parent/AdoptionLayout'
 import Reports from './parent/Reports'
 import ChildProfile from './parent/ChildProfile'
 
 const items = [
-  { label: 'Overview', path: '/dashboard/parent' },
-  { label: 'Profile & Children', path: '/dashboard/parent/profile' },
-  { label: 'Hire Nanny', path: '/dashboard/parent/hire-nanny' },
-  { label: 'Daycare', path: '/dashboard/parent/daycare' },
-  { label: 'Safety Monitor', path: '/dashboard/parent/safety' },
-  { label: 'Learning', path: '/dashboard/parent/learning' },
-  { label: 'Marketplace', path: '/dashboard/parent/marketplace' },
-  { label: 'Adoption', path: '/dashboard/parent/adoption' },
-  { label: 'Notifications', path: '/dashboard/parent/notifications' },
-  { label: 'Messages', path: '/dashboard/parent/messages' },
-  { label: 'Reports', path: '/dashboard/parent/reports' },
+  { label: 'Dashboard', path: '/dashboard/parent', icon: 'svg-dashboard' },
+  { label: 'Nanny', path: '/dashboard/parent/hire-nanny', icon: 'svg-nanny' },
+  { label: 'Daycare', path: '/dashboard/parent/daycare', icon: 'svg-daycare' },
+  { label: 'Adoption', path: '/dashboard/parent/adoption', icon: 'svg-adoption' },
+  { label: 'Shop', path: '/dashboard/parent/marketplace', icon: 'svg-shop' },
+  { label: 'Job Requests', path: '/dashboard/parent/job-requests', icon: 'svg-job-requests' },
+  { label: 'Interviews', path: '/dashboard/parent/interviews', icon: 'svg-interviews' },
+  { label: 'Schedule', path: '/dashboard/parent/schedule', icon: 'svg-schedule' },
+  { label: 'Messages', path: '/dashboard/parent/messages', icon: 'svg-messages' },
+  { label: 'Notifications', path: '/dashboard/parent/notifications', icon: 'svg-notifications' },
+  { label: 'Settings', path: '/dashboard/parent/settings', icon: 'svg-settings' },
 ]
 
 function ProfileView() {
@@ -212,6 +212,42 @@ function MessagesView() {
   )
 }
 
+function JobRequestsView() {
+  return (
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold text-slate-900">Job Requests</h1>
+      <p className="mt-2 text-slate-600">View and manage your job requests.</p>
+    </div>
+  )
+}
+
+function InterviewsView() {
+  return (
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold text-slate-900">Interviews</h1>
+      <p className="mt-2 text-slate-600">Schedule and manage your interviews.</p>
+    </div>
+  )
+}
+
+function ScheduleView() {
+  return (
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold text-slate-900">Schedule</h1>
+      <p className="mt-2 text-slate-600">View your schedule and appointments.</p>
+    </div>
+  )
+}
+
+function SettingsView() {
+  return (
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold text-slate-900">Settings</h1>
+      <p className="mt-2 text-slate-600">Manage your account settings.</p>
+    </div>
+  )
+}
+
 export default function ParentDashboard() {
   return (
     <div className="min-h-[calc(100vh-68px)] bg-[#0B0E14] text-white md:flex">
@@ -220,18 +256,22 @@ export default function ParentDashboard() {
         <Routes>
           <Route index element={<Overview />} />
           <Route path="profile" element={<ProfileView />} />
-          <Route path="hire-nanny" element={<HireNanny />} />
-          <Route path="daycare" element={<DaycareManagement />} />
+          <Route path="hire-nanny/*" element={<HireNanny />} />
+          <Route path="daycare/*" element={<DaycareLayout />} />
           <Route path="safety" element={<SafetyMonitoring />} />
           <Route path="gps" element={<SafetyMonitoring />} />
           <Route path="sos" element={<SafetyMonitoring />} />
           <Route path="learning" element={<LearningPlatform />} />
           <Route path="marketplace" element={<Marketplace />} />
-          <Route path="adoption" element={<AdoptionSystem />} />
+          <Route path="adoption/*" element={<AdoptionLayout />} />
           <Route path="notifications" element={<NotificationsView />} />
           <Route path="messages" element={<MessagesView />} />
           <Route path="reports" element={<Reports />} />
-          <Route path="child-profile" element={<ChildProfile />} />
+          <Route path="child-profile/:id" element={<ChildProfile />} />
+          <Route path="job-requests" element={<JobRequestsView />} />
+          <Route path="interviews" element={<InterviewsView />} />
+          <Route path="schedule" element={<ScheduleView />} />
+          <Route path="settings" element={<SettingsView />} />
         </Routes>
       </main>
     </div>

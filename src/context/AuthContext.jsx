@@ -5,10 +5,13 @@ const AuthContext = createContext()
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
+  const [isChildMode, setIsChildMode] = useState(false)
 
   useEffect(() => {
     const raw = localStorage.getItem('user')
     if (raw) setUser(JSON.parse(raw))
+    const childModeRaw = localStorage.getItem('isChildMode')
+    if (childModeRaw === 'true') setIsChildMode(true)
   }, [])
 
   const login = async (credentials) => {
@@ -23,11 +26,18 @@ export function AuthProvider({ children }) {
   const logout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
+    localStorage.removeItem('isChildMode')
     setUser(null)
+    setIsChildMode(false)
+  }
+
+  const toggleChildMode = (value) => {
+    setIsChildMode(value)
+    localStorage.setItem('isChildMode', value)
   }
 
   return (
-    <AuthContext.Provider value={{ user, setUser, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser, login, logout, isChildMode, toggleChildMode }}>
       {children}
     </AuthContext.Provider>
   )

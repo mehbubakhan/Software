@@ -1,7 +1,39 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import api from '../../../services/api'
 
 export default function ChildProfile() {
+  const { id } = useParams()
   const [activeTab, setActiveTab] = useState('Overview')
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [showCCTV, setShowCCTV] = useState(false)
+
+  useEffect(() => {
+    const fetchChildProfile = async () => {
+      try {
+        const res = await api.get(`/dashboard/parent/child/${id || '1'}`)
+        if (res.data && res.data.ok) {
+          setData(res.data.data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch child profile:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchChildProfile()
+  }, [id])
+
+  if (loading) {
+    return <div className="text-white text-center py-20">Loading child profile...</div>
+  }
+
+  if (!data) {
+    return <div className="text-red-400 text-center py-20">Failed to load data. Please ensure backend is running.</div>
+  }
+
+  const { profile, overviewStats, recentActivities, liveUpdates, weeklyProgress, schedule, health } = data
 
   const tabs = ['Overview', 'Weekly Progress', 'Schedule', 'Health & Growth']
 
@@ -10,31 +42,31 @@ export default function ChildProfile() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-fuchsia-600 rounded-2xl p-5 flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-2 text-white/80">
-            <span>👩‍🍼</span>
-            <span className="text-2xl font-bold text-white">3/3</span>
+            <span>🍽️</span>
+            <span className="text-2xl font-bold text-white">{overviewStats.mealsCompleted}</span>
           </div>
-          <p className="text-sm font-semibold text-white">Nanny Bookings</p>
+          <p className="text-sm font-semibold text-white">Meals Completed</p>
         </div>
         <div className="bg-fuchsia-500 rounded-2xl p-5 flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-2 text-white/80">
-            <span>⏱️</span>
-            <span className="text-2xl font-bold text-white">2.5 hrs</span>
+            <span>😴</span>
+            <span className="text-2xl font-bold text-white">{overviewStats.napTimeToday}</span>
           </div>
-          <p className="text-sm font-semibold text-white">Real-Time Today</p>
+          <p className="text-sm font-semibold text-white">Nap Time Today</p>
         </div>
         <div className="bg-green-500 rounded-2xl p-5 flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-2 text-white/80">
-            <span>📅</span>
-            <span className="text-2xl font-bold text-white">5</span>
+            <span>📈</span>
+            <span className="text-2xl font-bold text-white">{overviewStats.activitiesDone}</span>
           </div>
-          <p className="text-sm font-semibold text-white">Appointments</p>
+          <p className="text-sm font-semibold text-white">Activities Done</p>
         </div>
         <div className="bg-orange-500 rounded-2xl p-5 flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-2 text-white/80">
             <span>📚</span>
-            <span className="text-2xl font-bold text-white">3</span>
+            <span className="text-2xl font-bold text-white">{overviewStats.learningSessions}</span>
           </div>
-          <p className="text-sm font-semibold text-white">Learning Session</p>
+          <p className="text-sm font-semibold text-white">Learning Sessions</p>
         </div>
       </div>
 
@@ -44,46 +76,18 @@ export default function ChildProfile() {
           <a href="#" className="text-xs text-slate-400 hover:text-white">View All</a>
         </div>
         <div className="space-y-3">
-          <div className="flex justify-between items-center p-3 rounded-xl border border-[#2A2E3D] hover:bg-white/5">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-500/20 text-green-400 rounded-lg flex items-center justify-center">🥗</div>
-              <div>
-                <p className="text-sm font-semibold text-white">Nutrition Plan</p>
-                <p className="text-xs text-slate-400">1 hour ago</p>
+          {recentActivities.map((activity, idx) => (
+            <div key={idx} className="flex justify-between items-center p-3 rounded-xl border border-[#2A2E3D] hover:bg-white/5">
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 bg-${activity.color}-500/20 text-${activity.color}-400 rounded-lg flex items-center justify-center`}>{activity.icon}</div>
+                <div>
+                  <p className="text-sm font-semibold text-white">{activity.title}</p>
+                  <p className="text-xs text-slate-400">{activity.time}</p>
+                </div>
               </div>
+              <span className="text-green-500">✓</span>
             </div>
-            <span className="text-green-500">✓</span>
-          </div>
-          <div className="flex justify-between items-center p-3 rounded-xl border border-[#2A2E3D] hover:bg-white/5">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-500/20 text-blue-400 rounded-lg flex items-center justify-center">➕</div>
-              <div>
-                <p className="text-sm font-semibold text-white">Math Class - Finger Painting</p>
-                <p className="text-xs text-slate-400">2 hours ago</p>
-              </div>
-            </div>
-            <span className="text-green-500">✓</span>
-          </div>
-          <div className="flex justify-between items-center p-3 rounded-xl border border-[#2A2E3D] hover:bg-white/5">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-500/20 text-purple-400 rounded-lg flex items-center justify-center">🔤</div>
-              <div>
-                <p className="text-sm font-semibold text-white">Alphabet Learning</p>
-                <p className="text-xs text-slate-400">4 hours ago</p>
-              </div>
-            </div>
-            <span className="text-green-500">✓</span>
-          </div>
-          <div className="flex justify-between items-center p-3 rounded-xl border border-[#2A2E3D] hover:bg-white/5">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-orange-500/20 text-orange-400 rounded-lg flex items-center justify-center">🥪</div>
-              <div>
-                <p className="text-sm font-semibold text-white">Morning Snack</p>
-                <p className="text-xs text-slate-400">5 hours ago</p>
-              </div>
-            </div>
-            <span className="text-green-500">✓</span>
-          </div>
+          ))}
         </div>
       </div>
 
@@ -92,17 +96,22 @@ export default function ChildProfile() {
           <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
           <h3 className="font-bold text-white">Live Daycare Updates</h3>
         </div>
-        <div className="p-4 rounded-xl border border-[#2A2E3D] bg-blue-500/10">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white shrink-0">👩‍🏫</div>
-            <div>
-              <p className="text-sm font-semibold text-blue-400">Teacher Update</p>
-              <p className="text-sm text-slate-300 mt-1">Md Reza is engaged in art class today. Very creative with colors.</p>
-              <p className="text-xs text-slate-500 mt-2">2 mins ago</p>
+        {liveUpdates.map((update, idx) => (
+          <div key={idx} className={`p-4 rounded-xl border border-[#2A2E3D] bg-${update.color}-500/10 mb-3 last:mb-0`}>
+            <div className="flex items-start gap-3">
+              <div className={`w-10 h-10 bg-${update.color}-500 rounded-full flex items-center justify-center text-white shrink-0`}>{update.icon}</div>
+              <div>
+                <p className={`text-sm font-semibold text-${update.color}-400`}>{update.title}</p>
+                <p className="text-sm text-slate-300 mt-1">{update.description}</p>
+                <p className="text-xs text-slate-500 mt-2">{update.time}</p>
+              </div>
             </div>
           </div>
-        </div>
-        <button className="w-full mt-4 py-3 bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold rounded-xl text-center transition">
+        ))}
+        <button 
+          onClick={() => setShowCCTV(true)}
+          className="w-full mt-4 py-3 bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold rounded-xl text-center transition"
+        >
           View Live CCTV Feed
         </button>
       </div>
@@ -115,14 +124,12 @@ export default function ChildProfile() {
         <h3 className="font-bold text-white mb-6">Weekly Activity Overview</h3>
         {/* CSS Chart Simulation */}
         <div className="relative h-48 w-full border-b border-l border-[#2A2E3D] pb-6 pl-4 flex items-end justify-between">
-          {/* Grid lines */}
           <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-between pointer-events-none pb-6 pl-4">
             <div className="w-full border-t border-[#2A2E3D] opacity-50"></div>
             <div className="w-full border-t border-[#2A2E3D] opacity-50"></div>
             <div className="w-full border-t border-[#2A2E3D] opacity-50"></div>
           </div>
           
-          {/* Data Points */}
           {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day, i) => (
             <div key={day} className="flex flex-col items-center flex-1 z-10">
               <div className="relative w-full h-32 flex justify-center items-center">
@@ -139,20 +146,14 @@ export default function ChildProfile() {
       <div className="bg-[#1A1D27] border border-[#2A2E3D] rounded-3xl p-5">
         <h3 className="font-bold text-white mb-6">Learning Progress</h3>
         <div className="space-y-5">
-          {[
-            { label: 'Alphabet', percent: 72 },
-            { label: 'Numbers', percent: 84 },
-            { label: 'Colors', percent: 60 },
-            { label: 'Shapes', percent: 92 },
-            { label: 'Phonics', percent: 55 },
-          ].map(item => (
+          {weeklyProgress.learningData.map(item => (
             <div key={item.label}>
               <div className="flex justify-between text-xs mb-2">
                 <span className="text-slate-300 font-semibold">{item.label}</span>
                 <span className="text-slate-400">{item.percent}%</span>
               </div>
               <div className="w-full bg-[#2A2E3D] rounded-full h-2 overflow-hidden">
-                <div className="bg-pink-500 h-2 rounded-full" style={{ width: `${item.percent}%` }}></div>
+                <div className="bg-fuchsia-500 h-2 rounded-full" style={{ width: `${item.percent}%` }}></div>
               </div>
             </div>
           ))}
@@ -162,18 +163,18 @@ export default function ChildProfile() {
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-[#1A1D27] border border-[#2A2E3D] rounded-2xl p-4 flex flex-col gap-2">
           <div className="w-8 h-8 bg-orange-500/20 text-orange-400 rounded flex items-center justify-center">🎓</div>
-          <span className="text-2xl font-bold text-white">41</span>
-          <span className="text-xs text-slate-400">Total Sessions</span>
+          <span className="text-2xl font-bold text-white">{weeklyProgress.stats.totalActivities}</span>
+          <span className="text-xs text-slate-400">Total Activities</span>
         </div>
         <div className="bg-[#1A1D27] border border-[#2A2E3D] rounded-2xl p-4 flex flex-col gap-2">
           <div className="w-8 h-8 bg-blue-500/20 text-blue-400 rounded flex items-center justify-center">⏱️</div>
-          <span className="text-2xl font-bold text-white">23</span>
+          <span className="text-2xl font-bold text-white">{weeklyProgress.stats.learningHours}</span>
           <span className="text-xs text-slate-400">Learning Hours</span>
         </div>
         <div className="bg-[#1A1D27] border border-[#2A2E3D] rounded-2xl p-4 flex flex-col gap-2">
-          <div className="w-8 h-8 bg-green-500/20 text-green-400 rounded flex items-center justify-center">🌡️</div>
-          <span className="text-2xl font-bold text-white">3.1 hrs</span>
-          <span className="text-xs text-slate-400">Avg Temp</span>
+          <div className="w-8 h-8 bg-green-500/20 text-green-400 rounded flex items-center justify-center">😴</div>
+          <span className="text-2xl font-bold text-white">{weeklyProgress.stats.avgSleep}</span>
+          <span className="text-xs text-slate-400">Avg Sleep</span>
         </div>
       </div>
     </div>
@@ -184,13 +185,7 @@ export default function ChildProfile() {
       <div className="bg-[#1A1D27] border border-[#2A2E3D] rounded-3xl p-5">
         <h3 className="font-bold text-white mb-4">Upcoming This Week</h3>
         <div className="space-y-3">
-          {[
-            { label: 'Art Class', location: 'Sunshine Daycare', date: 'Tomorrow', time: '10:00 AM', icon: '🎨', color: 'text-purple-400', bg: 'bg-purple-500/20' },
-            { label: 'Music & Movement', location: 'Sunshine Daycare', date: 'Feb 20', time: '11:00 AM', icon: '🎵', color: 'text-blue-400', bg: 'bg-blue-500/20' },
-            { label: 'Pediatric Checkup', location: 'City Hospital', date: 'Feb 22', time: '09:30 AM', icon: '🏥', color: 'text-green-400', bg: 'bg-green-500/20' },
-            { label: 'Storytelling Session', location: 'Sunshine Daycare', date: 'Feb 24', time: '02:00 PM', icon: '📚', color: 'text-fuchsia-400', bg: 'bg-fuchsia-500/20' },
-            { label: 'Outdoor Play Date', location: 'Central Park', date: 'Feb 25', time: '03:00 PM', icon: '🏃', color: 'text-orange-400', bg: 'bg-orange-500/20' },
-          ].map((item, idx) => (
+          {schedule.upcoming.map((item, idx) => (
             <div key={idx} className="flex justify-between items-center p-3 rounded-xl border border-[#2A2E3D] hover:bg-white/5">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 ${item.bg} ${item.color} rounded-lg flex items-center justify-center shrink-0`}>
@@ -213,15 +208,7 @@ export default function ChildProfile() {
       <div className="bg-[#1A1D27] border border-[#2A2E3D] rounded-3xl p-5">
         <h3 className="font-bold text-white mb-4">Daily Routine</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            { time: '8:00 AM', label: 'Breakfast & Morning Circle', icon: '🥣' },
-            { time: '10:00 AM', label: 'Learning Activities', icon: '🖍️' },
-            { time: '12:00 PM', label: 'Lunch Time', icon: '🍽️' },
-            { time: '1:00 PM', label: 'Nap Time', icon: '😴' },
-            { time: '3:00 PM', label: 'Outdoor Play', icon: '🏃‍♂️' },
-            { time: '4:00 PM', label: 'Art & Creativity', icon: '🎨' },
-            { time: '5:00 PM', label: 'Pick up Time', icon: '🚗' },
-          ].map((routine, idx) => (
+          {schedule.routine.map((routine, idx) => (
             <div key={idx} className="flex items-center gap-3 p-3 rounded-xl border border-[#2A2E3D] bg-white/5">
               <div className="text-xl">{routine.icon}</div>
               <div>
@@ -244,8 +231,8 @@ export default function ChildProfile() {
             <span className="text-lg font-bold text-white">Vaccinations</span>
           </div>
           <div>
-            <p className="text-sm font-semibold text-white">Up to date</p>
-            <p className="text-xs text-white/80">Next: MMR Booster in 2 months</p>
+            <p className="text-sm font-semibold text-white">{health.stats.vaccinations}</p>
+            <p className="text-xs text-white/80">{health.stats.nextVaccination}</p>
           </div>
         </div>
         <div className="bg-blue-600 rounded-2xl p-5 flex flex-col justify-between">
@@ -254,8 +241,8 @@ export default function ChildProfile() {
             <span className="text-lg font-bold text-white">Height</span>
           </div>
           <div>
-            <p className="text-2xl font-bold text-white">97 cm</p>
-            <p className="text-xs text-white/80">75th percentile</p>
+            <p className="text-2xl font-bold text-white">{health.stats.height}</p>
+            <p className="text-xs text-white/80">{health.stats.heightPercentile}</p>
           </div>
         </div>
         <div className="bg-purple-600 rounded-2xl p-5 flex flex-col justify-between">
@@ -264,8 +251,8 @@ export default function ChildProfile() {
             <span className="text-lg font-bold text-white">Weight</span>
           </div>
           <div>
-            <p className="text-2xl font-bold text-white">12.5 kg</p>
-            <p className="text-xs text-white/80">65th percentile</p>
+            <p className="text-2xl font-bold text-white">{health.stats.weight}</p>
+            <p className="text-xs text-white/80">{health.stats.weightPercentile}</p>
           </div>
         </div>
       </div>
@@ -294,11 +281,7 @@ export default function ChildProfile() {
       <div className="bg-[#1A1D27] border border-[#2A2E3D] rounded-3xl p-5">
         <h3 className="font-bold text-white mb-4">Upcoming Health Events</h3>
         <div className="space-y-3">
-          {[
-            { label: 'Medical Checkup', date: 'May 10, 2026', icon: '🩺' },
-            { label: 'Dental Checkup', date: 'July 1, 2026', icon: '🦷' },
-            { label: 'MMR Booster Vaccination', date: 'July 15, 2026', icon: '💉' },
-          ].map((event, idx) => (
+          {health.upcomingEvents.map((event, idx) => (
             <div key={idx} className="flex justify-between items-center p-4 rounded-xl border border-[#2A2E3D] hover:bg-white/5">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-500/20 text-green-400 rounded-lg flex items-center justify-center shrink-0">
@@ -318,27 +301,15 @@ export default function ChildProfile() {
       <div className="bg-[#1A1D27] border border-[#2A2E3D] rounded-3xl p-5">
         <h3 className="font-bold text-white mb-4">Medical Notes</h3>
         <div className="space-y-3">
-          <div className="p-4 rounded-xl border border-[#2A2E3D] bg-white/5">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-yellow-500">⚠️</span>
-              <p className="text-sm font-semibold text-white">Allergies</p>
+          {health.notes.map((note, idx) => (
+            <div key={idx} className="p-4 rounded-xl border border-[#2A2E3D] bg-white/5">
+              <div className="flex items-center gap-2 mb-1">
+                <span className={`text-${note.color}-500`}>{note.icon}</span>
+                <p className="text-sm font-semibold text-white">{note.type}</p>
+              </div>
+              <p className="text-xs text-slate-400 ml-6">{note.text}</p>
             </div>
-            <p className="text-xs text-slate-400 ml-6">Peanuts, lactose</p>
-          </div>
-          <div className="p-4 rounded-xl border border-[#2A2E3D] bg-white/5">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-red-500">🩸</span>
-              <p className="text-sm font-semibold text-white">Blood Type</p>
-            </div>
-            <p className="text-xs text-slate-400 ml-6">A+</p>
-          </div>
-          <div className="p-4 rounded-xl border border-[#2A2E3D] bg-white/5">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-blue-500">📝</span>
-              <p className="text-sm font-semibold text-white">Notes</p>
-            </div>
-            <p className="text-xs text-slate-400 ml-6">Predisposed asthmatic tendencies in cold weather (unconfirmed, track closely).</p>
-          </div>
+          ))}
         </div>
       </div>
     </div>
@@ -359,8 +330,8 @@ export default function ChildProfile() {
           </div>
           <div>
             <div className="flex items-center gap-3">
-              <h2 className="text-xl font-bold text-white">Md Reza</h2>
-              <span className="px-2 py-0.5 bg-blue-600 text-white text-xs font-bold rounded">Level 28</span>
+              <h2 className="text-xl font-bold text-white">{profile.name} <span className="text-sm font-normal text-slate-400 ml-2">{profile.age}</span></h2>
+              <span className="px-2 py-0.5 bg-blue-600 text-white text-xs font-bold rounded">{profile.level}</span>
             </div>
           </div>
         </div>
@@ -369,15 +340,15 @@ export default function ChildProfile() {
           <div className="flex items-start gap-3 p-4 rounded-xl border border-[#2A2E3D] bg-white/5">
             <div className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">🏫</div>
             <div>
-              <p className="text-sm font-semibold text-white">Parent Module</p>
-              <p className="text-xs text-slate-400 mt-1">Sunshine Daycare</p>
+              <p className="text-sm font-semibold text-white">Current Daycare</p>
+              <p className="text-xs text-slate-400 mt-1">{profile.currentDaycare}</p>
             </div>
           </div>
           <div className="flex items-start gap-3 p-4 rounded-xl border border-[#2A2E3D] bg-white/5">
             <div className="w-8 h-8 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center shrink-0">💉</div>
             <div>
               <p className="text-sm font-semibold text-white">Health Status</p>
-              <p className="text-xs text-slate-400 mt-1">All vaccinations up to date</p>
+              <p className="text-xs text-slate-400 mt-1">{profile.healthStatus}</p>
             </div>
           </div>
         </div>
@@ -407,6 +378,38 @@ export default function ChildProfile() {
         {activeTab === 'Schedule' && renderSchedule()}
         {activeTab === 'Health & Growth' && renderHealth()}
       </div>
+
+      {/* CCTV Modal */}
+      {showCCTV && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="bg-[#1A1D27] border border-[#2A2E3D] p-6 rounded-3xl w-full max-w-2xl text-center">
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
+                <h2 className="text-xl font-bold text-white">Live CCTV Feed</h2>
+              </div>
+              <button onClick={() => setShowCCTV(false)} className="text-slate-400 hover:text-white">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+            </div>
+            
+            <div className="w-full aspect-video bg-black rounded-xl overflow-hidden relative border border-[#2A2E3D]">
+              <div className="absolute top-4 left-4 bg-black/50 px-2 py-1 rounded text-xs text-white font-mono z-10 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                CAM-01 • PLAYROOM
+              </div>
+              <div className="absolute bottom-4 right-4 bg-black/50 px-2 py-1 rounded text-xs text-white font-mono z-10">
+                {new Date().toLocaleTimeString()}
+              </div>
+              {/* Simulated camera noise/feed placeholder */}
+              <div className="w-full h-full bg-slate-800 flex items-center justify-center text-slate-500 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiAvPgo8cmVjdCB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjMDAwIiAvPgo8L3N2Zz4=')]"></div>
+                <p>Live Video Stream Playing...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
