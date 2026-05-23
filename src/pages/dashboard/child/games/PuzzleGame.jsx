@@ -8,9 +8,7 @@ const LEVELS = {
 
 const TYPES = {
   NUMBERS: { label: '🔢', items: Array.from({length: 25}, (_, i) => String(i + 1)) },
-  LETTERS: { label: '🔤', items: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('') },
-  ANIMALS: { label: '🐶', items: ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🐤','🦆','🦅','🦉','🦇','🐺','🐗'] },
-  FRUITS: { label: '🍎', items: ['🍎','🍐','🍊','🍋','🍌','🍉','🍇','🍓','🍈','🍒','🍑','🥭','🍍','🥥','🥝','🍅','🍆','🥑','🥦','🥬','🥒','🌶','🌽','🥕','🥔'] }
+  LETTERS: { label: '🔤', items: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('') }
 }
 
 export default function PuzzleGame({ playClick, addCoins, speak }) {
