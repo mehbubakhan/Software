@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { useNavigate, Routes, Route, Link } from 'react-router-dom'
+import { useNavigate, useLocation, Routes, Route, Link } from 'react-router-dom'
 import LearningDashboard from './child/LearningDashboard'
 import AlphabetLearning from './child/AlphabetLearning'
 import NumbersLearning from './child/NumbersLearning'
@@ -15,6 +15,7 @@ import AdvancedLearning from './child/AdvancedLearning'
 
 export default function ChildDashboard() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [coins, setCoins] = useState(() => {
     const saved = localStorage.getItem('child_coins')
     return saved ? parseInt(saved, 10) : 50
@@ -72,7 +73,17 @@ export default function ChildDashboard() {
           >
             Exit to Parent
           </button>
-          <Link to="/dashboard/child" className="flex items-center gap-2 rounded-full hover:bg-slate-50 px-3 py-1 transition">
+          
+          {location.pathname !== '/dashboard/child' && location.pathname !== '/dashboard/child/' && (
+            <button 
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 font-bold text-slate-700 transition hover:bg-slate-200"
+            >
+              ⬅️ Back
+            </button>
+          )}
+
+          <Link to="/dashboard/child" className="flex items-center gap-2 rounded-full hover:bg-slate-50 px-3 py-1 transition ml-2">
             <span className="text-xl font-black tracking-tight text-fuchsia-600">MiniMate</span>
           </Link>
         </div>
