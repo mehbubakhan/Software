@@ -56,15 +56,15 @@ export default function AdoptionTracker() {
                 {/* Application Header */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-slate-700 pb-6">
                   <div>
-                    <h2 className="text-2xl font-bold text-white mb-1">{app.childName}</h2>
-                    <p className="text-slate-400 text-sm">{app.childGender} • {app.childAge}</p>
+                    <h2 className="text-2xl font-bold text-white mb-1">{app.child_name}</h2>
+                    <p className="text-slate-400 text-sm">{app.gender} • {app.age}</p>
                   </div>
                   <div className="mt-4 md:mt-0 flex flex-col md:items-end">
                     <button className="bg-transparent hover:bg-slate-800 border border-slate-600 text-white text-sm font-semibold py-2 px-4 rounded-lg transition mb-2">
                       View Application
                     </button>
-                    <span className="bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 px-3 py-1 rounded text-xs font-semibold">
-                      {app.status}
+                    <span className="bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 px-3 py-1 rounded text-xs font-semibold uppercase">
+                      {app.application_status}
                     </span>
                   </div>
                 </div>
@@ -73,11 +73,11 @@ export default function AdoptionTracker() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                   <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
                     <div className="text-xs text-slate-500 mb-1">Date Applied</div>
-                    <div className="font-bold text-white">{app.dateApplied}</div>
+                    <div className="font-bold text-white">{new Date(app.created_at).toLocaleDateString()}</div>
                   </div>
                   <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
-                    <div className="text-xs text-slate-500 mb-1">Last Updated</div>
-                    <div className="font-bold text-white">{app.lastUpdated}</div>
+                    <div className="text-xs text-slate-500 mb-1">Compatibility Score</div>
+                    <div className="font-bold text-white">{app.compatibility_score || 0}%</div>
                   </div>
                   <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
                     <div className="text-xs text-slate-500 mb-1">Application ID</div>
@@ -89,17 +89,15 @@ export default function AdoptionTracker() {
                 <div className="mb-10">
                   <h3 className="text-sm font-bold text-slate-400 mb-6 uppercase tracking-wider">Application Timeline</h3>
                   <div className="space-y-6 relative before:absolute before:inset-0 before:ml-2.5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-fuchsia-500 before:via-slate-700 before:to-slate-700">
-                    {app.timeline.map((step, idx) => (
-                      <div key={idx} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                        <div className={`flex items-center justify-center w-6 h-6 rounded-full border-4 border-[#1a1c2d] ${step.completed ? 'bg-fuchsia-500' : 'bg-slate-600'} text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2`}></div>
-                        <div className="w-[calc(100%-2.5rem)] md:w-[calc(50%-1.5rem)] p-4 rounded-xl border border-slate-700 bg-slate-800/30">
-                          <div className="flex items-center justify-between mb-1">
-                            <div className={`font-bold text-sm ${step.completed ? 'text-white' : 'text-slate-400'}`}>{step.stage}</div>
-                            <div className="text-xs text-slate-500">{step.date}</div>
-                          </div>
+                    <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                      <div className={`flex items-center justify-center w-6 h-6 rounded-full border-4 border-[#1a1c2d] bg-fuchsia-500 text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2`}></div>
+                      <div className="w-[calc(100%-2.5rem)] md:w-[calc(50%-1.5rem)] p-4 rounded-xl border border-slate-700 bg-slate-800/30">
+                        <div className="flex items-center justify-between mb-1">
+                          <div className={`font-bold text-sm text-white`}>Application Submitted</div>
+                          <div className="text-xs text-slate-500">{new Date(app.created_at).toLocaleDateString()}</div>
                         </div>
                       </div>
-                    ))}
+                    </div>
                   </div>
                 </div>
 
@@ -113,7 +111,7 @@ export default function AdoptionTracker() {
                   </p>
                   
                   <div className="space-y-3">
-                    {app.documents.map((doc, idx) => (
+                    {(app.submitted_documents || []).map((doc, idx) => (
                       <div key={idx} className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className={`text-xl ${doc.uploaded ? 'text-green-500' : 'text-slate-500'}`}>

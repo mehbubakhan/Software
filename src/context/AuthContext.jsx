@@ -4,15 +4,13 @@ import api from '../services/api'
 const AuthContext = createContext()
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [isChildMode, setIsChildMode] = useState(false)
-
-  useEffect(() => {
+  const [user, setUser] = useState(() => {
     const raw = localStorage.getItem('user')
-    if (raw) setUser(JSON.parse(raw))
-    const childModeRaw = localStorage.getItem('isChildMode')
-    if (childModeRaw === 'true') setIsChildMode(true)
-  }, [])
+    return raw ? JSON.parse(raw) : null
+  })
+  const [isChildMode, setIsChildMode] = useState(() => {
+    return localStorage.getItem('isChildMode') === 'true'
+  })
 
   const login = async (credentials) => {
     const res = await api.post('/auth/login', credentials)
