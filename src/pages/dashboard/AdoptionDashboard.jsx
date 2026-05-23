@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react'
 import Sidebar from '../../components/Sidebar'
 import { useAuth } from '../../context/AuthContext'
-import { getChildren, getApplications } from '../../services/adoptionApi'
+import { getChildren, getApplications, createOrphanage, createChild, createApplication, updateApplicationStatus, createMeetup, getApplicationMeetups, submitQA } from '../../services/adoptionApi'
 
 const items = [
   { label: 'Adoption Overview', path: '/dashboard/adoption' },
@@ -48,9 +48,10 @@ export default function AdoptionDashboard() {
   const [applications, setApplications] = useState([])
   
   useEffect(() => {
+    if (!user) return;
     getChildren().then(res => setChildren(res.data.data)).catch(console.error)
     getApplications().then(res => setApplications(res.data.data)).catch(console.error)
-  }, [])
+  }, [user])
 
   const averageCompatibility = useMemo(() => {
     if (applications.length === 0) return 0
@@ -58,19 +59,18 @@ export default function AdoptionDashboard() {
     return Math.round(total / applications.length)
   }, [applications])
 
-  // Mock data for unimplemented sections
-  const meetups = [
-    { session: 1, child: 'Lucas', parent: 'Ariana Smith', date: '2026-05-25', attendance: 'Confirmed', note: 'Introductory play session' }
-  ]
-  const evaluations = [
-    { label: 'Parent Q&A submitted', value: '8', detail: 'Session-based emotional responses collected' }
-  ]
-  const parentProfiles = [
-    { name: 'Ariana Smith', status: 'Verified', background: 'Married, stable home, early childhood volunteer', finance: 'Approved', preference: 'Age 3-5' }
-  ]
-  const analytics = [
-    ['Adoption success rate', '68%', 'Approved cases from completed evaluations']
-  ]
+  const [meetups, setMeetups] = useState([]);
+  const [evaluations, setEvaluations] = useState([]);
+  const [parentProfiles, setParentProfiles] = useState([]);
+  const [analytics, setAnalytics] = useState([]);
+
+  // Example: load meetups for a selected application (placeholder)
+  // useEffect(() => {
+  //   if (applications.length) {
+  //     const appId = applications[0].id;
+  //     getApplicationMeetups(appId).then(res => setMeetups(res.data.data)).catch(console.error);
+  //   }
+  // }, [applications]);
 
   return (
     <div className="min-h-[calc(100vh-68px)] bg-slate-50 md:flex">
@@ -78,7 +78,7 @@ export default function AdoptionDashboard() {
       <main className="min-w-0 flex-1 space-y-6 p-4 sm:p-6 lg:p-8">
         <div className="rounded-lg border border-violet-100 bg-gradient-to-r from-violet-50 via-white to-cyan-50 p-6 shadow-sm">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-violet-600">Adoption Module</p>
-          <h1 className="mt-2 text-3xl font-black text-slate-950 sm:text-4xl">Welcome, {user?.name || 'Orphanage Manager'}</h1>
+          <h1 className="mt-2 text-3xl font-black text-slate-950 sm:text-4xl">Welcome, {user?.name || (user?.role === 'parent' ? 'Parent' : 'Orphanage Manager')}</h1>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
             Manage verified orphanage workflows, child profiles, parent applications, bonding sessions, compatibility review, final approval, and post-adoption follow-up from one secure dashboard.
           </p>
