@@ -1,7 +1,8 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 export default function Sidebar({ items = [], variant = 'default' }){
+  const navigate = useNavigate()
   const [activeHash, setActiveHash] = React.useState(() => {
     if (typeof window === 'undefined') return ''
     return window.location.hash || ''
@@ -46,7 +47,10 @@ export default function Sidebar({ items = [], variant = 'default' }){
         </nav>
         
         <div className="p-6 pt-2">
-          <button className="w-full rounded-xl bg-fuchsia-600 py-3 font-bold text-white transition hover:bg-fuchsia-500 shadow-[0_0_15px_rgba(192,38,211,0.4)]">
+          <button 
+            onClick={() => navigate('/dashboard/child')}
+            className="w-full rounded-xl bg-fuchsia-600 py-3 font-bold text-white transition hover:bg-fuchsia-500 shadow-[0_0_15px_rgba(192,38,211,0.4)]"
+          >
             Child mode
           </button>
         </div>

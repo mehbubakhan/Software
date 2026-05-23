@@ -28,6 +28,7 @@ import Reviews from '../pages/dashboard/nanny/Reviews'
 import Payments from '../pages/dashboard/nanny/Payments'
 import ProtectedRoute from '../components/ProtectedRoute'
 import RoleRedirect from '../components/RoleRedirect'
+import ChildDashboard from '../pages/dashboard/ChildDashboard'
 
 export default function AppRoutes(){
   return (
@@ -45,6 +46,7 @@ export default function AppRoutes(){
 
       <Route path="/role-redirect" element={<RoleRedirect/>} />
 
+      <Route path="/dashboard/child/*" element={<ProtectedRoute roles={["parent"]}><ChildDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/parent/*" element={<ProtectedRoute roles={["parent"]}><ParentDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/admin/*" element={<ProtectedRoute roles={["admin","daycare"]}><AdminDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/adoption/*" element={<ProtectedRoute roles={["orphanage_manager"]}><AdoptionDashboard/></ProtectedRoute>} />
