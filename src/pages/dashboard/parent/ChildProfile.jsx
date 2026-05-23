@@ -7,6 +7,7 @@ export default function ChildProfile() {
   const [activeTab, setActiveTab] = useState('Overview')
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [showCCTV, setShowCCTV] = useState(false)
 
   useEffect(() => {
     const fetchChildProfile = async () => {
@@ -107,7 +108,10 @@ export default function ChildProfile() {
             </div>
           </div>
         ))}
-        <button className="w-full mt-4 py-3 bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold rounded-xl text-center transition">
+        <button 
+          onClick={() => setShowCCTV(true)}
+          className="w-full mt-4 py-3 bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold rounded-xl text-center transition"
+        >
           View Live CCTV Feed
         </button>
       </div>
@@ -374,6 +378,38 @@ export default function ChildProfile() {
         {activeTab === 'Schedule' && renderSchedule()}
         {activeTab === 'Health & Growth' && renderHealth()}
       </div>
+
+      {/* CCTV Modal */}
+      {showCCTV && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="bg-[#1A1D27] border border-[#2A2E3D] p-6 rounded-3xl w-full max-w-2xl text-center">
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
+                <h2 className="text-xl font-bold text-white">Live CCTV Feed</h2>
+              </div>
+              <button onClick={() => setShowCCTV(false)} className="text-slate-400 hover:text-white">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+            </div>
+            
+            <div className="w-full aspect-video bg-black rounded-xl overflow-hidden relative border border-[#2A2E3D]">
+              <div className="absolute top-4 left-4 bg-black/50 px-2 py-1 rounded text-xs text-white font-mono z-10 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                CAM-01 • PLAYROOM
+              </div>
+              <div className="absolute bottom-4 right-4 bg-black/50 px-2 py-1 rounded text-xs text-white font-mono z-10">
+                {new Date().toLocaleTimeString()}
+              </div>
+              {/* Simulated camera noise/feed placeholder */}
+              <div className="w-full h-full bg-slate-800 flex items-center justify-center text-slate-500 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiAvPgo8cmVjdCB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjMDAwIiAvPgo8L3N2Zz4=')]"></div>
+                <p>Live Video Stream Playing...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

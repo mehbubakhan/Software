@@ -7,6 +7,8 @@ export default function Overview() {
   const { user } = useAuth()
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [expandedWishlist, setExpandedWishlist] = useState(null)
+  const [showMessageModal, setShowMessageModal] = useState(false)
 
   useEffect(() => {
     const fetchOverview = async () => {
@@ -50,6 +52,13 @@ export default function Overview() {
     { label: 'Browse Daycare', desc: 'Explore trusted centers', bg: 'bg-green-600', icon: '🏫', path: '/dashboard/parent/daycare' },
     { label: 'Shop Products', desc: 'Baby care essentials', bg: 'bg-orange-500', icon: '🛍️', path: '/dashboard/parent/marketplace' },
     { label: 'Orphanage', desc: 'Adoption profiles', bg: 'bg-blue-600', icon: '👶', path: '/dashboard/parent/adoption' },
+  ]
+
+  const wishlistItems = [
+    { title: 'Saved Nannies (2)', items: [{name: 'Kamrun Nahar', path: '/dashboard/parent/hire-nanny/1'}, {name: 'Aisha Khan', path: '/dashboard/parent/hire-nanny/2'}] },
+    { title: 'Saved Daycares (4)', items: [{name: 'Happy Kids Daycare', path: '/dashboard/parent/daycare'}, {name: 'Sunny Days Center', path: '/dashboard/parent/daycare'}, {name: 'Little Angels', path: '/dashboard/parent/daycare'}, {name: 'Tiny Tots', path: '/dashboard/parent/daycare'}] },
+    { title: 'Saved Videos (5)', items: [{name: 'Childcare Tips', path: '#'}, {name: 'Healthy Recipes', path: '#'}, {name: 'Activity Ideas', path: '#'}, {name: 'Potty Training', path: '#'}, {name: 'Sleep Training', path: '#'}] },
+    { title: 'Saved Products (8)', items: [{name: 'Baby Monitor', path: '#'}, {name: 'Stroller', path: '#'}, {name: 'Educational Toys', path: '#'}, {name: 'Diapers', path: '#'}] },
   ]
 
   return (
@@ -114,7 +123,11 @@ export default function Overview() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {statCards.map((stat, idx) => (
-          <div key={idx} className="bg-[#1A1D27] border border-[#2A2E3D] rounded-2xl p-4 flex flex-col justify-between">
+          <div 
+            key={idx} 
+            onClick={() => stat.label === 'Messages' ? setShowMessageModal(true) : null}
+            className={`bg-[#1A1D27] border border-[#2A2E3D] rounded-2xl p-4 flex flex-col justify-between ${stat.label === 'Messages' ? 'cursor-pointer hover:border-pink-500/50 transition' : ''}`}
+          >
             <div className={`w-8 h-8 rounded-lg ${stat.bg} ${stat.color} flex items-center justify-center mb-3`}>
               {stat.icon}
             </div>
@@ -268,14 +281,60 @@ export default function Overview() {
           <button className="text-slate-400 hover:text-white">♡</button>
         </div>
         <div className="space-y-2">
-          {['Saved Nannies (2)', 'Saved Daycares (4)', 'Saved Videos (5)', 'Saved Products (8)'].map((item, idx) => (
-            <div key={idx} className="flex justify-between items-center p-3 rounded-xl hover:bg-white/5 cursor-pointer border-b border-[#2A2E3D] last:border-0">
-              <span className="text-sm text-slate-300">{item}</span>
-              <span className="w-6 h-6 rounded-full bg-fuchsia-600/20 text-fuchsia-400 flex items-center justify-center text-xs">›</span>
+          {wishlistItems.map((category, idx) => (
+            <div key={idx} className="border-b border-[#2A2E3D] last:border-0">
+              <div 
+                onClick={() => setExpandedWishlist(expandedWishlist === idx ? null : idx)}
+                className="flex justify-between items-center p-3 rounded-xl hover:bg-white/5 cursor-pointer"
+              >
+                <span className="text-sm text-slate-300">{category.title}</span>
+                <span className={`w-6 h-6 rounded-full bg-fuchsia-600/20 text-fuchsia-400 flex items-center justify-center text-xs transition-transform ${expandedWishlist === idx ? 'rotate-90' : ''}`}>›</span>
+              </div>
+              {expandedWishlist === idx && (
+                <div className="pl-6 pb-3 space-y-2">
+                  {category.items.map((item, i) => (
+                    <Link key={i} to={item.path} className="text-xs text-slate-400 hover:text-fuchsia-400 transition cursor-pointer py-1 flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 bg-fuchsia-500 rounded-full"></span>
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>
       </div>
+
+      {/* Message Modal */}
+      {showMessageModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="bg-[#1A1D27] border border-[#2A2E3D] rounded-3xl w-full max-w-md overflow-hidden flex flex-col h-[500px]">
+            <div className="bg-slate-800 p-4 flex justify-between items-center">
+              <h3 className="font-bold text-white flex items-center gap-2"><span>✉️</span> Messages</h3>
+              <button onClick={() => setShowMessageModal(false)} className="text-slate-400 hover:text-white">✕</button>
+            </div>
+            <div className="flex-1 p-4 overflow-y-auto space-y-4">
+              <div className="flex gap-3">
+                <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs">KN</div>
+                <div className="bg-slate-800 rounded-2xl rounded-tl-none p-3 max-w-[80%]">
+                  <p className="text-sm text-slate-200">Hi! I am available for an interview tomorrow.</p>
+                  <p className="text-[10px] text-slate-500 mt-1">10:00 AM</p>
+                </div>
+              </div>
+              <div className="flex gap-3 flex-row-reverse">
+                <div className="bg-fuchsia-600 rounded-2xl rounded-tr-none p-3 max-w-[80%]">
+                  <p className="text-sm text-white">Great! Let's schedule it for 2 PM.</p>
+                  <p className="text-[10px] text-fuchsia-200 mt-1">10:05 AM</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-4 border-t border-[#2A2E3D] flex gap-2">
+              <input type="text" placeholder="Type a message..." className="flex-1 bg-slate-900 border border-slate-700 rounded-full px-4 text-sm text-white focus:outline-none focus:border-fuchsia-500" />
+              <button className="w-10 h-10 rounded-full bg-fuchsia-600 text-white flex items-center justify-center">↑</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
