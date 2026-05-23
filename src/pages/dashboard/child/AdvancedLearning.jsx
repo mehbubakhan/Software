@@ -1,6 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
+import BasicMath from './BasicMath'
 
-export default function AdvancedLearning({ playClick }) {
+export default function AdvancedLearning({ playClick, addCoins, speak }) {
+  const [activeTopic, setActiveTopic] = useState(null)
+
   const subjects = [
     { name: 'The Solar System', icon: '🌍', color: 'bg-indigo-500' },
     { name: 'Basic Math', icon: '➗', color: 'bg-blue-500' },
@@ -9,6 +12,10 @@ export default function AdvancedLearning({ playClick }) {
     { name: 'Introduction to Science', icon: '🧪', color: 'bg-purple-500' },
     { name: 'History of Inventions', icon: '💡', color: 'bg-rose-500' },
   ]
+
+  if (activeTopic === 'Basic Math') {
+    return <BasicMath playClick={playClick} addCoins={addCoins} speak={speak} onBack={() => setActiveTopic(null)} />
+  }
 
   return (
     <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 max-w-5xl mx-auto text-center mt-12">
@@ -23,11 +30,15 @@ export default function AdvancedLearning({ playClick }) {
               key={sub.name}
               onClick={() => {
                 playClick()
-                alert(`Opening ${sub.name} lesson... (Coming Soon)`)
+                if (sub.name === 'Basic Math') {
+                  setActiveTopic('Basic Math')
+                } else {
+                  alert(`Opening ${sub.name} lesson... (Coming Soon)`)
+                }
               }}
-              className="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-slate-100 hover:-translate-y-1 hover:shadow-md transition text-left"
+              className="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-slate-100 hover:-translate-y-1 hover:shadow-md transition text-left group"
             >
-              <div className={`${sub.color} w-12 h-12 rounded-lg flex items-center justify-center text-2xl text-white shadow-inner`}>
+              <div className={`${sub.color} w-12 h-12 rounded-lg flex items-center justify-center text-2xl text-white shadow-inner group-hover:scale-110 transition-transform`}>
                 {sub.icon}
               </div>
               <span className="font-bold text-slate-700">{sub.name}</span>
