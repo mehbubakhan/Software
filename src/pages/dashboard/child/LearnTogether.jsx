@@ -1,10 +1,27 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
 export default function LearnTogether({ playClick, addCoins }) {
   const [room, setRoom] = useState('')
   const [joined, setJoined] = useState(false)
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
+  
+  // Canvas states
+  const canvasRef = useRef(null)
+  const [isDrawing, setIsDrawing] = useState(false)
+  const [color, setColor] = useState('#ec4899') // default pink
+  const [lineWidth, setLineWidth] = useState(5)
+  
+  const colors = ['#000000', '#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#a855f7', '#ec4899']
+
+  useEffect(() => {
+    if (joined && canvasRef.current) {
+      const canvas = canvasRef.current
+      const ctx = canvas.getContext('2d')
+      ctx.lineCap = 'round'
+      ctx.lineJoin = 'round'
+    }
+  }, [joined])
 
   const handleJoin = (e) => {
     e.preventDefault()
@@ -26,6 +43,40 @@ export default function LearnTogether({ playClick, addCoins }) {
       setMessages(prev => [...prev, { id: Date.now()+1, text: "Wow, cool drawing!", sender: 'Friend' }])
       addCoins(5)
     }, 2000)
+  }
+
+  // Drawing handlers
+  const startDrawing = ({ nativeEvent }) => {
+    const { offsetX, offsetY } = nativeEvent
+    const ctx = canvasRef.current.getContext('2d')
+    ctx.beginPath()
+    ctx.moveTo(offsetX, offsetY)
+    ctx.strokeStyle = color
+    ctx.lineWidth = lineWidth
+    setIsDrawing(true)
+  }
+
+  const draw = ({ nativeEvent }) => {
+    if (!isDrawing) return
+    const { offsetX, offsetY } = nativeEvent
+    const ctx = canvasRef.current.getContext('2d')
+    ctx.lineTo(offsetX, offsetY)
+    ctx.stroke()
+  }
+
+  const stopDrawing = () => {
+    if (isDrawing) {
+      const ctx = canvasRef.current.getContext('2d')
+      ctx.closePath()
+      setIsDrawing(false)
+    }
+  }
+
+  const clearCanvas = () => {
+    playClick()
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
   }
 
   if (!joined) {
@@ -62,25 +113,60 @@ export default function LearnTogether({ playClick, addCoins }) {
   }
 
   return (
-    <div className="max-w-6xl mx-auto mt-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="max-w-6xl mx-auto mt-6 flex flex-col h-[calc(100vh-140px)]">
+      <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <h2 className="text-2xl font-bold text-slate-800">Collaborative Learning 👥</h2>
         <span className="px-4 py-1 bg-pink-100 text-pink-700 font-bold rounded-full">Room: {room}</span>
       </div>
 
-      <div className="grid lg:grid-cols-[1fr_300px] gap-6 h-[600px]">
-        {/* Mock Shared Canvas */}
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 flex flex-col">
-          <h3 className="font-bold text-slate-700 mb-4 flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></span> Shared Canvas
-          </h3>
-          <div className="flex-1 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center text-slate-400">
-            (Draw here... feature simulated for now)
+      <div className="grid lg:grid-cols-[1fr_300px] gap-6 flex-1 min-h-0">
+        {/* Shared Canvas Area */}
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 flex flex-col min-h-0">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-bold text-slate-700 flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></span> Shared Canvas
+            </h3>
+            
+            <div className="flex gap-4 items-center">
+              <div className="flex gap-2">
+                {colors.map(c => (
+                  <button
+                    key={c}
+                    onClick={() => { playClick(); setColor(c) }}
+                    className={`w-6 h-6 rounded-full transition transform ${color === c ? 'scale-125 ring-2 ring-offset-2 ring-slate-400' : 'hover:scale-110'}`}
+                    style={{ backgroundColor: c }}
+                  />
+                ))}
+              </div>
+              <input 
+                type="range" 
+                min="1" max="20" 
+                value={lineWidth} 
+                onChange={(e) => setLineWidth(e.target.value)}
+                className="w-20 accent-pink-500"
+              />
+              <button onClick={clearCanvas} className="ml-2 px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-200">
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <div className="flex-1 bg-slate-50 rounded-2xl border-2 border-slate-200 overflow-hidden cursor-crosshair relative">
+            <canvas
+              ref={canvasRef}
+              width={800}
+              height={500}
+              onMouseDown={startDrawing}
+              onMouseMove={draw}
+              onMouseUp={stopDrawing}
+              onMouseLeave={stopDrawing}
+              className="absolute inset-0 w-full h-full touch-none"
+            />
           </div>
         </div>
 
         {/* Chat */}
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 flex flex-col overflow-hidden">
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 flex flex-col overflow-hidden min-h-0">
           <div className="p-4 border-b border-slate-100 bg-slate-50">
             <h3 className="font-bold text-slate-700">💬 Chat</h3>
           </div>
