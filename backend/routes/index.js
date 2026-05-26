@@ -15,4 +15,6 @@ router.use('/marketplace', require('./marketplace'))
 router.use('/adoption', require('./adoption'))
 router.use('/learning', require('./learning'))
 router.use('/daycare', require('./daycare'))
+router.use('/families', require('./families'))
+router.use('/messages', require('./messages'))
 module.exports = router

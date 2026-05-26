@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import Sidebar from '../../components/Sidebar'
 import { useAuth } from '../../context/AuthContext'
+import { getChildren, getApplications } from '../../services/adoptionApi'
 
 const items = [
   { label: 'Adoption Overview', path: '/dashboard/adoption' },
@@ -17,70 +18,6 @@ const items = [
   { label: 'Analytics', path: '/dashboard/adoption#analytics' },
   { label: 'Security', path: '/dashboard/adoption#security' },
   { label: 'Notifications', path: '/dashboard/adoption#notifications' },
-]
-
-const children = [
-  {
-    id: 'CH-204',
-    name: 'Lucas',
-    age: '4 years',
-    gender: 'Male',
-    status: 'Meetup Phase',
-    medical: 'Healthy, routine check complete',
-    traits: ['Curious', 'Social', 'Enjoys drawing'],
-    visibility: 'Restricted',
-  },
-  {
-    id: 'CH-218',
-    name: 'Sofia',
-    age: '6 years',
-    gender: 'Female',
-    status: 'Available',
-    medical: 'Mild seasonal allergies',
-    traits: ['Creative', 'Careful', 'Loves reading'],
-    visibility: 'Verified parents only',
-  },
-  {
-    id: 'CH-233',
-    name: 'Marco',
-    age: '3 years',
-    gender: 'Male',
-    status: 'Under Review',
-    medical: 'Follow-up visit scheduled',
-    traits: ['Playful', 'Energetic', 'Music interest'],
-    visibility: 'Internal review',
-  },
-]
-
-const applications = [
-  { id: 'APP-1024', parent: 'Ariana Smith', child: 'Lucas', status: 'Evaluation Ongoing', documents: '6/7 uploaded', score: 84 },
-  { id: 'APP-1025', parent: 'Daniel Carter', child: 'Sofia', status: 'Under Review', documents: '5/7 uploaded', score: 72 },
-  { id: 'APP-1026', parent: 'Mina Rahman', child: 'Marco', status: 'Pending', documents: '3/7 uploaded', score: 61 },
-]
-
-const meetups = [
-  { session: 1, child: 'Lucas', parent: 'Ariana Smith', date: '2026-05-25', attendance: 'Confirmed', note: 'Introductory play session' },
-  { session: 2, child: 'Lucas', parent: 'Ariana Smith', date: '2026-05-29', attendance: 'Scheduled', note: 'Storytelling and drawing activity' },
-  { session: 3, child: 'Sofia', parent: 'Daniel Carter', date: '2026-06-02', attendance: 'Pending', note: 'Reading activity and staff observation' },
-]
-
-const evaluations = [
-  { label: 'Parent Q&A submitted', value: '8', detail: 'Session-based emotional responses collected' },
-  { label: 'Child observations', value: '11', detail: 'Comfort, anxiety, and attachment notes logged' },
-  { label: 'Open follow-ups', value: '3', detail: 'Staff review required before final approval' },
-]
-
-const parentProfiles = [
-  { name: 'Ariana Smith', status: 'Verified', background: 'Married, stable home, early childhood volunteer', finance: 'Approved', preference: 'Age 3-5' },
-  { name: 'Daniel Carter', status: 'Background Check', background: 'Single parent, extended family support', finance: 'Under Review', preference: 'Age 5-7' },
-  { name: 'Mina Rahman', status: 'Documents Needed', background: 'Two-parent household, teacher profile', finance: 'Pending', preference: 'Age 2-4' },
-]
-
-const analytics = [
-  ['Adoption success rate', '68%', 'Approved cases from completed evaluations'],
-  ['Meetup completion', '74%', 'Scheduled bonding sessions completed'],
-  ['Child welfare checks', '92%', 'Follow-up reports submitted on time'],
-  ['Application review speed', '3.2 days', 'Average review cycle for new applications'],
 ]
 
 function Section({ id, eyebrow, title, children }) {
@@ -107,10 +44,33 @@ function StatusBadge({ children, tone = 'slate' }) {
 export default function AdoptionDashboard() {
   const { user } = useAuth() || {}
   const [applicationStatus, setApplicationStatus] = useState('Evaluation Ongoing')
-  const averageCompatibility = useMemo(() => {
-    const total = applications.reduce((sum, item) => sum + item.score, 0)
-    return Math.round(total / applications.length)
+  const [children, setChildren] = useState([])
+  const [applications, setApplications] = useState([])
+  
+  useEffect(() => {
+    getChildren().then(res => setChildren(res.data.data)).catch(console.error)
+    getApplications().then(res => setApplications(res.data.data)).catch(console.error)
   }, [])
+
+  const averageCompatibility = useMemo(() => {
+    if (applications.length === 0) return 0
+    const total = applications.reduce((sum, item) => sum + (item.compatibility_score || 0), 0)
+    return Math.round(total / applications.length)
+  }, [applications])
+
+  // Mock data for unimplemented sections
+  const meetups = [
+    { session: 1, child: 'Lucas', parent: 'Ariana Smith', date: '2026-05-25', attendance: 'Confirmed', note: 'Introductory play session' }
+  ]
+  const evaluations = [
+    { label: 'Parent Q&A submitted', value: '8', detail: 'Session-based emotional responses collected' }
+  ]
+  const parentProfiles = [
+    { name: 'Ariana Smith', status: 'Verified', background: 'Married, stable home, early childhood volunteer', finance: 'Approved', preference: 'Age 3-5' }
+  ]
+  const analytics = [
+    ['Adoption success rate', '68%', 'Approved cases from completed evaluations']
+  ]
 
   return (
     <div className="min-h-[calc(100vh-68px)] bg-slate-50 md:flex">
@@ -159,16 +119,16 @@ export default function AdoptionDashboard() {
               <article key={child.id} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-lg font-bold text-slate-950">{child.name}</h3>
-                    <p className="text-sm text-slate-600">{child.id} - {child.age} - {child.gender}</p>
+                    <h3 className="text-lg font-bold text-slate-950">{child.child_name}</h3>
+                    <p className="text-sm text-slate-600">ID: {child.id} - {child.age} - {child.gender}</p>
                   </div>
-                  <StatusBadge tone={child.status === 'Available' ? 'green' : child.status === 'Under Review' ? 'yellow' : 'violet'}>{child.status}</StatusBadge>
+                  <StatusBadge tone={child.adoption_status === 'available' ? 'green' : child.adoption_status === 'under_review' ? 'yellow' : 'violet'}>{child.adoption_status}</StatusBadge>
                 </div>
-                <p className="mt-3 text-sm text-slate-700">{child.medical}</p>
+                <p className="mt-3 text-sm text-slate-700">{child.health_condition}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {child.traits.map(trait => <StatusBadge key={trait}>{trait}</StatusBadge>)}
+                  <StatusBadge>{child.interests}</StatusBadge>
                 </div>
-                <p className="mt-3 text-xs font-semibold text-slate-500">Visibility: {child.visibility}</p>
+                <p className="mt-3 text-xs font-semibold text-slate-500">Short description: {child.short_description}</p>
               </article>
             ))}
           </div>
@@ -198,7 +158,7 @@ export default function AdoptionDashboard() {
             <table className="w-full min-w-[760px] text-left text-sm">
               <thead className="bg-slate-100 text-slate-600">
                 <tr>
-                  {['Application', 'Parent', 'Child', 'Status', 'Documents', 'Internal Score'].map(head => (
+                  {['Application', 'Parent', 'Child', 'Status', 'Internal Score'].map(head => (
                     <th key={head} className="px-4 py-3 font-bold">{head}</th>
                   ))}
                 </tr>
@@ -207,11 +167,10 @@ export default function AdoptionDashboard() {
                 {applications.map(app => (
                   <tr key={app.id} className="border-b border-slate-100">
                     <td className="px-4 py-3 font-bold text-slate-900">{app.id}</td>
-                    <td className="px-4 py-3">{app.parent}</td>
-                    <td className="px-4 py-3">{app.child}</td>
-                    <td className="px-4 py-3"><StatusBadge tone="violet">{app.status}</StatusBadge></td>
-                    <td className="px-4 py-3">{app.documents}</td>
-                    <td className="px-4 py-3 font-bold text-slate-900">{app.score}%</td>
+                    <td className="px-4 py-3">{app.parent_name || 'Parent ID: ' + app.parent_id}</td>
+                    <td className="px-4 py-3">{app.child_name}</td>
+                    <td className="px-4 py-3"><StatusBadge tone="violet">{app.application_status}</StatusBadge></td>
+                    <td className="px-4 py-3 font-bold text-slate-900">{app.compatibility_score}%</td>
                   </tr>
                 ))}
               </tbody>
@@ -261,11 +220,11 @@ export default function AdoptionDashboard() {
               {applications.map(app => (
                 <div key={app.id} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
                   <div className="flex items-center justify-between gap-4">
-                    <p className="font-bold text-slate-900">{app.parent} and {app.child}</p>
-                    <span className="font-black text-violet-700">{app.score}%</span>
+                    <p className="font-bold text-slate-900">{app.parent_name || 'Parent ID: ' + app.parent_id} and {app.child_name}</p>
+                    <span className="font-black text-violet-700">{app.compatibility_score || 0}%</span>
                   </div>
                   <div className="mt-3 h-3 rounded-full bg-slate-200">
-                    <div className="h-3 rounded-full bg-violet-600" style={{ width: `${app.score}%` }} />
+                    <div className="h-3 rounded-full bg-violet-600" style={{ width: `${app.compatibility_score || 0}%` }} />
                   </div>
                 </div>
               ))}

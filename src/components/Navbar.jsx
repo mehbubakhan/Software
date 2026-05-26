@@ -1,31 +1,46 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function Navbar(){
   const { user, logout } = useAuth() || {}
+  const navigate = useNavigate()
+
   return (
-    <nav className="sticky top-0 z-30 border-b border-white/70 bg-white/75 px-4 py-3 shadow-sm shadow-cyan-900/5 backdrop-blur-xl sm:px-6">
+    <nav className="sticky top-0 z-30 border-b border-white/70 bg-white/75 px-4 py-3 shadow-sm shadow-fuchsia-900/5 backdrop-blur-xl sm:px-6">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
-      <div className="flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-500 to-fuchsia-500 text-lg font-black text-white shadow-lg shadow-blue-500/20">
-          D
+        
+        {/* Logo */}
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-fuchsia-600 text-lg font-black text-white shadow-lg shadow-fuchsia-500/20">
+            M
+          </div>
+          <Link to="/" className="text-xl font-black text-slate-950 transition hover:text-fuchsia-700">Minimate</Link>
         </div>
-        <Link to="/" className="text-lg font-black text-slate-950 transition hover:text-cyan-700">Daycare</Link>
-      </div>
-      <div>
-        {user ? (
-          <div className="flex items-center gap-3">
-            <span className="hidden rounded-full bg-cyan-50 px-3 py-2 text-sm font-semibold text-slate-700 sm:inline-flex">{user.name || user.email}</span>
-            <button onClick={logout} className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-fuchsia-600 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-fuchsia-100">Logout</button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2">
-            <Link to="/login" className="rounded-xl px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-cyan-50 hover:text-cyan-700">Login</Link>
-            <Link to="/signup" className="rounded-xl bg-gradient-to-r from-cyan-500 to-fuchsia-500 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition duration-200 hover:-translate-y-0.5 hover:shadow-fuchsia-500/25">Signup</Link>
-          </div>
-        )}
-      </div>
+        
+        {/* Navigation Links */}
+        <div className="hidden md:flex items-center gap-8 text-sm font-bold uppercase tracking-widest text-slate-500">
+          {/* Empty for now */}
+        </div>
+
+        {/* Right Side Actions */}
+        <div className="flex items-center gap-6">
+          <button className="text-slate-400 hover:text-slate-600 transition">
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+          </button>
+
+          {user ? (
+            <button onClick={logout} className="text-lg font-bold text-slate-400 hover:text-slate-600 transition">
+              Logout
+            </button>
+          ) : (
+            <div className="flex items-center gap-4">
+              <Link to="/login" className="text-sm font-bold text-slate-500 hover:text-fuchsia-600 transition">Log in</Link>
+              <Link to="/signup" className="rounded-full bg-fuchsia-600 px-5 py-2 text-sm font-bold text-white transition hover:bg-fuchsia-700">Sign up</Link>
+            </div>
+          )}
+        </div>
+
       </div>
     </nav>
   )

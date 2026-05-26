@@ -1,12 +1,16 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import api from '../../../services/api'
 
 export default function AdoptionSystem() {
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('browse')
   const [applications, setApplications] = useState([
-    { id: 1, childName: 'Lucas', age: '4 years', status: 'Under Review', lastUpdate: '3 days ago' },
+    { id: 1, childName: 'Lucas', age: '4 years', status: 'Under Review', lastUpdate: '3 days ago', stage: 'Document Review' },
   ])
   const [showApplicationForm, setShowApplicationForm] = useState(false)
+  const [viewingApplication, setViewingApplication] = useState(null)
+  const [updatingApplication, setUpdatingApplication] = useState(null)
 
   const adoptableChildren = [
     {
@@ -62,19 +66,22 @@ export default function AdoptionSystem() {
 
   return (
     <div className="space-y-6">
+      <button onClick={() => navigate(-1)} className="text-slate-400 hover:text-white flex items-center gap-2 mb-2 transition text-sm">
+        <span>←</span> Back to Dashboard
+      </button>
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">Adoption Services</h1>
-        <p className="text-slate-600 mt-2">Find and adopt a child - Build your family</p>
+        <h1 className="text-3xl font-bold text-white">Adoption Services</h1>
+        <p className="text-slate-300 mt-2">Find and adopt a child - Build your family</p>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-slate-200 overflow-x-auto">
+      <div className="flex gap-2 border-b border-slate-700 overflow-x-auto">
         <button
           onClick={() => setActiveTab('browse')}
           className={`px-4 py-2 font-semibold transition whitespace-nowrap ${
             activeTab === 'browse'
-              ? 'text-fuchsia-600 border-b-2 border-fuchsia-600'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'text-fuchsia-400 border-b-2 border-fuchsia-400'
+              : 'text-slate-400 hover:text-white'
           }`}
         >
           👶 Browse Children
@@ -83,8 +90,8 @@ export default function AdoptionSystem() {
           onClick={() => setActiveTab('application')}
           className={`px-4 py-2 font-semibold transition whitespace-nowrap ${
             activeTab === 'application'
-              ? 'text-fuchsia-600 border-b-2 border-fuchsia-600'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'text-fuchsia-400 border-b-2 border-fuchsia-400'
+              : 'text-slate-400 hover:text-white'
           }`}
         >
           📋 My Applications
@@ -93,8 +100,8 @@ export default function AdoptionSystem() {
           onClick={() => setActiveTab('meetups')}
           className={`px-4 py-2 font-semibold transition whitespace-nowrap ${
             activeTab === 'meetups'
-              ? 'text-fuchsia-600 border-b-2 border-fuchsia-600'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'text-fuchsia-400 border-b-2 border-fuchsia-400'
+              : 'text-slate-400 hover:text-white'
           }`}
         >
           📅 Scheduled Meetups
@@ -118,12 +125,12 @@ export default function AdoptionSystem() {
                 </div>
 
                 <div className="flex gap-2">
-                  <button className="flex-1 px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition">
+                  <button className="flex-1 px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition font-semibold shadow-sm">
                     📞 Know More
                   </button>
                   <button
                     onClick={() => setShowApplicationForm(true)}
-                    className="flex-1 px-4 py-2 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 transition font-semibold"
+                    className="flex-1 px-4 py-2 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 transition font-semibold shadow-sm"
                   >
                     Apply Now
                   </button>
@@ -168,10 +175,16 @@ export default function AdoptionSystem() {
                     <p className="text-sm text-slate-600"><span className="font-semibold">Application Stage:</span> Document Review</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="flex-1 px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition">
+                    <button 
+                      onClick={() => setViewingApplication(app)}
+                      className="flex-1 px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition font-semibold shadow-sm"
+                    >
                       View Details
                     </button>
-                    <button className="flex-1 px-4 py-2 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 transition">
+                    <button 
+                      onClick={() => setUpdatingApplication(app)}
+                      className="flex-1 px-4 py-2 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 transition font-semibold shadow-sm"
+                    >
                       Update Application
                     </button>
                   </div>
@@ -220,16 +233,16 @@ export default function AdoptionSystem() {
               <div className="flex gap-2">
                 <button
                   onClick={() => handleMeetupConfirmation(meetup.id)}
-                  className="flex-1 px-4 py-2 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 transition"
+                  className="flex-1 px-4 py-2 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 transition font-semibold shadow-sm"
                 >
                   Confirm Attendance
                 </button>
-                <button className="flex-1 px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition">
+                <button className="flex-1 px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition font-semibold shadow-sm">
                   Reschedule
                 </button>
               </div>
 
-              <button className="w-full mt-3 px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition text-slate-900">
+              <button className="w-full mt-3 px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition font-semibold shadow-sm">
                 Submit Feedback & Q&A
               </button>
             </div>
@@ -253,17 +266,17 @@ export default function AdoptionSystem() {
 
             <form onSubmit={handleSubmitApplication} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <input type="text" placeholder="First Name" className="px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required />
-                <input type="text" placeholder="Last Name" className="px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required />
+                <input type="text" placeholder="First Name" className="px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required />
+                <input type="text" placeholder="Last Name" className="px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required />
               </div>
 
-              <input type="email" placeholder="Email" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required />
-              <input type="tel" placeholder="Phone" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required />
-              <input type="text" placeholder="Home Address" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required />
+              <input type="email" placeholder="Email" className="w-full px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required />
+              <input type="tel" placeholder="Phone" className="w-full px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required />
+              <input type="text" placeholder="Home Address" className="w-full px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required />
 
-              <textarea placeholder="Family Background & Why you want to adopt" rows={4} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required></textarea>
+              <textarea placeholder="Family Background & Why you want to adopt" rows={4} className="w-full px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required></textarea>
 
-              <select className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required>
+              <select className="w-full px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required>
                 <option value="">Select preferred child age</option>
                 <option value="0-2">0-2 years</option>
                 <option value="2-4">2-4 years</option>
@@ -273,14 +286,14 @@ export default function AdoptionSystem() {
 
               <label className="flex items-center gap-2">
                 <input type="checkbox" required className="w-4 h-4" />
-                <span className="text-sm text-slate-600">I agree to the adoption process terms and conditions</span>
+                <span className="text-sm text-slate-900 font-medium">I agree to the adoption process terms and conditions</span>
               </label>
 
-              <div className="flex gap-3">
+              <div className="flex gap-3 mt-6">
                 <button
                   type="button"
                   onClick={() => setShowApplicationForm(false)}
-                  className="flex-1 px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition"
+                  className="flex-1 px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition font-semibold shadow-sm"
                 >
                   Cancel
                 </button>
@@ -290,6 +303,50 @@ export default function AdoptionSystem() {
                 >
                   Submit Application
                 </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* View Details Modal */}
+      {viewingApplication && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-lg p-6 max-w-lg w-full my-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-slate-900">Application Details</h2>
+              <button onClick={() => setViewingApplication(null)} className="text-2xl text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+            <div className="space-y-4">
+              <p className="text-slate-700"><span className="font-semibold text-slate-900">Child Name:</span> {viewingApplication.childName}</p>
+              <p className="text-slate-700"><span className="font-semibold text-slate-900">Status:</span> {viewingApplication.status}</p>
+              <p className="text-slate-700"><span className="font-semibold text-slate-900">Stage:</span> {viewingApplication.stage}</p>
+              <p className="text-slate-700"><span className="font-semibold text-slate-900">Last Updated:</span> {viewingApplication.lastUpdate}</p>
+              <div className="mt-6">
+                <button onClick={() => setViewingApplication(null)} className="w-full px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition font-semibold shadow-sm">
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Update Application Modal */}
+      {updatingApplication && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full my-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-slate-900">Update Application - {updatingApplication.childName}</h2>
+              <button onClick={() => setUpdatingApplication(null)} className="text-2xl text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+            <form onSubmit={(e) => { e.preventDefault(); alert('Application updated!'); setUpdatingApplication(null); }} className="space-y-4">
+              <input type="email" placeholder="Update Email" defaultValue="parent@example.com" className="w-full px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required />
+              <input type="tel" placeholder="Update Phone" defaultValue="555-1234" className="w-full px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required />
+              <textarea placeholder="Any new updates to your family background?" rows={4} className="w-full px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500"></textarea>
+              <div className="flex gap-3 mt-6">
+                <button type="button" onClick={() => setUpdatingApplication(null)} className="flex-1 px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition font-semibold shadow-sm">Cancel</button>
+                <button type="submit" className="flex-1 px-4 py-2 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 transition font-semibold">Save Updates</button>
               </div>
             </form>
           </div>

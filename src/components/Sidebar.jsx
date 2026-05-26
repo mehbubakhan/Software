@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function Sidebar({ items = [], variant = 'default' }){
+  const navigate = useNavigate()
   const [activeHash, setActiveHash] = useState(() => {
     if (typeof window === 'undefined') return ''
     return window.location.hash || ''
@@ -79,21 +80,12 @@ const renderIcon = (iconName) => {
         </nav>
         
         <div className="p-6 pt-2">
-          {isChildMode ? (
-            <button 
-              onClick={() => setShowPinModal(true)}
-              className="w-full rounded-xl bg-slate-800 py-3 font-bold text-white transition hover:bg-slate-700 shadow-[0_0_15px_rgba(255,255,255,0.1)]"
-            >
-              Exit Child Mode
-            </button>
-          ) : (
-            <button 
-              onClick={() => toggleChildMode(true)}
-              className="w-full rounded-xl bg-fuchsia-600 py-3 font-bold text-white transition hover:bg-fuchsia-500 shadow-[0_0_15px_rgba(192,38,211,0.4)]"
-            >
-              Child mode
-            </button>
-          )}
+          <button 
+            onClick={() => navigate('/dashboard/child')}
+            className="w-full rounded-xl bg-fuchsia-600 py-3 font-bold text-white transition hover:bg-fuchsia-500 shadow-[0_0_15px_rgba(192,38,211,0.4)]"
+          >
+            Child mode
+          </button>
         </div>
 
         {showPinModal && (
@@ -143,8 +135,8 @@ const renderIcon = (iconName) => {
               const active = hash ? activeHash === hash : activeHash === ''
               return (
                 <li key={i.path} className="shrink-0 md:shrink">
-                  <a
-                    href={i.path}
+                  <Link
+                    to={i.path}
                     className={`block rounded-2xl px-6 py-4 text-lg font-black text-slate-700 transition duration-200 md:text-xl ${
                       active
                         ? 'border border-cyan-200 bg-white text-cyan-700 shadow-lg shadow-cyan-900/10'
@@ -152,7 +144,7 @@ const renderIcon = (iconName) => {
                     }`}
                   >
                     {i.label}
-                  </a>
+                  </Link>
                 </li>
               )
             })}
@@ -173,8 +165,8 @@ const renderIcon = (iconName) => {
               const active = hash ? activeHash === hash : activeHash === ''
               return (
                 <li key={i.path} className="shrink-0 md:shrink">
-                  <a
-                    href={i.path}
+                  <Link
+                    to={i.path}
                     className={`block rounded-2xl px-6 py-4 text-lg font-black text-slate-700 transition duration-200 md:text-xl ${
                       active
                         ? 'border border-amber-200 bg-white text-amber-700 shadow-lg shadow-amber-900/10'
@@ -182,7 +174,7 @@ const renderIcon = (iconName) => {
                     }`}
                   >
                     {i.label}
-                  </a>
+                  </Link>
                 </li>
               )
             })}

@@ -7,6 +7,29 @@ export default function NannyProfile() {
   const navigate = useNavigate()
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [showPhone, setShowPhone] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
+  const [showMessageModal, setShowMessageModal] = useState(false)
+  const [messages, setMessages] = useState([])
+  const [newMessage, setNewMessage] = useState('')
+
+  useEffect(() => {
+    if (profile && messages.length === 0) {
+      setMessages([{ id: 1, text: `Hi ${profile.name}, I'm interested in booking an interview!`, sender: 'me', time: 'Just now' }])
+    }
+  }, [profile, messages.length])
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+    setMessages([...messages, {
+      id: Date.now(),
+      text: newMessage,
+      sender: 'me',
+      time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+    }]);
+    setNewMessage('');
+  }
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -156,17 +179,29 @@ export default function NannyProfile() {
             <div className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-6">
               <h3 className="font-bold text-lg mb-6">Get in Touch</h3>
               <div className="space-y-3 mb-6">
-                <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2">
+                <button 
+                  onClick={() => alert(`Video interview request sent to ${profile.name}!`)}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2"
+                >
                   <span>📹</span> Book Video Interview
                 </button>
-                <button className="w-full bg-transparent hover:bg-slate-800 border border-slate-700 text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2">
+                <button 
+                  onClick={() => setShowMessageModal(true)}
+                  className="w-full bg-transparent hover:bg-slate-800 border border-slate-700 text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2"
+                >
                   <span>💬</span> Send Message
                 </button>
-                <button className="w-full bg-transparent hover:bg-slate-800 border border-slate-700 text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2">
-                  <span>📞</span> Request Call
+                <button 
+                  onClick={() => setShowPhone(!showPhone)}
+                  className="w-full bg-transparent hover:bg-slate-800 border border-slate-700 text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2"
+                >
+                  <span>📞</span> {showPhone ? (profile.phone || '+880 1234 567 890') : 'Request Call'}
                 </button>
-                <button className="w-full bg-transparent hover:bg-slate-800 border border-slate-700 text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2">
-                  <span>🔖</span> Save Profile
+                <button 
+                  onClick={() => setIsSaved(!isSaved)}
+                  className={`w-full font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2 border ${isSaved ? 'bg-indigo-500/20 border-indigo-500 text-indigo-400' : 'bg-transparent hover:bg-slate-800 border-slate-700 text-white'}`}
+                >
+                  <span>🔖</span> {isSaved ? 'Profile Saved' : 'Save Profile'}
                 </button>
               </div>
               <div className="space-y-2 text-xs text-slate-400">
@@ -205,6 +240,39 @@ export default function NannyProfile() {
 
         </div>
       </div>
+
+      {/* Message Modal */}
+      {showMessageModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="bg-[#1a1c2d] border border-slate-700 rounded-3xl w-full max-w-md overflow-hidden flex flex-col h-[500px]">
+            <div className="bg-slate-800 p-4 flex justify-between items-center">
+              <h3 className="font-bold text-white flex items-center gap-2"><span>✉️</span> Message {profile.name.split(' ')[0]}</h3>
+              <button onClick={() => setShowMessageModal(false)} className="text-slate-400 hover:text-white">✕</button>
+            </div>
+            <div className="flex-1 p-4 overflow-y-auto space-y-4">
+              {messages.map((msg) => (
+                <div key={msg.id} className={`flex gap-3 ${msg.sender === 'me' ? 'flex-row-reverse' : ''}`}>
+                  <div className={`${msg.sender === 'me' ? 'bg-indigo-600 rounded-tr-none' : 'bg-slate-800 rounded-tl-none'} rounded-2xl p-3 max-w-[80%]`}>
+                    <p className="text-sm text-white">{msg.text}</p>
+                    <p className={`text-[10px] mt-1 ${msg.sender === 'me' ? 'text-indigo-200' : 'text-slate-500'}`}>{msg.time}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <form onSubmit={handleSendMessage} className="p-4 border-t border-slate-700 flex gap-2">
+              <input 
+                type="text" 
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type a message..." 
+                className="flex-1 bg-slate-900 border border-slate-700 rounded-full px-4 text-sm text-white focus:outline-none focus:border-indigo-500" 
+              />
+              <button type="submit" className="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0 hover:bg-indigo-500 transition">↑</button>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

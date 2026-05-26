@@ -28,12 +28,14 @@ const items = [
 
 function ProfileView() {
   const { user } = useAuth() || {}
+  const [isEditingPin, setIsEditingPin] = useState(false)
   const [profile, setProfile] = useState({
     name: user?.name || '',
     email: user?.email || '',
     phone: '',
     address: '',
     emergencyContact: '',
+    childModePin: '',
     childName: 'Emma',
     childAge: '4',
     childNotes: 'No allergies reported',
@@ -46,8 +48,8 @@ function ProfileView() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">Parent Profile</h1>
-        <p className="mt-2 text-slate-600">Manage parent details, child information, and emergency contacts.</p>
+        <h1 className="text-3xl font-bold text-white">Parent Profile</h1>
+        <p className="mt-2 text-slate-300">Manage parent details, child information, and emergency contacts.</p>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
@@ -79,7 +81,7 @@ function ProfileView() {
               <label key={key} className="block">
                 <span className="text-sm font-semibold text-slate-700">{label}</span>
                 <input
-                  className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500"
+                  className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500 text-slate-900"
                   value={profile[key]}
                   onChange={event => updateField(key, event.target.value)}
                   type={key === 'email' ? 'email' : 'text'}
@@ -87,7 +89,34 @@ function ProfileView() {
               </label>
             ))}
           </div>
-          <button className="mt-5 rounded-lg bg-fuchsia-600 px-5 py-2 font-semibold text-white hover:bg-fuchsia-700">
+
+          <h2 className="mt-6 text-lg font-bold text-slate-900">Security</h2>
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <label className="block">
+              <span className="text-sm font-semibold text-slate-700">Child Mode PIN</span>
+              <div className="flex gap-2 mt-2">
+                <input
+                  className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500 text-slate-900 disabled:bg-slate-100 disabled:text-slate-500"
+                  value={profile.childModePin}
+                  onChange={event => updateField('childModePin', event.target.value)}
+                  type="password"
+                  maxLength={4}
+                  placeholder="e.g. 1234"
+                  disabled={!isEditingPin}
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsEditingPin(!isEditingPin)}
+                  className="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition font-semibold"
+                >
+                  {isEditingPin ? 'Done' : 'Edit'}
+                </button>
+              </div>
+              <span className="text-xs text-slate-500 block mt-1">4-digit PIN required to exit Child Mode</span>
+            </label>
+          </div>
+
+          <button className="mt-6 rounded-lg bg-fuchsia-600 px-5 py-2 font-semibold text-white hover:bg-fuchsia-700">
             Save Profile
           </button>
         </form>
@@ -96,15 +125,15 @@ function ProfileView() {
           <h2 className="text-lg font-bold text-slate-900">Child Information</h2>
           <label className="mt-4 block">
             <span className="text-sm font-semibold text-slate-700">Child Name</span>
-            <input className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2" value={profile.childName} onChange={event => updateField('childName', event.target.value)} />
+            <input className="mt-2 w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500" value={profile.childName} onChange={event => updateField('childName', event.target.value)} />
           </label>
           <label className="mt-4 block">
             <span className="text-sm font-semibold text-slate-700">Age</span>
-            <input className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2" value={profile.childAge} onChange={event => updateField('childAge', event.target.value)} />
+            <input className="mt-2 w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500" value={profile.childAge} onChange={event => updateField('childAge', event.target.value)} />
           </label>
           <label className="mt-4 block">
             <span className="text-sm font-semibold text-slate-700">Care Notes</span>
-            <textarea className="mt-2 min-h-24 w-full rounded-lg border border-slate-300 px-3 py-2" value={profile.childNotes} onChange={event => updateField('childNotes', event.target.value)} />
+            <textarea className="mt-2 min-h-24 w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500" value={profile.childNotes} onChange={event => updateField('childNotes', event.target.value)} />
           </label>
         </section>
       </div>
@@ -123,8 +152,8 @@ function NotificationsView() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">Notifications</h1>
-        <p className="mt-2 text-slate-600">Safety alerts, order updates, meetup reminders, and child activity reports.</p>
+        <h1 className="text-3xl font-bold text-white">Notifications</h1>
+        <p className="mt-2 text-slate-300">Safety alerts, order updates, meetup reminders, and child activity reports.</p>
       </div>
       <div className="space-y-3">
         {notifications.map(item => (
@@ -154,8 +183,8 @@ function MessagesView() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">Messages</h1>
-        <p className="mt-2 text-slate-600">Communicate with nannies, daycare admins, orphanage managers, and support.</p>
+        <h1 className="text-3xl font-bold text-white">Messages</h1>
+        <p className="mt-2 text-slate-300">Communicate with nannies, daycare admins, orphanage managers, and support.</p>
       </div>
       <div className="grid gap-4 lg:grid-cols-[340px_1fr]">
         <aside className="space-y-2">
@@ -211,10 +240,103 @@ function ScheduleView() {
 }
 
 function SettingsView() {
+  const [settings, setSettings] = useState({
+    emailAlerts: true,
+    smsAlerts: false,
+    pushNotifications: true,
+    locationSharing: true,
+    twoFactor: false,
+    darkTheme: true
+  })
+
+  const toggleSetting = (key) => {
+    setSettings(prev => ({ ...prev, [key]: !prev[key] }))
+  }
+
+  const Toggle = ({ label, description, checked, onChange }) => (
+    <div className="flex items-center justify-between p-4 bg-[#151821] border border-[#2A2E3D] rounded-xl hover:border-fuchsia-500/50 transition">
+      <div>
+        <h3 className="text-white font-semibold">{label}</h3>
+        <p className="text-sm text-slate-400 mt-1">{description}</p>
+      </div>
+      <button 
+        onClick={onChange}
+        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${checked ? 'bg-fuchsia-600' : 'bg-slate-700'}`}
+      >
+        <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
+      </button>
+    </div>
+  )
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-slate-900">Settings</h1>
-      <p className="mt-2 text-slate-600">Manage your account settings.</p>
+    <div className="space-y-8 max-w-4xl">
+      <div>
+        <h1 className="text-3xl font-bold text-white">Settings</h1>
+        <p className="mt-2 text-slate-400">Manage your account preferences, notifications, and privacy.</p>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Notifications Section */}
+        <section className="space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xl">🔔</span>
+            <h2 className="text-xl font-bold text-white">Notifications</h2>
+          </div>
+          <Toggle 
+            label="Email Alerts" 
+            description="Receive daily summaries and important updates via email."
+            checked={settings.emailAlerts}
+            onChange={() => toggleSetting('emailAlerts')}
+          />
+          <Toggle 
+            label="SMS Alerts" 
+            description="Get text messages for urgent safety alerts."
+            checked={settings.smsAlerts}
+            onChange={() => toggleSetting('smsAlerts')}
+          />
+          <Toggle 
+            label="Push Notifications" 
+            description="Receive app notifications for live updates."
+            checked={settings.pushNotifications}
+            onChange={() => toggleSetting('pushNotifications')}
+          />
+        </section>
+
+        {/* Security & Privacy Section */}
+        <section className="space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xl">🔒</span>
+            <h2 className="text-xl font-bold text-white">Security & Privacy</h2>
+          </div>
+          <Toggle 
+            label="Live Location Sharing" 
+            description="Allow daycare and transport to see your child's location."
+            checked={settings.locationSharing}
+            onChange={() => toggleSetting('locationSharing')}
+          />
+          <Toggle 
+            label="Two-Factor Authentication" 
+            description="Require an extra code when logging in."
+            checked={settings.twoFactor}
+            onChange={() => toggleSetting('twoFactor')}
+          />
+        </section>
+      </div>
+
+      <div className="pt-6 border-t border-[#2A2E3D]">
+        <h2 className="text-xl font-bold text-white mb-4">Account Actions</h2>
+        <div className="flex flex-wrap gap-4">
+          <button className="px-5 py-2.5 bg-[#151821] border border-[#2A2E3D] text-white rounded-xl hover:bg-slate-800 transition font-semibold">
+            Change Password
+          </button>
+          <button className="px-5 py-2.5 bg-[#151821] border border-[#2A2E3D] text-white rounded-xl hover:bg-slate-800 transition font-semibold">
+            Manage Payment Methods
+          </button>
+          <button className="px-5 py-2.5 bg-red-950/30 border border-red-900/50 text-red-400 rounded-xl hover:bg-red-900/40 transition font-semibold ml-auto">
+            Deactivate Account
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

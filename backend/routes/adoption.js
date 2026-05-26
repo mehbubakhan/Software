@@ -1,26 +1,30 @@
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
+const adoptionController = require('../controllers/adoptionController');
+const { permit } = require('../middleware/roles');
+const auth = require('../middleware/auth'); // default export
 
-const {
-  getChildren,
-  getChildById,
-  getOrphanages,
-  getOrphanageById,
-  getApplications
-} = require('../controllers/adoptionController')
+// Public/Parent reading
+router.get('/orphanages', auth, adoptionController.getOrphanages);
+router.get('/orphanages/:id', auth, adoptionController.getOrphanageById);
+router.get('/children', auth, adoptionController.getChildren);
+router.get('/children/:id', auth, adoptionController.getChildById);
 
-router.get('/children', getChildren)
-router.get('/children/:id', getChildById)
-router.get('/orphanages', getOrphanages)
-router.get('/orphanages/:id', getOrphanageById)
-router.get('/applications', getApplications)
+// Orphanage Manager specific routes
+router.post('/orphanages', auth, permit('orphanageManager', 'admin'), adoptionController.createOrphanage);
+router.get('/manager/my-orphanage', auth, permit('orphanageManager', 'admin'), adoptionController.getMyOrphanage);
+router.post('/children', auth, permit('orphanageManager', 'admin'), adoptionController.createChild);
 
-router.post('/apply', (req, res) => {
-  res.json({ success: true, message: 'Adoption application submitted successfully' })
-})
+// Applications
+router.post('/applications', auth, permit('parent', 'admin'), adoptionController.createApplication);
+router.get('/applications', auth, adoptionController.getApplications);
+router.patch('/applications/:id/status', auth, permit('orphanageManager', 'admin'), adoptionController.updateApplicationStatus);
 
-router.post('/meetup/confirm', (req, res) => {
-  res.json({ success: true, message: 'Meetup attendance confirmed' })
-})
+// Meetups
+router.post('/meetups', auth, permit('orphanageManager', 'admin'), adoptionController.createMeetup);
+router.get('/applications/:id/meetups', auth, adoptionController.getApplicationMeetups);
 
-module.exports = router
+// QA & Compatibility
+router.post('/qa', auth, adoptionController.submitQA);
+
+module.exports = router;

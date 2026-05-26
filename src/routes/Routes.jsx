@@ -42,11 +42,14 @@ import Reviews from '../pages/dashboard/nanny/Reviews'
 import Payments from '../pages/dashboard/nanny/Payments'
 import ProtectedRoute from '../components/ProtectedRoute'
 import RoleRedirect from '../components/RoleRedirect'
+import ChildDashboard from '../pages/dashboard/ChildDashboard'
+import LearningLanding from '../pages/LearningLanding'
 
 export default function AppRoutes(){
   return (
     <Routes>
       <Route path="/" element={<Home/>} />
+      <Route path="/learning" element={<LearningLanding/>} />
       <Route path="/login" element={<Login/>} />
       <Route path="/signup" element={<Signup/>} />
       <Route path="/signup/parent" element={<ParentSignup/>} />
@@ -59,6 +62,7 @@ export default function AppRoutes(){
 
       <Route path="/role-redirect" element={<RoleRedirect/>} />
 
+      <Route path="/dashboard/child/*" element={<ProtectedRoute roles={["parent"]}><ChildDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/parent/*" element={<ProtectedRoute roles={["parent"]}><ParentDashboard/></ProtectedRoute>} />
       
       {/* Daycare Portal Routes */}
