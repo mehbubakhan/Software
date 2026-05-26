@@ -8,7 +8,10 @@ import { useAuth } from './context/AuthContext'
 function Shell(){
   const { user } = useAuth() || {}
   const location = useLocation()
-  const showNavbar = user || location.pathname !== '/'
+  
+  // Hide navbar on welcome, login, and signup pages
+  const isAuthPage = location.pathname === '/' || location.pathname.startsWith('/login') || location.pathname.startsWith('/signup');
+  const showNavbar = !isAuthPage;
 
   return (
     <div className="min-h-screen bg-auth-splash text-slate-900">
