@@ -27,7 +27,7 @@ export default function FamilySchedule() {
             + Add Event
           </button>
         </div>
-        
+
         <div className="space-y-4">
           {schedules.map((schedule) => (
             <div key={schedule.id} className="flex items-center gap-4 p-4 rounded-xl border border-[#2A2E3D] hover:border-fuchsia-500/50 transition bg-slate-800/30">

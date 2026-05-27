@@ -55,10 +55,10 @@ export default function Overview() {
   ]
 
   const wishlistItems = [
-    { title: 'Saved Nannies (2)', items: [{name: 'Kamrun Nahar', path: '/dashboard/parent/hire-nanny/1'}, {name: 'Aisha Khan', path: '/dashboard/parent/hire-nanny/2'}] },
-    { title: 'Saved Daycares (4)', items: [{name: 'Happy Kids Daycare', path: '/dashboard/parent/daycare'}, {name: 'Sunny Days Center', path: '/dashboard/parent/daycare'}, {name: 'Little Angels', path: '/dashboard/parent/daycare'}, {name: 'Tiny Tots', path: '/dashboard/parent/daycare'}] },
-    { title: 'Saved Videos (5)', items: [{name: 'Childcare Tips', path: '#'}, {name: 'Healthy Recipes', path: '#'}, {name: 'Activity Ideas', path: '#'}, {name: 'Potty Training', path: '#'}, {name: 'Sleep Training', path: '#'}] },
-    { title: 'Saved Products (8)', items: [{name: 'Baby Monitor', path: '#'}, {name: 'Stroller', path: '#'}, {name: 'Educational Toys', path: '#'}, {name: 'Diapers', path: '#'}] },
+    { title: 'Saved Nannies (2)', items: [{ name: 'Kamrun Nahar', path: '/dashboard/parent/hire-nanny/1' }, { name: 'Aisha Khan', path: '/dashboard/parent/hire-nanny/2' }] },
+    { title: 'Saved Daycares (4)', items: [{ name: 'Happy Kids Daycare', path: '/dashboard/parent/daycare' }, { name: 'Sunny Days Center', path: '/dashboard/parent/daycare' }, { name: 'Little Angels', path: '/dashboard/parent/daycare' }, { name: 'Tiny Tots', path: '/dashboard/parent/daycare' }] },
+    { title: 'Saved Videos (5)', items: [{ name: 'Childcare Tips', path: '#' }, { name: 'Healthy Recipes', path: '#' }, { name: 'Activity Ideas', path: '#' }, { name: 'Potty Training', path: '#' }, { name: 'Sleep Training', path: '#' }] },
+    { title: 'Saved Products (8)', items: [{ name: 'Baby Monitor', path: '#' }, { name: 'Stroller', path: '#' }, { name: 'Educational Toys', path: '#' }, { name: 'Diapers', path: '#' }] },
   ]
 
   return (
@@ -88,7 +88,7 @@ export default function Overview() {
               </div>
               <button className="text-slate-400 hover:text-white">♡</button>
             </div>
-            
+
             <div className="space-y-4 mb-5">
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0">🏫</div>
@@ -123,8 +123,8 @@ export default function Overview() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {statCards.map((stat, idx) => (
-          <div 
-            key={idx} 
+          <div
+            key={idx}
             onClick={() => stat.label === 'Messages' ? setShowMessageModal(true) : null}
             className={`bg-[#1A1D27] border border-[#2A2E3D] rounded-2xl p-4 flex flex-col justify-between ${stat.label === 'Messages' ? 'cursor-pointer hover:border-pink-500/50 transition' : ''}`}
           >
@@ -283,7 +283,7 @@ export default function Overview() {
         <div className="space-y-2">
           {wishlistItems.map((category, idx) => (
             <div key={idx} className="border-b border-[#2A2E3D] last:border-0">
-              <div 
+              <div
                 onClick={() => setExpandedWishlist(expandedWishlist === idx ? null : idx)}
                 className="flex justify-between items-center p-3 rounded-xl hover:bg-white/5 cursor-pointer"
               >

@@ -32,8 +32,8 @@ export default function Messages() {
         </div>
         <div className="flex-1 overflow-y-auto">
           {conversations.map(c => (
-            <div 
-              key={c.id} 
+            <div
+              key={c.id}
               onClick={() => openChat(c)}
               className={`p-4 border-b border-[#2A2E3D] cursor-pointer hover:bg-white/5 transition flex items-center gap-3 ${activeChat?.id === c.id ? 'bg-fuchsia-600/10 border-l-4 border-l-fuchsia-600' : ''}`}
             >
@@ -68,7 +68,7 @@ export default function Messages() {
                 <button className="w-10 h-10 rounded-full bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center">📹</button>
               </div>
             </div>
-            
+
             <div className="flex-1 overflow-y-auto p-5 space-y-4">
               {messages.map(msg => (
                 <div key={msg.id} className={`flex gap-3 max-w-[80%] ${msg.sender === 'me' ? 'ml-auto flex-row-reverse' : ''}`}>

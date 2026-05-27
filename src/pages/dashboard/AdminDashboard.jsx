@@ -1,200 +1,156 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Sidebar from '../../components/Sidebar'
 import { useAuth } from '../../context/AuthContext'
+import { AlertTriangle, ShieldCheck, CheckCircle, XCircle } from 'lucide-react'
 
 const items = [
   {label:'Overview', path:'/dashboard/admin'},
+  {label:'Nanny Verification', path:'/dashboard/admin#verification'},
+  {label:'SOS Emergencies', path:'/dashboard/admin#sos'},
+  {label:'Organizations', path:'/dashboard/admin#organizations'},
   {label:'Admissions', path:'/dashboard/admin#admissions'},
   {label:'Children', path:'/dashboard/admin#children'},
-  {label:'Attendance', path:'/dashboard/admin#attendance'},
-  {label:'Activities', path:'/dashboard/admin#activities'},
-  {label:'Communication', path:'/dashboard/admin#communication'},
-  {label:'Safety', path:'/dashboard/admin#safety'},
-  {label:'Transport', path:'/dashboard/admin#transport'},
-  {label:'CCTV', path:'/dashboard/admin#cctv'},
-  {label:'Health', path:'/dashboard/admin#health'},
-  {label:'Feedback', path:'/dashboard/admin#feedback'}
+  {label:'Safety & CCTV', path:'/dashboard/admin#safety'},
+  {label:'Support', path:'/dashboard/admin#support'}
 ]
 
 const metrics = [
-  ['Admission requests', '12', '4 need review'],
-  ['Checked in today', '38', '2 late pickups'],
-  ['Active alerts', '3', '1 safety incident'],
-  ['Transport routes', '5', '2 delayed']
+  ['Pending Nannies', '24', 'Needs verification'],
+  ['Active Work Sessions', '186', 'Live tracking'],
+  ['SOS Alerts', '2', 'CRITICAL - Action req.'],
+  ['Organizations', '15', '3 pending approval']
 ]
 
-const modules = [
-  {
-    id: 'registration',
-    title: 'Daycare Registration & Verification',
-    text: 'Manage daycare profile, licenses, contact information, facility details, operating hours, emergency contacts, and system admin verification status.',
-    actions: ['Profile creation', 'License upload', 'Facility details', 'Verification status']
-  },
-  {
-    id: 'search',
-    title: 'Parent Search & Discovery',
-    text: 'Keep daycare details searchable by location, ratings, fees, seats, CCTV, transport, supported ages, facilities, and special care services.',
-    actions: ['Available seats', 'Fees and ratings', 'Facilities', 'Advanced filters']
-  },
-  {
-    id: 'admissions',
-    title: 'Child Admission Management',
-    text: 'Review online admission forms, child documents, vaccination records, emergency contacts, and approve or reject applications.',
-    actions: ['Pending applications', 'Documents', 'Vaccination records', 'Approval workflow']
-  },
-  {
-    id: 'activities',
-    title: 'Daily Activity Tracking',
-    text: 'Send parent updates for meals, sleep, bathroom, playtime, learning activities, mood tracking, and child status.',
-    actions: ['Meal update', 'Sleep log', 'Mood tracking', 'Learning activity']
-  },
-  {
-    id: 'attendance',
-    title: 'Attendance Management',
-    text: 'Track child check-in/check-out, history, absence notifications, late pickup alerts, QR scans, and RFID-style attendance.',
-    actions: ['Check in', 'Check out', 'Late pickup alert', 'Attendance history']
-  },
-  {
-    id: 'communication',
-    title: 'Parent Communication',
-    text: 'Send in-app messages, announcements, event reminders, notifications, and emergency communication to parents.',
-    actions: ['Messages', 'Announcements', 'Event reminders', 'Emergency notes']
-  },
-  {
-    id: 'safety',
-    title: 'Child Safety Monitoring',
-    text: 'Monitor live child status, safety alerts, incident reports, emergency notifications, and pickup authorization.',
-    actions: ['Pickup authorization', 'Incident report', 'Safety alert', 'Emergency escalation']
-  },
-  {
-    id: 'transport',
-    title: 'Transport Tracking',
-    text: 'Coordinate GPS bus tracking, route monitoring, pickup/drop notifications, delay alerts, and live location integration.',
-    actions: ['Routes', 'Live location', 'Pickup notice', 'Delay alert']
-  },
-  {
-    id: 'cctv',
-    title: 'CCTV Monitoring',
-    text: 'Provide simulated camera feeds, snapshots, restricted viewing windows, and secure parent access for transparency.',
-    actions: ['Live feed', 'Snapshots', 'Viewing hours', 'Secure access']
-  },
-  {
-    id: 'health',
-    title: 'Meal & Health Reporting',
-    text: 'Track meal records, allergies, medicine reminders, temperature logs, health notes, and emergency medical information.',
-    actions: ['Allergies', 'Medicine reminders', 'Temperature log', 'Medical notes']
-  },
-  {
-    id: 'feedback',
-    title: 'Feedback & Ratings',
-    text: 'Review parent ratings, complaints, service feedback, reports, and parent satisfaction analytics.',
-    actions: ['Ratings', 'Reviews', 'Complaints', 'Satisfaction']
-  }
+const pendingVerifications = [
+  { id: 101, name: 'Kamrun Nahar', type: 'Nanny', docs: ['NID', 'Police Clearance', 'Selfie'], status: 'Pending' },
+  { id: 102, name: 'Caring Hearts Agency', type: 'Organization', docs: ['Trade License', 'Owner NID'], status: 'Pending' },
+  { id: 103, name: 'Deedhity Dhara', type: 'Nanny', docs: ['NID', 'Medical', 'Selfie'], status: 'Pending' }
 ]
 
-const activityRows = [
-  ['Ate lunch at 1:00 PM', 'Meal', 'Sent to parent'],
-  ['Slept for 2 hours', 'Sleep', 'Logged'],
-  ['Participated in drawing activity', 'Learning', 'Shared'],
-  ['Unauthorized pickup attempt blocked', 'Safety', 'Escalated']
+const activeSOS = [
+  { id: 501, nanny: 'Maria Mim', category: 'Medical Emergency', location: 'Lat 23.79, Lng 90.41', time: '2 mins ago', status: 'Unresolved' },
+  { id: 502, nanny: 'Samanta Khan', category: 'Unsafe Environment', location: 'Lat 23.81, Lng 90.42', time: '5 mins ago', status: 'Investigating' }
 ]
 
 export default function AdminDashboard(){
   const { user } = useAuth() || {}
   const isDaycare = user?.role === 'daycare'
+  const isSystemAdmin = user?.role === 'admin' || !isDaycare
 
   return (
     <div className="min-h-[calc(100vh-68px)] bg-slate-50 md:flex">
       <Sidebar items={items} />
       <main className="flex-1 p-4 sm:p-6 lg:p-8">
-        <section className="mb-6 rounded-lg border border-white bg-white p-6 shadow-sm">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-cyan-600">BabyCare+ SafeGuard</p>
-          <h2 className="mt-2 text-3xl font-black text-slate-950">
-            {isDaycare ? 'Daycare admin dashboard' : 'System admin dashboard'}
-          </h2>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-            Manage daycare registration, admissions, child records, attendance, daily reports, parent communication, safety monitoring, transport, CCTV, health logs, and feedback.
-          </p>
-        </section>
-
-        <section className="grid gap-4 md:grid-cols-4">
-          {metrics.map(([label, value, note]) => (
-            <div key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-sm font-bold text-slate-500">{label}</p>
-              <p className="mt-2 text-3xl font-black text-cyan-700">{value}</p>
-              <p className="mt-1 text-sm font-semibold text-slate-600">{note}</p>
-            </div>
-          ))}
-        </section>
-
-        <section className="mt-6 rounded-lg border border-red-100 bg-red-50 p-5">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <p className="text-sm font-black uppercase tracking-[0.16em] text-red-600">Emergency desk</p>
-              <h3 className="mt-1 text-xl font-black text-slate-950">Fire, medical, pickup, and incident alerts</h3>
-              <p className="mt-1 text-sm text-slate-600">Send one-click SOS alerts to parents and admins, block unauthorized pickup, and log incident reports.</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <button className="rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-500">Trigger SOS</button>
-              <button className="rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-bold text-red-700 hover:border-red-400">Report Incident</button>
-            </div>
+        <section className="mb-6 rounded-lg border border-white bg-white p-6 shadow-sm flex items-center justify-between">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-cyan-600">Smart Nanny Ecosystem Platform</p>
+            <h2 className="mt-2 text-3xl font-black text-slate-950">
+              {isDaycare ? 'Daycare Admin Dashboard' : 'System Admin Control Center'}
+            </h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+              Manage nanny and organization verifications, monitor live active work sessions, respond to SOS emergencies, and oversee the entire childcare ecosystem.
+            </p>
           </div>
+          {isSystemAdmin && (
+            <ShieldCheck className="h-16 w-16 text-cyan-700 opacity-20" />
+          )}
         </section>
 
-        <section className="mt-6 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="text-lg font-black text-slate-950">Live child activity feed</h3>
-            <div className="mt-4 overflow-x-auto">
-              <table className="min-w-full text-left text-sm">
-                <thead className="text-slate-500">
-                  <tr>
-                    <th className="py-2 pr-4">Update</th>
-                    <th className="py-2 pr-4">Type</th>
-                    <th className="py-2 pr-4">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="font-semibold text-slate-800">
-                  {activityRows.map(row => (
-                    <tr key={row.join('-')} className="border-t">
-                      {row.map(cell => <td key={cell} className="py-3 pr-4">{cell}</td>)}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+        {isSystemAdmin && (
+          <>
+            <section className="grid gap-4 md:grid-cols-4 mb-6">
+              {metrics.map(([label, value, note], i) => (
+                <div key={label} className={`rounded-lg border p-5 shadow-sm ${i === 2 ? 'border-red-200 bg-red-50' : 'border-slate-200 bg-white'}`}>
+                  <p className={`text-sm font-bold ${i === 2 ? 'text-red-600' : 'text-slate-500'}`}>{label}</p>
+                  <p className={`mt-2 text-3xl font-black ${i === 2 ? 'text-red-700 animate-pulse' : 'text-cyan-700'}`}>{value}</p>
+                  <p className={`mt-1 text-sm font-semibold ${i === 2 ? 'text-red-800' : 'text-slate-600'}`}>{note}</p>
+                </div>
+              ))}
+            </section>
 
-          <div className="rounded-lg border border-cyan-100 bg-cyan-50 p-5 shadow-sm">
-            <h3 className="text-lg font-black text-slate-950">Simulated CCTV & transport</h3>
-            <div className="mt-4 grid gap-3">
-              <div className="rounded-lg bg-slate-950 p-4 text-white">
-                <p className="text-sm font-bold text-cyan-200">Camera 01 - Toddler room</p>
-                <div className="mt-3 h-28 rounded bg-slate-800" />
-                <p className="mt-2 text-xs text-slate-300">Restricted viewing window: 10:00 AM - 2:00 PM</p>
+            <section className="mb-6 rounded-lg border border-red-200 bg-red-50 p-6 shadow-sm relative overflow-hidden" id="sos">
+              <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                <AlertTriangle className="h-32 w-32 text-red-900" />
               </div>
-              <div className="rounded-lg border border-cyan-200 bg-white p-4">
-                <p className="font-bold text-slate-950">Bus Route A</p>
-                <p className="mt-1 text-sm text-slate-600">Live location active, 8 minutes delay, next stop: Lake Road.</p>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="relative flex h-4 w-4">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
+                </div>
+                <h3 className="text-xl font-black text-red-950">Live SOS Emergency Center</h3>
               </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {modules.map(module => (
-            <article key={module.id} id={module.id} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-              <h3 className="text-base font-black text-slate-950">{module.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">{module.text}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {module.actions.map(action => (
-                  <span key={action} className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold text-slate-700">
-                    {action}
-                  </span>
+              
+              <div className="grid gap-4">
+                {activeSOS.map(sos => (
+                  <div key={sos.id} className="bg-white border border-red-100 p-4 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm font-bold text-red-600 uppercase tracking-wider">{sos.category} • {sos.time}</p>
+                      <h4 className="text-lg font-black text-slate-900 mt-1">Nanny: {sos.nanny}</h4>
+                      <p className="text-sm text-slate-600 font-mono mt-1">Last known location: {sos.location}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button className="px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-bold shadow-sm hover:bg-slate-900 transition">Contact Nanny</button>
+                      <button className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-bold shadow-sm hover:bg-red-700 transition">Dispatch Help / Escalate</button>
+                    </div>
+                  </div>
                 ))}
               </div>
-            </article>
-          ))}
-        </section>
+            </section>
+
+            <section className="mb-6 grid gap-6 lg:grid-cols-2">
+              <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm" id="verification">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-black text-slate-950">Pending Verifications</h3>
+                  <span className="text-sm font-bold text-cyan-600 hover:underline cursor-pointer">View All</span>
+                </div>
+                <div className="space-y-4">
+                  {pendingVerifications.map(v => (
+                    <div key={v.id} className="p-4 border border-slate-100 bg-slate-50 rounded-xl flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${v.type === 'Organization' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>{v.type}</span>
+                          <h4 className="font-bold text-slate-900">{v.name}</h4>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-1">Docs: {v.docs.join(', ')}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <button className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition" title="Approve">
+                          <CheckCircle className="h-6 w-6" />
+                        </button>
+                        <button className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition" title="Reject">
+                          <XCircle className="h-6 w-6" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 className="text-xl font-black text-slate-950 mb-4">Platform Health & Monitoring</h3>
+                <div className="space-y-3 text-sm text-slate-700 font-medium">
+                  <div className="flex justify-between p-3 bg-emerald-50 text-emerald-800 rounded-lg">
+                    <span>Active Escrow Salary Payments</span>
+                    <span className="font-bold">$4,520 processing</span>
+                  </div>
+                  <div className="flex justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
+                    <span>Smart Matches Completed Today</span>
+                    <span className="font-bold text-cyan-700">142 successful matches</span>
+                  </div>
+                  <div className="flex justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
+                    <span>Safe Zone Deviations (Last 24h)</span>
+                    <span className="font-bold text-amber-600">8 alerts triggered</span>
+                  </div>
+                  <div className="flex justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
+                    <span>Payment Disputes Pending</span>
+                    <span className="font-bold text-red-600">3 cases open</span>
+                  </div>
+                </div>
+                <button className="mt-4 w-full text-center text-sm font-bold text-slate-500 hover:text-slate-900 transition">Open Full Analytics Dashboard</button>
+              </div>
+            </section>
+          </>
+        )}
       </main>
     </div>
   )

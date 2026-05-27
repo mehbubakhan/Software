@@ -40,6 +40,11 @@ import Safety from '../pages/dashboard/nanny/Safety'
 import Communication from '../pages/dashboard/nanny/Communication'
 import Reviews from '../pages/dashboard/nanny/Reviews'
 import Payments from '../pages/dashboard/nanny/Payments'
+import Learning from '../pages/dashboard/nanny/Learning'
+import ActiveJobs from '../pages/dashboard/nanny/ActiveJobs'
+import Verification from '../pages/dashboard/nanny/Verification'
+import Wellness from '../pages/dashboard/nanny/Wellness'
+import Settings from '../pages/dashboard/nanny/Settings'
 import ProtectedRoute from '../components/ProtectedRoute'
 import RoleRedirect from '../components/RoleRedirect'
 import ChildDashboard from '../pages/dashboard/ChildDashboard'
@@ -96,9 +101,15 @@ export default function AppRoutes(){
         <Route path="profile" element={<Profile/>} />
         <Route path="availability" element={<Availability/>} />
         <Route path="safety" element={<Safety/>} />
+        <Route path="sos" element={<Safety/>} />
         <Route path="communication" element={<Communication/>} />
         <Route path="reviews" element={<Reviews/>} />
         <Route path="payments" element={<Payments/>} />
+        <Route path="learning" element={<Learning/>} />
+        <Route path="active-jobs" element={<ActiveJobs/>} />
+        <Route path="verification" element={<Verification/>} />
+        <Route path="wellness" element={<Wellness/>} />
+        <Route path="settings" element={<Settings/>} />
       </Route>
     </Routes>
   )

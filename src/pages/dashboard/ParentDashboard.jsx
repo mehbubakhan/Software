@@ -259,7 +259,7 @@ function SettingsView() {
         <h3 className="text-white font-semibold">{label}</h3>
         <p className="text-sm text-slate-400 mt-1">{description}</p>
       </div>
-      <button 
+      <button
         onClick={onChange}
         className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${checked ? 'bg-fuchsia-600' : 'bg-slate-700'}`}
       >
@@ -282,20 +282,20 @@ function SettingsView() {
             <span className="text-xl">🔔</span>
             <h2 className="text-xl font-bold text-white">Notifications</h2>
           </div>
-          <Toggle 
-            label="Email Alerts" 
+          <Toggle
+            label="Email Alerts"
             description="Receive daily summaries and important updates via email."
             checked={settings.emailAlerts}
             onChange={() => toggleSetting('emailAlerts')}
           />
-          <Toggle 
-            label="SMS Alerts" 
+          <Toggle
+            label="SMS Alerts"
             description="Get text messages for urgent safety alerts."
             checked={settings.smsAlerts}
             onChange={() => toggleSetting('smsAlerts')}
           />
-          <Toggle 
-            label="Push Notifications" 
+          <Toggle
+            label="Push Notifications"
             description="Receive app notifications for live updates."
             checked={settings.pushNotifications}
             onChange={() => toggleSetting('pushNotifications')}
@@ -308,14 +308,14 @@ function SettingsView() {
             <span className="text-xl">🔒</span>
             <h2 className="text-xl font-bold text-white">Security & Privacy</h2>
           </div>
-          <Toggle 
-            label="Live Location Sharing" 
+          <Toggle
+            label="Live Location Sharing"
             description="Allow daycare and transport to see your child's location."
             checked={settings.locationSharing}
             onChange={() => toggleSetting('locationSharing')}
           />
-          <Toggle 
-            label="Two-Factor Authentication" 
+          <Toggle
+            label="Two-Factor Authentication"
             description="Require an extra code when logging in."
             checked={settings.twoFactor}
             onChange={() => toggleSetting('twoFactor')}
