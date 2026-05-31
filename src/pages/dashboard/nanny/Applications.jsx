@@ -113,6 +113,22 @@ export default function Applications() {
         <p className="text-slate-500 mt-2">Track the status of your job applications</p>
       </div>
 
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        {[
+          { label: 'Pending', count: applications.filter(a => a.status === 'Pending').length, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200' },
+          { label: 'Shortlisted', count: applications.filter(a => a.status === 'Shortlisted').length, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' },
+          { label: 'Interview', count: applications.filter(a => a.status === 'Interview').length, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200' },
+          { label: 'Accepted', count: applications.filter(a => a.status === 'Accepted').length, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200' },
+          { label: 'Rejected', count: applications.filter(a => a.status === 'Rejected').length, color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' },
+        ].map(stat => (
+          <div key={stat.label} className={`p-4 rounded-xl border ${stat.bg} ${stat.border}`}>
+            <div className={`text-2xl font-black ${stat.color}`}>{stat.count}</div>
+            <div className={`text-sm font-medium mt-1 ${stat.color}`}>{stat.label}</div>
+          </div>
+        ))}
+      </div>
+
       {/* Tabs */}
       <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
         {tabs.map(tab => (

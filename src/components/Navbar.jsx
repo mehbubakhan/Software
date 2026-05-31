@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Bell, MessageCircle, User } from 'lucide-react'
+import { Bell, MessageCircle, User, AlertTriangle, Shield } from 'lucide-react'
 
 export default function Navbar(){
   const { user, logout } = useAuth() || {}
@@ -28,6 +28,9 @@ export default function Navbar(){
         <div className="flex items-center gap-6">
           {user ? (
             <div className="flex items-center gap-5">
+              <button className="bg-[#e11d48] hover:bg-[#be123c] text-white px-4 py-1.5 sm:py-2 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 transition-all shadow-md hover:shadow-lg active:scale-95 mr-1">
+                <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">SOS Emergency</span>
+              </button>
               <button className="text-slate-500 hover:text-fuchsia-600 transition relative">
                 <MessageCircle className="h-6 w-6" />
               </button>
@@ -36,9 +39,22 @@ export default function Navbar(){
                 <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">3</span>
               </button>
               <div className="group relative">
-                <button className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-slate-200 bg-slate-100 text-slate-500 hover:border-fuchsia-600 transition">
-                  <User className="h-5 w-5" />
-                </button>
+                <div className="flex items-center gap-3 cursor-pointer">
+                  <img 
+                    src="https://i.pravatar.cc/150?img=5" 
+                    alt="Sarah Johnson" 
+                    className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
+                  />
+                  <div className="hidden md:block">
+                    <h1 className="text-sm font-bold text-slate-900 leading-tight tracking-tight">Sarah Johnson</h1>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="bg-[#1e7b2b] text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+                        <Shield className="w-3 h-3" /> Verified
+                      </span>
+                      <span className="text-[10px] text-slate-500 font-bold bg-slate-100 px-2 py-0.5 rounded-full">Trust Score: 4.8/5</span>
+                    </div>
+                  </div>
+                </div>
                 {/* Dropdown Menu (Hidden by default, shown on hover for profile actions) */}
                 <div className="absolute right-0 mt-2 w-48 origin-top-right rounded-xl border border-slate-200 bg-white shadow-lg opacity-0 invisible transition-all group-hover:opacity-100 group-hover:visible z-50">
                   <div className="p-2">

@@ -59,42 +59,7 @@ export default function NannyDashboard() {
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col font-sans">
       
-      {/* Top Header */}
-      <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between sticky top-0 z-30 shadow-sm">
-        <div className="flex items-center gap-4">
-          <img 
-            src="https://i.pravatar.cc/150?img=5" 
-            alt="Sarah Johnson" 
-            className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
-          />
-          <div>
-            <h1 className="text-xl font-bold text-slate-900 leading-tight tracking-tight">Sarah Johnson</h1>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="bg-[#1e7b2b] text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
-                <Shield className="w-3 h-3" /> Verified
-              </span>
-              <span className="text-xs text-slate-500 font-bold bg-slate-100 px-2 py-0.5 rounded-full">Trust Score: 4.8/5</span>
-            </div>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-6">
-          <button className="bg-[#e11d48] hover:bg-[#be123c] text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-95">
-            <AlertTriangle className="w-5 h-5" /> SOS Emergency
-          </button>
-          
-          <div className="relative cursor-pointer hover:bg-slate-50 p-2.5 rounded-full transition-colors border border-transparent hover:border-slate-200">
-            <Bell className="w-6 h-6 text-slate-600" />
-            <span className="absolute top-1 right-1 w-4 h-4 bg-[#e11d48] text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white shadow-sm">
-              3
-            </span>
-          </div>
-          
-          <button className="border-2 border-blue-100 text-[#2563eb] px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-50 transition-colors shadow-sm">
-            LOGOUT
-          </button>
-        </div>
-      </header>
+
 
       {/* Main Layout Area */}
       <div className="flex flex-1 overflow-hidden">
