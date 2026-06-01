@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ClipboardList, 
   MapPin, 
@@ -69,7 +69,27 @@ export default function Applications() {
     }
   ];
 
-  const [applications, setApplications] = useState(initialApplications);
+  const [applications, setApplications] = useState([]);
+
+  useEffect(() => {
+    fetchApplications();
+  }, []);
+
+  const fetchApplications = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/applications/mine', {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      const data = await response.json();
+      if(data.ok && data.data) {
+        setApplications(data.data);
+      } else {
+        setApplications(initialApplications);
+      }
+    } catch (err) {
+      setApplications(initialApplications);
+    }
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
