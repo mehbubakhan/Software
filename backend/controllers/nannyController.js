@@ -35,6 +35,47 @@ const getAvail = async (req, res) => {
   }catch(err){ return res.status(500).json({ ok:false, error: err.message }) }
 }
 
+const pool = require('../config/db')
+
+const uploadVerificationDoc = async (req, res) => {
+  try {
+    const nanny_id = req.user.id
+    const { document_type } = req.body
+    
+    // In a real app we'd save a file_url. For MVP, we just record the upload.
+    await pool.query(
+      'INSERT INTO nanny_documents (nanny_id, document_type, status) VALUES (?, ?, "pending") ON DUPLICATE KEY UPDATE status="pending", uploaded_at=CURRENT_TIMESTAMP',
+      [nanny_id, document_type]
+    )
+    return res.json({ ok: true })
+  } catch(err) {
+    return res.status(500).json({ ok: false, error: err.message })
+  }
+}
+
+const getVerificationStatus = async (req, res) => {
+  try {
+    const nanny_id = req.user.id
+    const [rows] = await pool.query('SELECT document_type, status FROM nanny_documents WHERE nanny_id = ?', [nanny_id])
+    
+    const statusMap = {
+      id: false,
+      address: false,
+      police: false,
+      medical: false
+    }
+    
+    rows.forEach(r => {
+      // For MVP UI, any status means it's uploaded (we could differentiate verified vs pending if we wanted to reflect it in UI)
+      statusMap[r.document_type] = true
+    })
+    
+    return res.json({ ok: true, data: statusMap })
+  } catch(err) {
+    return res.status(500).json({ ok: false, error: err.message })
+  }
+}
+
 const getAgencies = async (req, res) => {
   const agencies = [
     { id: 1, name: 'Trust Nanny Network', logo: '🛡️', rating: 4.2, reviews: 28, location: 'Liverpool, AU', numNannies: 35, skills: ['Newborn Care', 'Teaching'], desc: 'Background checked professionals with certifications' },
@@ -108,4 +149,4 @@ const getNannyDetails = async (req, res) => {
   return res.json({ ok: true, data: details })
 }
 
-module.exports = { saveProfile, getProfile, saveAvailability, getAvail, getAgencies, getIndividualNannies, getFeaturedNannies, getNannyDetails }
+module.exports = { saveProfile, getProfile, saveAvailability, getAvail, uploadVerificationDoc, getVerificationStatus, getAgencies, getIndividualNannies, getFeaturedNannies, getNannyDetails }
