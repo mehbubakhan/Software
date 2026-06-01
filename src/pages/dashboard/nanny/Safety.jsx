@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   MessageSquare
 } from 'lucide-react';
+import api from '../../../services/api';
 
 export default function Safety() {
   const [sessionActive, setSessionActive] = useState(false);
@@ -42,10 +43,20 @@ export default function Safety() {
     }
   };
 
-  const triggerSOS = () => {
+  const triggerSOS = async () => {
     if(window.confirm('CRITICAL: Are you sure you want to trigger an SOS alert?')) {
       setSosSent(true);
-      setTimeout(() => alert(`SOS TRIGGERED! Admin and local authorities are being notified.`), 500);
+      try {
+        await api.post('/sos', {
+          lat: 23.8103, // In a real app we'd get this from navigator.geolocation
+          lng: 90.4125,
+          message: 'Emergency SOS triggered from Nanny Dashboard'
+        });
+        alert(`SOS TRIGGERED! Admin and local authorities are being notified.`);
+      } catch(err) {
+        alert('Failed to send SOS. Try calling emergency contacts directly.');
+        setSosSent(false);
+      }
     }
   };
 
