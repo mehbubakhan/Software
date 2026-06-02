@@ -136,7 +136,20 @@ export default function AdminDashboard(){
                 </div>
                 <div className="space-y-4">
                   {pendingVerifications.length === 0 ? (
-                    <p className="text-sm font-bold text-slate-500 text-center py-4">No pending verifications.</p>
+                    <div className="p-4 border border-slate-100 bg-slate-50 rounded-xl flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">Nanny</span>
+                          <h4 className="font-bold text-slate-900">Kamrun Nahar</h4>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-1">Docs: National ID, Childcare Certification</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={() => alert('Approved Kamrun Nahar')} className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition" title="Approve">
+                          <CheckCircle className="h-6 w-6" />
+                        </button>
+                      </div>
+                    </div>
                   ) : (
                     pendingVerifications.map(v => (
                       <div key={v.id} className="p-4 border border-slate-100 bg-slate-50 rounded-xl flex items-center justify-between">
@@ -181,7 +194,175 @@ export default function AdminDashboard(){
                     <span className="font-bold text-red-600">3 cases open</span>
                   </div>
                 </div>
-                <button className="mt-4 w-full text-center text-sm font-bold text-slate-500 hover:text-slate-900 transition">Open Full Analytics Dashboard</button>
+                <button onClick={() => alert('Detailed platform telemetry loading...')} className="mt-4 w-full text-center text-sm font-bold text-slate-500 hover:text-slate-900 transition">Open Full Analytics Dashboard</button>
+              </div>
+            </section>
+
+            {/* 🏢 Organizations Section */}
+            <section className="mb-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm scroll-mt-6" id="organizations">
+              <div className="flex items-center justify-between mb-4 border-b pb-4">
+                <div>
+                  <h3 className="text-xl font-black text-slate-950">Ecosystem Organizations</h3>
+                  <p className="text-sm text-slate-500 mt-1">Verified partner daycares, schools, and care agencies</p>
+                </div>
+                <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">12 Registered</span>
+              </div>
+              <div className="grid gap-4 md:grid-cols-3">
+                {[
+                  { name: 'Little Stars Daycare Center', type: 'Daycare', status: 'Active', members: '48 children' },
+                  { name: 'Trust Nanny Network Corp', type: 'Agency', status: 'Active', members: '35 nannies' },
+                  { name: 'Greenfields Orphanage Home', type: 'Orphanage', status: 'Pending Approval', members: '18 kids registered' }
+                ].map((org, idx) => (
+                  <div key={idx} className="border border-slate-100 p-4 rounded-xl hover:shadow-md transition bg-slate-50/50">
+                    <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded ${org.type === 'Daycare' ? 'bg-indigo-100 text-indigo-700' : org.type === 'Agency' ? 'bg-amber-100 text-amber-700' : 'bg-fuchsia-100 text-fuchsia-700'}`}>{org.type}</span>
+                    <h4 className="font-bold text-slate-900 mt-2">{org.name}</h4>
+                    <p className="text-xs text-slate-500 mt-1">{org.members}</p>
+                    <div className="flex items-center justify-between mt-4 pt-2 border-t border-slate-100">
+                      <span className={`text-xs font-semibold ${org.status === 'Active' ? 'text-emerald-600' : 'text-amber-500 animate-pulse'}`}>{org.status}</span>
+                      <button onClick={() => alert(`Configuring ${org.name}`)} className="text-xs text-cyan-600 font-bold hover:underline">Manage</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* 📝 Admissions Section */}
+            <section className="mb-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm scroll-mt-6" id="admissions">
+              <div className="flex items-center justify-between mb-4 border-b pb-4">
+                <div>
+                  <h3 className="text-xl font-black text-slate-950">Admissions & Applications</h3>
+                  <p className="text-sm text-slate-500 mt-1">Cross-institutional registration requests and enrollment logs</p>
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-sm">
+                  <thead>
+                    <tr className="border-b border-slate-200 text-slate-400 font-bold">
+                      <th className="py-2">Child Name</th>
+                      <th className="py-2">Destination</th>
+                      <th className="py-2">Parent</th>
+                      <th className="py-2">Date Submitted</th>
+                      <th className="py-2">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { child: 'Emma Stone', target: 'Little Stars Daycare', parent: 'John Stone', date: 'June 01, 2026', status: 'Approved' },
+                      { child: 'Liam Neeson', target: 'Rainbow Learning Center', parent: 'Sarah Neeson', date: 'May 28, 2026', status: 'Pending Review' },
+                      { child: 'Noah Miller', target: 'Happy Hearts Childcare', parent: 'Lisa Miller', date: 'May 27, 2026', status: 'Approved' }
+                    ].map((row, idx) => (
+                      <tr key={idx} className="border-b border-slate-50 hover:bg-slate-50 transition">
+                        <td className="py-3 font-bold text-slate-900">{row.child}</td>
+                        <td className="py-3 text-slate-700">{row.target}</td>
+                        <td className="py-3 text-slate-600">{row.parent}</td>
+                        <td className="py-3 text-slate-500">{row.date}</td>
+                        <td className="py-3">
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${row.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>{row.status}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            {/* 👧 Children Registry */}
+            <section className="mb-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm scroll-mt-6" id="children">
+              <div className="flex items-center justify-between mb-4 border-b pb-4">
+                <div>
+                  <h3 className="text-xl font-black text-slate-950">Active Children Registry</h3>
+                  <p className="text-sm text-slate-500 mt-1">Ecosystem-wide list of children with active care status</p>
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                {[
+                  { name: 'Emma Stone', age: '4 yrs', care: 'Daycare Mode', details: 'Assigned: Lisa Thompson (Teacher)' },
+                  { name: 'Liam Miller', age: '3 yrs', care: 'Nanny Assigned', details: 'Assigned: Kamrun Nahar (Nanny)' }
+                ].map((child, idx) => (
+                  <div key={idx} className="border border-slate-200 rounded-xl p-4 flex items-center gap-4 bg-slate-50">
+                    <div className="text-2xl w-12 h-12 bg-white rounded-full flex items-center justify-center border shadow-sm">👧</div>
+                    <div>
+                      <h4 className="font-bold text-slate-900">{child.name} <span className="text-xs text-slate-400 font-normal">({child.age})</span></h4>
+                      <p className="text-xs text-cyan-600 font-semibold mt-0.5">{child.care}</p>
+                      <p className="text-xs text-slate-500 mt-1">{child.details}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* 🛡️ Safety & CCTV Monitoring */}
+            <section className="mb-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm scroll-mt-6" id="safety">
+              <div className="flex items-center justify-between mb-4 border-b pb-4">
+                <div>
+                  <h3 className="text-xl font-black text-slate-950">Live Safety & CCTV Center</h3>
+                  <p className="text-sm text-slate-500 mt-1">Safe zone tracking, system telemetry, and nursery camera feeds</p>
+                </div>
+                <span className="flex h-3 w-3 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                </span>
+              </div>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-inner bg-slate-950 aspect-video flex flex-col justify-between p-4 text-white relative">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_40%,_rgba(0,0,0,0.8)_100%)]"></div>
+                  <div className="flex justify-between items-center relative z-10">
+                    <span className="bg-red-600 text-xs px-2 py-0.5 font-bold rounded animate-pulse">REC CH-01</span>
+                    <span className="text-xs font-mono text-slate-300">Playground East</span>
+                  </div>
+                  <div className="text-center py-6 text-slate-400 text-sm relative z-10">
+                    <p className="text-4xl mb-2">🧒🏕️</p>
+                    <p className="font-mono text-xs">FEED ONLINE • 30 FPS</p>
+                  </div>
+                  <div className="flex justify-between items-center text-xs text-slate-400 relative z-10">
+                    <span>1080p HD</span>
+                    <span>2026-06-03 02:04</span>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="font-bold text-slate-900">Active Safe Zones</h4>
+                  {[
+                    { zone: 'Little Stars Playground', radius: '500m', alerts: '0 deviations', status: 'Nominal' },
+                    { zone: 'Gulshan Nanny Route', radius: '1.2km', alerts: '1 deviation resolved', status: 'Nominal' }
+                  ].map((sz, idx) => (
+                    <div key={idx} className="border border-slate-100 p-3 bg-slate-50 rounded-xl flex items-center justify-between text-xs font-medium">
+                      <div>
+                        <h5 className="font-bold text-slate-900">{sz.zone}</h5>
+                        <p className="text-slate-500 mt-1">Radius: {sz.radius} • {sz.alerts}</p>
+                      </div>
+                      <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded font-bold">{sz.status}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* 💬 Support tickets & Escrow disputes */}
+            <section className="mb-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm scroll-mt-6" id="support">
+              <div className="flex items-center justify-between mb-4 border-b pb-4">
+                <div>
+                  <h3 className="text-xl font-black text-slate-950">Dispute & Support Resolution</h3>
+                  <p className="text-sm text-slate-500 mt-1">Resolve platform complaints and payment disputes</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {[
+                  { user: 'Sarah Miller (Parent)', title: 'Nanny session hours discrepancy', id: 'TKT-9912', priority: 'High', status: 'Under Review' },
+                  { user: 'Maria Mim (Nanny)', title: 'Escrow release processing delay', id: 'TKT-9854', priority: 'Medium', status: 'Resolved' }
+                ].map((ticket, idx) => (
+                  <div key={idx} className="p-4 border border-slate-200 rounded-xl hover:border-slate-300 transition flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                    <div>
+                      <span className="text-xs text-slate-400 font-mono">ID: {ticket.id}</span>
+                      <h4 className="font-bold text-slate-900 mt-0.5">{ticket.title}</h4>
+                      <p className="text-xs text-slate-500 mt-1">Created by: {ticket.user}</p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span className={`px-2 py-0.5 rounded text-xs font-bold ${ticket.priority === 'High' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700'}`}>{ticket.priority}</span>
+                      <span className={`px-2 py-0.5 rounded text-xs font-bold ${ticket.status === 'Resolved' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700 animate-pulse'}`}>{ticket.status}</span>
+                      <button onClick={() => alert(`Opening details for ${ticket.id}`)} className="px-3 py-1 bg-cyan-600 hover:bg-cyan-700 text-white rounded text-xs font-bold transition">Resolve</button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
           </>

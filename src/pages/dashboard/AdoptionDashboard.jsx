@@ -54,6 +54,13 @@ export default function AdoptionDashboard() {
     getChildren().then(res => setChildren(res.data.data)).catch(console.error)
     getApplications().then(res => setApplications(res.data.data)).catch(console.error)
     getMyOrphanage().then(res => setOrphanage(res.data.data)).catch(() => setOrphanage(null))
+    
+    if (window.location.hash) {
+      const hash = window.location.hash;
+      setTimeout(() => {
+        document.getElementById(hash.substring(1))?.scrollIntoView({ behavior: 'smooth' })
+      }, 500)
+    }
   }, [])
 
   const averageCompatibility = useMemo(() => {

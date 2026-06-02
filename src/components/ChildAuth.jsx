@@ -1,20 +1,39 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import api from '../services/api';
 
 export default function ChildAuth({ isOpen, onClose, onSuccess }) {
   const [pin, setPin] = useState('');
   const [error, setError] = useState('');
+  const [actualPin, setActualPin] = useState('1234');
+
+  useEffect(() => {
+    if (isOpen) {
+      const loadProfile = async () => {
+        try {
+          const res = await api.get('/family/profile');
+          if (res.data?.data?.childModePin) {
+            setActualPin(res.data.data.childModePin);
+          } else if (res.data?.childModePin) {
+            setActualPin(res.data.childModePin);
+          }
+        } catch (err) {
+          console.warn('Failed to load parent profile PIN, using fallback', err);
+        }
+      };
+      loadProfile();
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // For now, simple client side check or assume valid if 4 digits
-    if (pin === '1234') { // Hardcoded 1234 for demo validation
+    if (pin === actualPin) {
       onClose();
       if (onSuccess) onSuccess();
     } else {
-      setError('Please enter a 4-digit PIN');
+      setError('Incorrect PIN. Please try again.');
+      setPin('');
     }
   };
 
@@ -27,7 +46,7 @@ export default function ChildAuth({ isOpen, onClose, onSuccess }) {
           </div>
           <h2 className="text-2xl font-bold text-slate-900">Parent PIN</h2>
           <p className="mt-2 text-sm text-slate-600">
-            Enter PIN (1234) to confirm action.
+            Enter your 4-digit Parent PIN to exit.
           </p>
         </div>
 
@@ -60,7 +79,7 @@ export default function ChildAuth({ isOpen, onClose, onSuccess }) {
               type="submit"
               className="flex-1 rounded-xl bg-fuchsia-600 py-3 font-semibold text-white shadow-md hover:bg-fuchsia-700 hover:shadow-lg"
             >
-              Enter
+              Verify
             </button>
           </div>
         </form>

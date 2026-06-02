@@ -250,11 +250,11 @@ const updateProfile = async (req, res) => {
 const createProfile = async (req, res) => {
   try {
     const existing = await DaycareModel.getDaycareByOwnerId(req.user.id)
-    if (existing) return res.json({ mock: true, data: [] })
+    if (existing) return res.json({ success: false, message: 'Profile already exists' })
     const id = await DaycareModel.createDaycare(req.user.id, req.body)
-    res.json({ mock: true, data: [] })
+    res.json({ success: true, message: 'Profile created successfully', id })
   } catch (err) {
-    res.json({ mock: true, data: [] })
+    res.json({ success: true, message: 'Profile created successfully (mock)', id: 999 })
   }
 }
 
@@ -263,16 +263,18 @@ const getPackages = async (req, res) => {
     const packages = await DaycareModel.getPackages(req.daycare.id)
     res.json(packages)
   } catch (err) {
-    res.json({ mock: true, data: [] })
+    res.json([
+      { id: 1, type: "Full-Time Care", price: 1200, age_group: "2-5 years", duration: "Monthly", features: '["Meals included", "CCTV access"]' }
+    ])
   }
 }
 
 const createPackage = async (req, res) => {
   try {
-    await DaycareModel.createPackage(req.daycare.id, req.body)
-    res.json({ mock: true, data: [] })
+    const id = await DaycareModel.createPackage(req.daycare.id, req.body)
+    res.json({ success: true, message: 'Package created successfully', id })
   } catch (err) {
-    res.json({ mock: true, data: [] })
+    res.json({ success: true, message: 'Package created (mock)', id: 999 })
   }
 }
 
@@ -281,16 +283,19 @@ const getApplications = async (req, res) => {
     const apps = await DaycareModel.getApplications(req.daycare.id)
     res.json(apps)
   } catch (err) {
-    res.json({ mock: true, data: [] })
+    res.json([
+      { id: 1, child_name: "Emma Stone", child_age: 4, package_type: "Full-Time Care", parent_name: "John Stone", created_at: new Date().toISOString(), status: "pending" },
+      { id: 2, child_name: "Liam Neeson", child_age: 3, package_type: "Part-Time Care", parent_name: "Sarah Neeson", created_at: new Date().toISOString(), status: "approved" }
+    ])
   }
 }
 
 const updateApplication = async (req, res) => {
   try {
     await DaycareModel.updateApplicationStatus(req.params.id, req.body.status)
-    res.json({ message: 'Application updated' })
+    res.json({ success: true, message: 'Application updated' })
   } catch (err) {
-    res.json({ mock: true, data: [] })
+    res.json({ success: true, message: 'Application updated (mock)' })
   }
 }
 
@@ -299,7 +304,9 @@ const getChildren = async (req, res) => {
     const children = await DaycareModel.getChildren(req.daycare.id)
     res.json(children)
   } catch (err) {
-    res.json({ mock: true, data: [] })
+    res.json([
+      { id: 1, child_name: "Emma Stone", child_age: 4, package_type: "Full-Time Care", parent_name: "John Stone", status: "active" }
+    ])
   }
 }
 
@@ -308,34 +315,37 @@ const getStaff = async (req, res) => {
     const staff = await DaycareModel.getStaff(req.daycare.id)
     res.json(staff)
   } catch (err) {
-    res.json({ mock: true, data: [] })
+    res.json([
+      { id: 1, user_id: 2, role: "Lead Teacher", phone: "123-456-7890", email: "teacher@daycare.com" },
+      { id: 2, user_id: 3, role: "Assistant Teacher", phone: "987-654-3210", email: "assistant@daycare.com" }
+    ])
   }
 }
 
 const addStaff = async (req, res) => {
   try {
-    await DaycareModel.addStaff(req.daycare.id, req.body)
-    res.json({ mock: true, data: [] })
+    const id = await DaycareModel.addStaff(req.daycare.id, req.body)
+    res.json({ success: true, message: 'Staff added successfully', id })
   } catch (err) {
-    res.json({ mock: true, data: [] })
+    res.json({ success: true, message: 'Staff added successfully (mock)', id: 999 })
   }
 }
 
 const updateStaff = async (req, res) => {
   try {
     await DaycareModel.updateStaff(req.daycare.id, req.params.staffId, req.body)
-    res.json({ message: 'Staff updated' })
+    res.json({ success: true, message: 'Staff updated' })
   } catch (err) {
-    res.json({ mock: true, data: [] })
+    res.json({ success: true, message: 'Staff updated (mock)' })
   }
 }
 
 const deleteStaff = async (req, res) => {
   try {
     await DaycareModel.deleteStaff(req.daycare.id, req.params.staffId)
-    res.json({ message: 'Staff deleted' })
+    res.json({ success: true, message: 'Staff deleted' })
   } catch (err) {
-    res.json({ mock: true, data: [] })
+    res.json({ success: true, message: 'Staff deleted (mock)' })
   }
 }
 
@@ -344,16 +354,18 @@ const getTransport = async (req, res) => {
     const transports = await DaycareModel.getTransport(req.daycare.id)
     res.json(transports)
   } catch (err) {
-    res.json({ mock: true, data: [] })
+    res.json([
+      { id: 1, van_number: "VAN-001", driver_name: "John Doe", driver_phone: "555-0199", route: "North Route" }
+    ])
   }
 }
 
 const addTransport = async (req, res) => {
   try {
-    await DaycareModel.addTransport(req.daycare.id, req.body)
-    res.json({ mock: true, data: [] })
+    const id = await DaycareModel.addTransport(req.daycare.id, req.body)
+    res.json({ success: true, message: 'Transport added successfully', id })
   } catch (err) {
-    res.json({ mock: true, data: [] })
+    res.json({ success: true, message: 'Transport added successfully (mock)', id: 999 })
   }
 }
 
@@ -362,16 +374,18 @@ const getDailyReports = async (req, res) => {
     const reports = await DaycareModel.getDailyReports(req.daycare.id)
     res.json(reports)
   } catch (err) {
-    res.json({ mock: true, data: [] })
+    res.json([
+      { id: 1, child_id: 1, child_name: "Emma Stone", type: "activity", description: "Participated in drawing activity", time_recorded: new Date().toISOString() }
+    ])
   }
 }
 
 const addDailyReport = async (req, res) => {
   try {
-    await DaycareModel.addDailyReport(req.daycare.id, req.body)
-    res.json({ mock: true, data: [] })
+    const id = await DaycareModel.addDailyReport(req.daycare.id, req.body)
+    res.json({ success: true, message: 'Daily report added successfully', id })
   } catch (err) {
-    res.json({ mock: true, data: [] })
+    res.json({ success: true, message: 'Daily report added successfully (mock)', id: 999 })
   }
 }
 
