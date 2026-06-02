@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   CheckCircle, 
   Shield, 
@@ -9,6 +9,7 @@ import {
   AlertTriangle,
   Lock
 } from 'lucide-react';
+import api from '../../../services/api';
 
 export default function Verification() {
   const [docsUploaded, setDocsUploaded] = useState({
@@ -18,15 +19,33 @@ export default function Verification() {
     medical: false
   });
 
+  useEffect(() => {
+    fetchStatus();
+  }, []);
+
+  const fetchStatus = async () => {
+    try {
+      const { data } = await api.get('/nanny/verify');
+      if (data?.ok && data?.data) {
+        setDocsUploaded(data.data);
+      }
+    } catch(err) {
+      console.error(err);
+    }
+  };
+
   const progress = Object.values(docsUploaded).filter(Boolean).length * 25; // 4 docs = 25% each
 
-  const handleUpload = (type) => {
-    // Simulate file upload
-    alert(`Uploading ${type}...`);
-    setTimeout(() => {
-      setDocsUploaded(prev => ({ ...prev, [type]: true }));
-      alert(`${type} uploaded successfully!`);
-    }, 1000);
+  const handleUpload = async (type) => {
+    try {
+      const { data } = await api.post('/nanny/verify', { document_type: type });
+      if (data?.ok) {
+        setDocsUploaded(prev => ({ ...prev, [type]: true }));
+        alert(`${type} uploaded successfully!`);
+      }
+    } catch(err) {
+      alert('Error uploading document.');
+    }
   };
 
   return (

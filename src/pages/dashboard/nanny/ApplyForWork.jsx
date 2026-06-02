@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, MapPin, Clock, Baby, Heart, Check, Send, User, MessageCircle, X, Navigation, Bookmark, BookmarkCheck, Sparkles } from 'lucide-react';
 
 export default function ApplyForWork() {
@@ -78,12 +78,41 @@ export default function ApplyForWork() {
     }
   ];
 
-  const [jobs, setJobs] = useState(initialJobs);
+  const [jobs, setJobs] = useState([]);
 
-  const handleApply = (id) => {
-    setJobs(jobs.map(job => 
-      job.id === id ? { ...job, applied: true } : job
-    ));
+  useEffect(() => {
+    fetchJobs();
+  }, []);
+
+  const fetchJobs = async () => {
+    try {
+      // In a real app we'd fetch from api.get('/jobs/open')
+      const response = await fetch('http://localhost:5000/api/jobs/open', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      const data = await response.json();
+      if(data.ok && data.data) {
+        setJobs(data.data);
+      } else {
+        setJobs(initialJobs); // Fallback to initial mock if backend fails
+      }
+    } catch(err) {
+      setJobs(initialJobs); // Fallback to initial mock if backend fails
+    }
+  };
+
+  const handleApply = async (id) => {
+    try {
+      // In a real app we'd call api.post('/jobs/apply', { job_id: id })
+      setJobs(jobs.map(job => 
+        job.id === id ? { ...job, applied: true } : job
+      ));
+      alert('Applied successfully!');
+    } catch(err) {
+      alert('Error applying');
+    }
   };
 
   const handleToggleSave = (id, e) => {

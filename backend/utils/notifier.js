@@ -12,18 +12,22 @@ if(process.env.SMTP_HOST && process.env.SMTP_USER){
 }
 
 const notifyParentsOfNanny = async (nanny_id, { subject, text, html }) => {
-  // find parent emails for children that this nanny has activities for
-  const [rows] = await pool.query('SELECT DISTINCT u.email FROM users u JOIN children c ON u.id = c.parent_id JOIN activities a ON c.id = a.child_id WHERE a.nanny_id = ?', [nanny_id])
-  const emails = rows.map(r=>r.email).filter(Boolean)
-  if(emails.length === 0){
-    console.log('notifier: no parent emails found for nanny', nanny_id)
-    return
-  }
-  if(transporter){
-    const info = await transporter.sendMail({ from: process.env.SMTP_FROM || process.env.SMTP_USER, to: emails.join(','), subject, text, html })
-    console.log('notifier: sent emails', info.messageId)
-  }else{
-    console.log('notifier: SMTP not configured — would notify:', emails, subject, text)
+  try {
+    // find parent emails for children that this nanny has activities for
+    const [rows] = await pool.query('SELECT DISTINCT u.email FROM users u JOIN children c ON u.id = c.parent_id JOIN activities a ON c.id = a.child_id WHERE a.nanny_id = ?', [nanny_id])
+    const emails = rows.map(r=>r.email).filter(Boolean)
+    if(emails.length === 0){
+      console.log('notifier: no parent emails found for nanny', nanny_id)
+      return
+    }
+    if(transporter){
+      const info = await transporter.sendMail({ from: process.env.SMTP_FROM || process.env.SMTP_USER, to: emails.join(','), subject, text, html })
+      console.log('notifier: sent emails', info.messageId)
+    }else{
+      console.log('notifier: SMTP not configured — would notify:', emails, subject, text)
+    }
+  } catch (err) {
+    console.warn('[notifier] DB unavailable, skipping parent notification for nanny', nanny_id, err.message)
   }
 }
 

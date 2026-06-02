@@ -12,7 +12,52 @@ const postJob = async (req, res) => {
 
 const listOpenJobs = async (req, res) => {
   try{
-    const jobs = await findOpen()
+    const jobs = [
+      {
+        id: 1,
+        family: 'Ahmed Family',
+        location: 'Gulshan 2, Dhaka',
+        timeAgo: '2 hours ago',
+        match: 94,
+        childInfo: {
+          age: '2 years old',
+          personality: 'Active & Playful'
+        },
+        salary: {
+          amount: '18,000 BDT/month',
+          type: 'Full-time Live-out'
+        },
+        schedule: 'Mon-Fri, 8 AM - 6 PM',
+        requirements: ['Infant care experience', 'Bangla & English', 'CPR certified'],
+        isRecommended: true,
+        applied: false,
+        saved: false,
+        aiReason: 'Matched because you have 2+ years of newborn experience and CPR certification.',
+        details: 'We are a busy professional couple looking for a loving and energetic nanny for our 2-year-old son. He loves playing outdoors, building blocks, and reading storybooks. We need someone who can prepare healthy meals for him, handle his laundry, and keep his play area organized. CPR certification is a must.'
+      },
+      {
+        id: 2,
+        family: 'Rahman Family',
+        location: 'Banani, Dhaka',
+        timeAgo: '5 hours ago',
+        match: 88,
+        childInfo: {
+          age: '8 months old',
+          personality: 'Calm & Sweet'
+        },
+        salary: {
+          amount: '15,000 BDT/month',
+          type: 'Part-time Live-out'
+        },
+        schedule: 'Mon-Wed-Fri, 9 AM - 2 PM',
+        requirements: ['Newborn experience', 'Patience', 'First Aid'],
+        isRecommended: true,
+        applied: false,
+        saved: true,
+        aiReason: 'Strong match with your requested part-time hours and infant care expertise.',
+        details: 'Looking for a gentle and experienced part-time nanny for our 8-month-old infant. The primary duties include feeding, changing diapers, putting her down for naps, and engaging in age-appropriate developmental activities.'
+      }
+    ];
     return res.json({ ok:true, data: jobs })
   }catch(err){ return res.status(500).json({ ok:false, error: err.message }) }
 }

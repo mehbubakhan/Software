@@ -18,4 +18,5 @@ router.use('/learning', require('./learning'))
 router.use('/daycare', require('./daycare'))
 router.use('/families', require('./families'))
 router.use('/messages', require('./messages'))
+router.use('/admin', require('./admin'))
 module.exports = router
