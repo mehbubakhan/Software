@@ -102,4 +102,51 @@ CREATE TABLE IF NOT EXISTS adoption_follow_ups (
   FOREIGN KEY (application_id) REFERENCES adoption_applications(id) ON DELETE CASCADE
 );
 
+-- 8. adoption_documents
+CREATE TABLE IF NOT EXISTS adoption_documents (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  application_id INT NOT NULL,
+  doc_type VARCHAR(100) NOT NULL,
+  file_url VARCHAR(500) NOT NULL,
+  verification_status ENUM('pending', 'verified', 'rejected') DEFAULT 'pending',
+  verified_by INT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (application_id) REFERENCES adoption_applications(id) ON DELETE CASCADE,
+  FOREIGN KEY (verified_by) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- 9. adoption_notifications
+CREATE TABLE IF NOT EXISTS adoption_notifications (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  message TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- 10. adoption_payments
+CREATE TABLE IF NOT EXISTS adoption_payments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  application_id INT NOT NULL,
+  amount DECIMAL(10, 2) NOT NULL,
+  payment_type VARCHAR(100),
+  status ENUM('pending', 'completed', 'failed', 'refunded') DEFAULT 'pending',
+  transaction_id VARCHAR(255),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (application_id) REFERENCES adoption_applications(id) ON DELETE CASCADE
+);
+
+-- 11. adoption_audit_logs
+CREATE TABLE IF NOT EXISTS adoption_audit_logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  application_id INT,
+  action_by INT NOT NULL,
+  action_type VARCHAR(100) NOT NULL,
+  description TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (application_id) REFERENCES adoption_applications(id) ON DELETE CASCADE,
+  FOREIGN KEY (action_by) REFERENCES users(id) ON DELETE CASCADE
+);
+
 SET FOREIGN_KEY_CHECKS = 1;

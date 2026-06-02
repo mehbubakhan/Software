@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
+import api from '../../services/api'
 import Sidebar from '../../components/Sidebar'
 import { useAuth } from '../../context/AuthContext'
 import Overview from './parent/Overview'
@@ -11,6 +12,9 @@ import Marketplace from './parent/Marketplace'
 import AdoptionLayout from './parent/AdoptionLayout'
 import Reports from './parent/Reports'
 import ChildProfile from './parent/ChildProfile'
+import FamilySchedule from './parent/FamilySchedule'
+import JobRequests from './parent/JobRequests'
+import Interviews from './parent/Interviews'
 
 const items = [
   { label: 'Dashboard', path: '/dashboard/parent', icon: 'svg-dashboard' },
@@ -29,6 +33,7 @@ const items = [
 function ProfileView() {
   const { user } = useAuth() || {}
   const [isEditingPin, setIsEditingPin] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -36,13 +41,40 @@ function ProfileView() {
     address: '',
     emergencyContact: '',
     childModePin: '',
-    childName: 'Emma',
-    childAge: '4',
-    childNotes: 'No allergies reported',
+    childName: '',
+    childAge: '',
+    childNotes: '',
   })
+
+  useEffect(() => {
+    api.get('/families/my/profile').then(res => {
+      if (res.data.ok) {
+        setProfile(prev => ({ ...prev, ...res.data.profile }))
+      }
+      setLoading(false)
+    }).catch(err => {
+      console.error(err)
+      setLoading(false)
+    })
+  }, [])
 
   const updateField = (key, value) => {
     setProfile(prev => ({ ...prev, [key]: value }))
+  }
+
+  const handleSave = async (event) => {
+    event.preventDefault()
+    try {
+      const res = await api.put('/families/my/profile', profile)
+      if (res.data.ok) {
+        alert('Profile updated successfully.')
+      } else {
+        alert('Failed to update profile: ' + res.data.error)
+      }
+    } catch (err) {
+      console.error(err)
+      alert('Error updating profile.')
+    }
   }
 
   return (
@@ -55,10 +87,7 @@ function ProfileView() {
       <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
         <form
           className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
-          onSubmit={(event) => {
-            event.preventDefault()
-            alert('Profile updated successfully.')
-          }}
+          onSubmit={handleSave}
         >
           <div className="mb-6 flex items-center gap-5">
             <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-fuchsia-500 bg-slate-100">
@@ -212,32 +241,8 @@ function MessagesView() {
   )
 }
 
-function JobRequestsView() {
-  return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-slate-900">Job Requests</h1>
-      <p className="mt-2 text-slate-600">View and manage your job requests.</p>
-    </div>
-  )
-}
 
-function InterviewsView() {
-  return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-slate-900">Interviews</h1>
-      <p className="mt-2 text-slate-600">Schedule and manage your interviews.</p>
-    </div>
-  )
-}
 
-function ScheduleView() {
-  return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-slate-900">Schedule</h1>
-      <p className="mt-2 text-slate-600">View your schedule and appointments.</p>
-    </div>
-  )
-}
 
 function SettingsView() {
   const [settings, setSettings] = useState({
@@ -361,9 +366,9 @@ export default function ParentDashboard() {
           <Route path="messages" element={<MessagesView />} />
           <Route path="reports" element={<Reports />} />
           <Route path="child-profile/:id" element={<ChildProfile />} />
-          <Route path="job-requests" element={<JobRequestsView />} />
-          <Route path="interviews" element={<InterviewsView />} />
-          <Route path="schedule" element={<ScheduleView />} />
+          <Route path="job-requests" element={<JobRequests />} />
+          <Route path="interviews" element={<Interviews />} />
+          <Route path="schedule" element={<FamilySchedule />} />
           <Route path="settings" element={<SettingsView />} />
         </Routes>
       </main>

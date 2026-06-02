@@ -91,6 +91,18 @@ class DaycareModel {
     return result.insertId
   }
 
+  static async updateStaff(daycareId, staffId, data) {
+    const { role, phone, email } = data
+    await db.query(
+      'UPDATE daycare_staff SET role = ?, phone = ?, email = ? WHERE id = ? AND daycare_id = ?',
+      [role, phone, email, staffId, daycareId]
+    )
+  }
+
+  static async deleteStaff(daycareId, staffId) {
+    await db.query('DELETE FROM daycare_staff WHERE id = ? AND daycare_id = ?', [staffId, daycareId])
+  }
+
   static async getTransport(daycareId) {
     const [rows] = await db.query('SELECT * FROM daycare_transport WHERE daycare_id = ?', [daycareId])
     return rows

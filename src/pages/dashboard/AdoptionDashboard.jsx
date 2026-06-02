@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react'
 import Sidebar from '../../components/Sidebar'
 import { useAuth } from '../../context/AuthContext'
-import { getChildren, getApplications } from '../../services/adoptionApi'
+import { getChildren, getApplications, updateApplicationStatus } from '../../services/adoptionApi'
 
 const items = [
   { label: 'Adoption Overview', path: '/dashboard/adoption' },
@@ -57,6 +57,17 @@ export default function AdoptionDashboard() {
     const total = applications.reduce((sum, item) => sum + (item.compatibility_score || 0), 0)
     return Math.round(total / applications.length)
   }, [applications])
+
+  const handleUpdateStatus = async (id, newStatus) => {
+    try {
+      await updateApplicationStatus(id, newStatus);
+      setApplications(applications.map(app => app.id === id ? { ...app, application_status: newStatus } : app));
+      alert(`Status for Application #${id} updated to ${newStatus}`);
+    } catch (error) {
+      console.error(error);
+      alert('Failed to update status');
+    }
+  };
 
   // Mock data for unimplemented sections
   const meetups = [
@@ -168,9 +179,20 @@ export default function AdoptionDashboard() {
                   <tr key={app.id} className="border-b border-slate-100">
                     <td className="px-4 py-3 font-bold text-slate-900">{app.id}</td>
                     <td className="px-4 py-3">{app.parent_name || 'Parent ID: ' + app.parent_id}</td>
-                    <td className="px-4 py-3">{app.child_name}</td>
-                    <td className="px-4 py-3"><StatusBadge tone="violet">{app.application_status}</StatusBadge></td>
-                    <td className="px-4 py-3 font-bold text-slate-900">{app.compatibility_score}%</td>
+                    <td className="px-4 py-3">{app.child_name || 'Child ID: ' + app.child_id}</td>
+                    <td className="px-4 py-3">
+                      <select 
+                        value={app.application_status} 
+                        onChange={(e) => handleUpdateStatus(app.id, e.target.value)}
+                        className="bg-slate-50 border border-slate-200 rounded px-2 py-1 text-xs font-bold text-violet-700 outline-none"
+                      >
+                        <option value="pending">pending</option>
+                        <option value="under_review">under_review</option>
+                        <option value="approved">approved</option>
+                        <option value="rejected">rejected</option>
+                      </select>
+                    </td>
+                    <td className="px-4 py-3 font-bold text-slate-900">{app.compatibility_score || 0}%</td>
                   </tr>
                 ))}
               </tbody>
@@ -241,19 +263,7 @@ export default function AdoptionDashboard() {
         <Section id="approval" eyebrow="Step 9" title="Final Adoption Approval">
           <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
             <div>
-              <label className="block">
-                <span className="text-sm font-bold text-slate-700">Application decision stage</span>
-                <select
-                  value={applicationStatus}
-                  onChange={event => setApplicationStatus(event.target.value)}
-                  className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:ring-2 focus:ring-violet-500"
-                >
-                  {['Pending', 'Under Review', 'Meetup Phase', 'Evaluation Ongoing', 'Approved', 'Rejected'].map(status => (
-                    <option key={status}>{status}</option>
-                  ))}
-                </select>
-              </label>
-              <p className="mt-3 text-sm text-slate-600">Current selected status: <strong>{applicationStatus}</strong></p>
+              <p className="mt-3 text-sm text-slate-600">Select an application in the table above to change its status. Once an application is approved, you can generate a final report.</p>
             </div>
             <button className="rounded-lg bg-violet-600 px-5 py-3 font-bold text-white hover:bg-violet-700">
               Generate Final Report

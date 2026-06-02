@@ -148,6 +148,74 @@ const marketplaceController = {
       console.error(error);
       res.status(500).json({ error: 'Failed to fetch order tracking' });
     }
+  },
+
+  // Seller Methods
+  getSellerProducts: async (req, res) => {
+    try {
+      const sellerId = req.user.id;
+      const products = await MarketplaceModel.getSellerProducts(sellerId);
+      res.json(products);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to fetch products' });
+    }
+  },
+
+  addSellerProduct: async (req, res) => {
+    try {
+      const sellerId = req.user.id;
+      const id = await MarketplaceModel.addProduct(sellerId, req.body);
+      res.status(201).json({ id, message: 'Product added' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to add product' });
+    }
+  },
+
+  updateSellerProduct: async (req, res) => {
+    try {
+      const sellerId = req.user.id;
+      await MarketplaceModel.updateProduct(sellerId, req.params.id, req.body);
+      res.json({ message: 'Product updated' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to update product' });
+    }
+  },
+
+  deleteSellerProduct: async (req, res) => {
+    try {
+      const sellerId = req.user.id;
+      await MarketplaceModel.deleteProduct(sellerId, req.params.id);
+      res.json({ message: 'Product deleted' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to delete product' });
+    }
+  },
+
+  getSellerOrders: async (req, res) => {
+    try {
+      const sellerId = req.user.id;
+      const orders = await MarketplaceModel.getSellerOrders(sellerId);
+      res.json(orders);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to fetch orders' });
+    }
+  },
+
+  updateOrderStatus: async (req, res) => {
+    try {
+      const sellerId = req.user.id;
+      const { status } = req.body;
+      await MarketplaceModel.updateOrderStatus(sellerId, req.params.id, status);
+      res.json({ message: 'Order status updated' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to update order' });
+    }
   }
 };
 

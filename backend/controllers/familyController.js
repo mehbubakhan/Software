@@ -15,4 +15,70 @@ const getMyFamily = async (req, res) => {
   }
 }
 
-module.exports = { getMyFamily }
+const getProfile = async (req, res) => {
+  try {
+    const user_id = req.user.id;
+    const [users] = await pool.query('SELECT name, email FROM users WHERE id = ?', [user_id]);
+    const [parents] = await pool.query('SELECT phone, address, emergency_contact, child_mode_pin FROM parents WHERE user_id = ?', [user_id]);
+    const [children] = await pool.query('SELECT name, dob FROM children WHERE parent_id = ? LIMIT 1', [user_id]);
+
+    const user = users[0] || {};
+    const parent = parents[0] || {};
+    const child = children[0] || {};
+
+    return res.json({
+      ok: true,
+      profile: {
+        name: user.name || '',
+        email: user.email || '',
+        phone: parent.phone || '',
+        address: parent.address || '',
+        emergencyContact: parent.emergency_contact || '',
+        childModePin: parent.child_mode_pin || '',
+        childName: child.name || '',
+        childAge: child.dob ? Math.floor((new Date() - new Date(child.dob)) / 31557600000) : '',
+        childNotes: ''
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+}
+
+const updateProfile = async (req, res) => {
+  try {
+    const user_id = req.user.id;
+    const { name, phone, address, emergencyContact, childModePin, childName, childAge } = req.body;
+
+    if (name) {
+      await pool.query('UPDATE users SET name = ? WHERE id = ?', [name, user_id]);
+    }
+
+    const [existingParent] = await pool.query('SELECT id FROM parents WHERE user_id = ?', [user_id]);
+    if (existingParent.length > 0) {
+      await pool.query('UPDATE parents SET phone = ?, address = ?, emergency_contact = ?, child_mode_pin = ? WHERE user_id = ?', 
+        [phone, address, emergencyContact, childModePin, user_id]);
+    } else {
+      await pool.query('INSERT INTO parents (user_id, phone, address, emergency_contact, child_mode_pin) VALUES (?, ?, ?, ?, ?)', 
+        [user_id, phone, address, emergencyContact, childModePin]);
+    }
+
+    if (childName) {
+      const dob = childAge ? new Date(new Date().setFullYear(new Date().getFullYear() - childAge)).toISOString().split('T')[0] : null;
+      const [existingChild] = await pool.query('SELECT id FROM children WHERE parent_id = ? LIMIT 1', [user_id]);
+      if (existingChild.length > 0) {
+        await pool.query('UPDATE children SET name = ?, dob = ? WHERE id = ?', [childName, dob, existingChild[0].id]);
+      } else {
+        await pool.query('INSERT INTO children (name, dob, parent_id) VALUES (?, ?, ?)', [childName, dob, user_id]);
+      }
+    }
+
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+}
+
+module.exports = { getMyFamily, getProfile, updateProfile }

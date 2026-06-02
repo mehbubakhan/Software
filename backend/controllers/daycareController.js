@@ -321,6 +321,24 @@ const addStaff = async (req, res) => {
   }
 }
 
+const updateStaff = async (req, res) => {
+  try {
+    await DaycareModel.updateStaff(req.daycare.id, req.params.staffId, req.body)
+    res.json({ message: 'Staff updated' })
+  } catch (err) {
+    res.status(500).json({ message: 'Error updating staff', error: err.message })
+  }
+}
+
+const deleteStaff = async (req, res) => {
+  try {
+    await DaycareModel.deleteStaff(req.daycare.id, req.params.staffId)
+    res.json({ message: 'Staff deleted' })
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting staff', error: err.message })
+  }
+}
+
 const getTransport = async (req, res) => {
   try {
     const transports = await DaycareModel.getTransport(req.daycare.id)
@@ -375,6 +393,8 @@ module.exports = {
   getChildren,
   getStaff,
   addStaff,
+  updateStaff,
+  deleteStaff,
   getTransport,
   addTransport,
   getDailyReports,

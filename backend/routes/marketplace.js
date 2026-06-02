@@ -24,4 +24,12 @@ router.delete('/wishlist/:wishlist_id', marketplaceController.removeFromWishlist
 // Checkout
 router.post('/checkout', marketplaceController.checkout);
 
+// Seller routes
+router.get('/seller/products', marketplaceController.getSellerProducts);
+router.post('/seller/products', marketplaceController.addSellerProduct);
+router.put('/seller/products/:id', marketplaceController.updateSellerProduct);
+router.delete('/seller/products/:id', marketplaceController.deleteSellerProduct);
+router.get('/seller/orders', marketplaceController.getSellerOrders);
+router.put('/seller/orders/:id/status', marketplaceController.updateOrderStatus);
+
 module.exports = router;

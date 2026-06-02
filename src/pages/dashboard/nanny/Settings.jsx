@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../../../services/api';
 import { 
   User, 
   Lock, 
@@ -22,13 +23,43 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState('profile');
   const [savedStatus, setSavedStatus] = useState('');
 
-  const handleSave = (e) => {
+  const [profileData, setProfileData] = useState({ experience: '', workType: '', skills: '' });
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const res = await api.get('/nanny/profile');
+        if (res.data?.data) {
+          setProfileData({
+            experience: res.data.data.experience || '',
+            workType: '', // Not in schema, ignore or store in bio
+            skills: res.data.data.skills ? JSON.parse(res.data.data.skills).join(', ') : ''
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    loadData();
+  }, []);
+
+  const handleSave = async (e) => {
     e.preventDefault();
     setSavedStatus('Saving...');
-    setTimeout(() => {
+    try {
+      if (activeTab === 'profile') {
+        const skillsArray = profileData.skills.split(',').map(s => s.trim()).filter(Boolean);
+        await api.post('/nanny/profile', {
+          experience: profileData.experience,
+          skills: JSON.stringify(skillsArray)
+        });
+      }
       setSavedStatus('Saved successfully!');
       setTimeout(() => setSavedStatus(''), 3000);
-    }, 1000);
+    } catch (err) {
+      setSavedStatus('Error saving');
+      setTimeout(() => setSavedStatus(''), 3000);
+    }
   };
 
   return (
@@ -120,11 +151,7 @@ export default function Settings() {
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-slate-700 mb-2">Experience Level</label>
-                    <select className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500">
-                      <option>Entry Level (0-2 years)</option>
-                      <option selected>Mid Level (3-5 years)</option>
-                      <option>Expert (5+ years)</option>
-                    </select>
+                    <input type="text" value={profileData.experience} onChange={e => setProfileData({...profileData, experience: e.target.value})} className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500" placeholder="e.g. 5 years" />
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-slate-700 mb-2">Work Type Preference</label>
@@ -135,13 +162,8 @@ export default function Settings() {
                     </select>
                   </div>
                   <div className="col-span-2">
-                    <label className="block text-sm font-bold text-slate-700 mb-2">Skills</label>
-                    <div className="flex gap-2 flex-wrap">
-                      <span className="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-sm font-bold border border-slate-200">Newborn Care</span>
-                      <span className="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-sm font-bold border border-slate-200">Toddler Care</span>
-                      <span className="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-sm font-bold border border-slate-200">First Aid</span>
-                      <button className="text-blue-600 text-sm font-bold px-2">+ Add Skill</button>
-                    </div>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Skills (comma separated)</label>
+                    <input type="text" value={profileData.skills} onChange={e => setProfileData({...profileData, skills: e.target.value})} className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500" placeholder="e.g. Newborn Care, CPR" />
                   </div>
                 </div>
               </div>

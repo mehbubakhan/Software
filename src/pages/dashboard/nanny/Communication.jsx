@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import api from '../../../services/api';
+import { useAuth } from '../../../context/AuthContext';
 import { 
   Search, 
   Phone, 
@@ -9,77 +11,63 @@ import {
   MessageCircle
 } from 'lucide-react';
 
-const conversationsList = [
-  {
-    id: 1,
-    name: 'Mrs. Johnson',
-    avatar: 'https://i.pravatar.cc/150?img=5',
-    time: '10 min ago',
-    lastMessage: 'Thanks for today! See you tomorrow.',
-    unread: 0,
-    online: true
-  },
-  {
-    id: 2,
-    name: 'Mr. Ahmed',
-    avatar: 'https://i.pravatar.cc/150?img=11',
-    time: '1 hour ago',
-    lastMessage: 'Can we schedule an interview?',
-    unread: 2,
-    online: false
-  },
-  {
-    id: 3,
-    name: 'Mrs. Rahman',
-    avatar: 'https://i.pravatar.cc/150?img=9',
-    time: '2 hours ago',
-    lastMessage: 'What time will you arrive?',
-    unread: 1,
-    online: true
-  }
-];
-
-const initialChatHistories = {
-  1: [
-    { id: 1, sender: 'them', text: 'Hi! Thank you for applying to our job post.', time: '2:30 PM' },
-    { id: 2, sender: 'me', text: "Hello! I'm very interested in the position.", time: '2:32 PM' },
-    { id: 3, sender: 'them', text: 'Great! Do you have experience with toddlers?', time: '2:35 PM' },
-    { id: 4, sender: 'me', text: 'Yes, I have 3 years of experience caring for children aged 2-5.', time: '2:36 PM' },
-    { id: 5, sender: 'them', text: 'Perfect! Thanks for today! See you tomorrow.', time: '4:15 PM' }
-  ],
-  2: [
-    { id: 1, sender: 'them', text: 'Can we schedule an interview?', time: '1:00 PM' },
-    { id: 2, sender: 'them', text: 'Around 10 AM works best for me.', time: '1:05 PM' }
-  ],
-  3: [
-    { id: 1, sender: 'them', text: 'What time will you arrive?', time: '9:00 AM' }
-  ]
-};
-
 export default function Communication() {
-  const [activeChat, setActiveChat] = useState(conversationsList[0]);
-  const [chatHistories, setChatHistories] = useState(initialChatHistories);
+  const { user } = useAuth();
+  const [conversations, setConversations] = useState([]);
+  const [activeChat, setActiveChat] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
+  
+  useEffect(() => {
+    const fetchConversations = async () => {
+      try {
+        const res = await api.get('/messages');
+        if (res.data?.data?.length > 0) {
+          setConversations(res.data.data);
+          setActiveChat(res.data.data[0]);
+        }
+      } catch (err) {
+        console.error('Error fetching conversations:', err);
+      }
+    };
+    fetchConversations();
+  }, []);
 
-  const currentMessages = chatHistories[activeChat.id] || [];
-
-  const handleSend = (e) => {
-    e.preventDefault();
-    if (!inputText.trim()) return;
-    
-    const newMessage = {
-      id: Date.now(),
-      sender: 'me',
-      text: inputText.trim(),
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  useEffect(() => {
+    let interval;
+    const fetchMessages = async () => {
+      if (!activeChat) return;
+      try {
+        const res = await api.get(`/messages/${activeChat.id}`);
+        setMessages(res.data?.data || []);
+      } catch (err) {
+        console.error('Error fetching messages:', err);
+      }
     };
     
-    setChatHistories(prev => ({
-      ...prev,
-      [activeChat.id]: [...(prev[activeChat.id] || []), newMessage]
-    }));
-    setInputText('');
+    if (activeChat) {
+      fetchMessages();
+      interval = setInterval(fetchMessages, 3000); // Polling every 3 seconds
+    }
+    return () => clearInterval(interval);
+  }, [activeChat]);
+
+  const handleSend = async (e) => {
+    e.preventDefault();
+    if (!inputText.trim() || !activeChat) return;
+    
+    try {
+      await api.post(`/messages/${activeChat.id}`, { content: inputText });
+      setInputText('');
+      // Optimistically fetch messages immediately
+      const res = await api.get(`/messages/${activeChat.id}`);
+      setMessages(res.data?.data || []);
+    } catch (err) {
+      console.error('Error sending message:', err);
+    }
   };
+
+
 
   const handleCallOption = (type) => {
     alert(`Initiating ${type} with ${activeChat.name}...`);
@@ -112,12 +100,12 @@ export default function Communication() {
           </div>
           
           <div className="flex-1 overflow-y-auto">
-            {conversationsList.map(conv => (
+            {conversations.map(conv => (
               <div 
                 key={conv.id}
                 onClick={() => setActiveChat(conv)}
                 className={`flex items-center gap-3 p-4 cursor-pointer border-b border-slate-50 transition-colors ${
-                  activeChat.id === conv.id ? 'bg-[#faf5ff]' : 'hover:bg-slate-50'
+                  activeChat?.id === conv.id ? 'bg-[#faf5ff]' : 'hover:bg-slate-50'
                 }`}
               >
                 <div className="relative flex-shrink-0">
@@ -149,6 +137,8 @@ export default function Communication() {
 
         {/* Right Area - Active Chat */}
         <div className="flex-1 flex flex-col min-w-0 bg-slate-50/30">
+          {activeChat ? (
+          <>
           {/* Chat Header */}
           <div className="h-16 border-b border-slate-200 px-6 flex items-center justify-between bg-white flex-shrink-0">
             <div className="flex items-center gap-3">
@@ -178,16 +168,16 @@ export default function Communication() {
 
           {/* Chat Messages */}
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
-            {currentMessages.map((msg) => (
-              <div key={msg.id} className={`flex flex-col ${msg.sender === 'me' ? 'items-end' : 'items-start'}`}>
+            {messages.map((msg) => (
+              <div key={msg.id} className={`flex flex-col ${msg.sender_id === user?.id ? 'items-end' : 'items-start'}`}>
                 <div className={`max-w-[75%] px-5 py-3 rounded-2xl ${
-                  msg.sender === 'me' 
+                  msg.sender_id === user?.id 
                     ? 'bg-[#a855f7] text-white rounded-br-sm shadow-sm' 
                     : 'bg-white border border-slate-200 text-slate-700 rounded-bl-sm shadow-sm'
                 }`}>
-                  <p className="text-[15px] leading-relaxed">{msg.text}</p>
-                  <p className={`text-[11px] mt-1 ${msg.sender === 'me' ? 'text-purple-200' : 'text-slate-400'}`}>
-                    {msg.time}
+                  <p className="text-[15px] leading-relaxed">{msg.content}</p>
+                  <p className={`text-[11px] mt-1 ${msg.sender_id === user?.id ? 'text-purple-200' : 'text-slate-400'}`}>
+                    {new Date(msg.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
               </div>
@@ -220,7 +210,12 @@ export default function Communication() {
               </button>
             </form>
           </div>
-
+          </>
+          ) : (
+            <div className="flex-1 flex items-center justify-center text-slate-400">
+              Select a conversation to start chatting
+            </div>
+          )}
         </div>
       </div>
     </div>

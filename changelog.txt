@@ -1,0 +1,36 @@
+CHANGELOG
+
+## Tier 2 Updates
+- **Marketplace Seller Dashboard:**
+  - `backend/models/MarketplaceModel.js`: Added methods `getSellerProducts`, `addProduct`, `updateProduct`, `deleteProduct`, `updateOrderStatus`, and `getSellerOrders`.
+  - `backend/controllers/marketplaceController.js`: Added corresponding controller methods.
+  - `backend/routes/marketplace.js`: Added REST routes for seller products and orders.
+  - `src/pages/dashboard/MarketplaceSellerDashboard.jsx`: Implemented API fetching and interaction for products and orders.
+
+- **Nanny Dashboard:**
+  - `backend/controllers/nannyController.js`: Added `getPayments` to serve seeded payment data. Modified `getConversations` to seed an initial conversation. Added `sendMessage`.
+  - `backend/routes/nanny.js`: Added `/payments` endpoint.
+  - `backend/routes/messages.js`: Added `POST /:id` endpoint to send messages.
+  - `src/pages/dashboard/nanny/Payments.jsx`: Wired to fetch payment summaries and history from the backend API.
+  - `src/pages/dashboard/nanny/Settings.jsx`: Wired the "Profile Details" tab to fetch from and save to `nanny_profiles` table.
+  - `src/pages/dashboard/nanny/Communication.jsx`: Wired to fetch conversations and messages from `/api/messages`. Implemented 3-second REST polling for real-time updates and wired the "Send" action to the backend.
+
+- **Task Management:**
+  - Checked off all Tier 2 tasks in `task.md`.
+  - Updated `walkthrough.md` with full Tier 2 progress.
+
+## Tier 3 Updates
+- **Marketplace Buyer Dashboard:**
+  - `src/pages/dashboard/MarketplaceBuyerDashboard.jsx`: Wired up API to fetch products (`GET /api/marketplace/products`) and add items to cart and wishlist.
+  - `src/pages/dashboard/CartAndWishlist.jsx`: Wired up `GET /api/marketplace/cart` and `GET /api/marketplace/wishlist`. Implemented functionality to remove items and proceed to checkout.
+  - `src/pages/dashboard/OrderTracking.jsx`: Implemented functionality to fetch and display real order details using `GET /api/marketplace/orders/track/:tracking_number`.
+  
+- **Advanced Adoption Features:**
+  - `src/pages/dashboard/AdoptionDashboard.jsx`: Replaced static table UI with a dynamic select dropdown that fires a `PATCH /api/adoption/applications/:id/status` to update the application status in the database.
+
+- **Child Dashboard:**
+  - `backend/routes/learning.js`: Added a new `POST /track` endpoint to mock tracking child learning activities and coins.
+  - `src/pages/dashboard/ChildDashboard.jsx`: Added logic to push an API request to the tracking endpoint whenever a child earns coins via `addCoins()`.
+  
+- **Documentation:**
+  - Updated `walkthrough.md`, `changelog.txt`, and checked off tasks in `task.md`.

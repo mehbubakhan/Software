@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../services/api';
 import Sidebar from '../../components/Sidebar';
 
 const sidebarItems = [
@@ -18,74 +19,42 @@ const sidebarItems = [
 
 export default function MarketplaceBuyerDashboard() {
   const navigate = useNavigate();
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: 'Organic Cotton Baby Onesie',
-      seller: 'Baby Care Hub',
-      price: 24.99,
-      rating: 4.8,
-      reviews: 145,
-      stock: 12,
-      is_verified: true,
-      image: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=400&q=80'
-    },
-    {
-      id: 2,
-      name: 'Educational Wooden Toy Set',
-      seller: 'Tiny Tots Emporium',
-      price: 39.99,
-      rating: 4.9,
-      reviews: 210,
-      stock: 8,
-      is_verified: true,
-      image: 'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=400&q=80'
-    },
-    {
-      id: 3,
-      name: 'Organic Baby Formula',
-      seller: 'Little Angels Store',
-      price: 29.99,
-      rating: 4.7,
-      reviews: 350,
-      stock: 5,
-      is_verified: true,
-      image: 'https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?auto=format&fit=crop&w=400&q=80'
-    },
-    {
-      id: 4,
-      name: 'Baby Diaper Pack (Size 2)',
-      seller: 'Little Angels Store',
-      price: 34.99,
-      rating: 4.6,
-      reviews: 80,
-      stock: 20,
-      is_verified: true,
-      image: 'https://images.unsplash.com/photo-1522771930-78848d92871d?auto=format&fit=crop&w=400&q=80'
-    },
-    {
-      id: 5,
-      name: 'Natural Baby Lotion',
-      seller: 'Baby Care Hub',
-      price: 16.99,
-      rating: 4.8,
-      reviews: 241,
-      stock: 15,
-      is_verified: true,
-      image: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=400&q=80'
-    },
-    {
-      id: 6,
-      name: 'Maternity Support Pillow',
-      seller: 'Little Angels Store',
-      price: 44.99,
-      rating: 4.9,
-      reviews: 234,
-      stock: 4,
-      is_verified: true,
-      image: 'https://images.unsplash.com/photo-1526401485004-46910ecc8e51?auto=format&fit=crop&w=400&q=80'
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await api.get('/marketplace/products');
+        setProducts(res.data || []);
+      } catch (err) {
+        console.error('Failed to fetch products', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  const handleAddToCart = async (productId) => {
+    try {
+      await api.post('/marketplace/cart', { product_id: productId, quantity: 1 });
+      alert('Added to cart!');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to add to cart');
     }
-  ]);
+  };
+
+  const handleAddToWishlist = async (productId) => {
+    try {
+      await api.post('/marketplace/wishlist', { product_id: productId });
+      alert('Added to wishlist!');
+    } catch (err) {
+      console.error(err);
+      alert('Already in wishlist or failed');
+    }
+  };
 
   return (
     <div className="flex min-h-screen bg-brand-dark text-white font-sans">
@@ -180,15 +149,14 @@ export default function MarketplaceBuyerDashboard() {
                   </div>
                   
                   <div className="p-5 flex flex-col flex-1">
-                    <p className="text-xs text-brand-violet mb-1">{product.seller}</p>
+                    <p className="text-xs text-brand-violet mb-1">{product.seller_name}</p>
                     <h3 className="font-bold text-white text-lg mb-2 line-clamp-1">{product.name}</h3>
                     
                     <div className="flex items-center gap-2 mb-4">
                       <div className="flex text-yellow-400 text-sm">
-                        {'★'.repeat(Math.floor(product.rating))}
-                        <span className="text-slate-600">{'★'.repeat(5 - Math.floor(product.rating))}</span>
+                        {'★'.repeat(5)}
                       </div>
-                      <span className="text-xs text-slate-400">({product.reviews})</span>
+                      <span className="text-xs text-slate-400">(New)</span>
                     </div>
                     
                     <div className="mt-auto flex items-end justify-between mb-4">
@@ -197,11 +165,11 @@ export default function MarketplaceBuyerDashboard() {
                     </div>
 
                     <div className="flex gap-2">
-                      <button className="flex-1 bg-brand-purple hover:bg-violet-500 text-white font-medium py-2.5 rounded-xl transition flex items-center justify-center gap-2">
+                      <button onClick={() => handleAddToCart(product.id)} className="flex-1 bg-brand-purple hover:bg-violet-500 text-white font-medium py-2.5 rounded-xl transition flex items-center justify-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         Add to Cart
                       </button>
-                      <button className="p-2.5 rounded-xl border border-[#2A2E3D] hover:bg-[#2A2E3D] text-slate-300 transition">
+                      <button onClick={() => handleAddToWishlist(product.id)} className="p-2.5 rounded-xl border border-[#2A2E3D] hover:bg-[#2A2E3D] text-slate-300 transition">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                       </button>
                     </div>

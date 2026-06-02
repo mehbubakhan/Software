@@ -49,6 +49,7 @@ import ProtectedRoute from '../components/ProtectedRoute'
 import RoleRedirect from '../components/RoleRedirect'
 import ChildDashboard from '../pages/dashboard/ChildDashboard'
 import LearningLanding from '../pages/LearningLanding'
+import AdoptionLanding from '../pages/adoption/AdoptionLanding'
 
 export default function AppRoutes(){
   return (
@@ -83,8 +84,9 @@ export default function AppRoutes(){
         <Route path="reports" element={<DailyUpdates/>} />
       </Route>
       
+      <Route path="/adoption" element={<AdoptionLanding/>} />
       <Route path="/dashboard/admin/*" element={<ProtectedRoute roles={["admin"]}><AdminDashboard/></ProtectedRoute>} />
-      <Route path="/dashboard/adoption/*" element={<ProtectedRoute roles={["orphanage_manager"]}><AdoptionDashboard/></ProtectedRoute>} />
+      <Route path="/dashboard/adoption/*" element={<ProtectedRoute roles={["orphanage_manager", "counsellor", "verification_officer", "legal_officer", "super_admin"]}><AdoptionDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/marketplace" element={<ProtectedRoute roles={["parent"]}><MarketplaceBuyerDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/marketplace/cart" element={<ProtectedRoute roles={["parent"]}><CartAndWishlist/></ProtectedRoute>} />
       <Route path="/dashboard/marketplace/wishlist" element={<ProtectedRoute roles={["parent"]}><CartAndWishlist/></ProtectedRoute>} />

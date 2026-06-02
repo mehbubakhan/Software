@@ -1,12 +1,32 @@
-import React from 'react'
-
-const payments = [
-  { period: 'This week', amount: '$320', status: 'Pending' },
-  { period: 'Last week', amount: '$450', status: 'Paid' },
-  { period: 'This month', amount: '$1,240', status: 'In progress' }
-]
+import React, { useState, useEffect } from 'react'
+import api from '../../../services/api'
 
 export default function Payments(){
+  const [payments, setPayments] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const res = await api.get('/nanny/payments')
+        setPayments(res.data.data)
+      } catch (err) {
+        console.error('Error fetching payments:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchPayments()
+  }, [])
+
+  if (loading) {
+    return <div className="p-4 text-slate-500">Loading payments...</div>
+  }
+
+  if (!payments) {
+    return <div className="p-4 text-slate-500">Failed to load payments.</div>
+  }
+
   return (
     <div className="space-y-5">
       <div>
@@ -15,7 +35,7 @@ export default function Payments(){
       </div>
 
       <section className="grid gap-4 md:grid-cols-3">
-        {payments.map(payment => (
+        {payments.summaries.map(payment => (
           <div key={payment.period} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
             <p className="text-sm font-bold text-slate-500">{payment.period}</p>
             <p className="mt-2 text-3xl font-black text-slate-950">{payment.amount}</p>
@@ -37,8 +57,14 @@ export default function Payments(){
               </tr>
             </thead>
             <tbody className="font-semibold text-slate-800">
-              <tr className="border-t"><td className="py-3 pr-4">After-school care</td><td className="py-3 pr-4">May 20</td><td className="py-3 pr-4">$80</td><td className="py-3 pr-4">Paid</td></tr>
-              <tr className="border-t"><td className="py-3 pr-4">Weekend care</td><td className="py-3 pr-4">May 18</td><td className="py-3 pr-4">$140</td><td className="py-3 pr-4">Paid</td></tr>
+              {payments.history.map((hist, idx) => (
+                <tr key={idx} className="border-t">
+                  <td className="py-3 pr-4">{hist.session}</td>
+                  <td className="py-3 pr-4">{hist.date}</td>
+                  <td className="py-3 pr-4">{hist.amount}</td>
+                  <td className="py-3 pr-4">{hist.status}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

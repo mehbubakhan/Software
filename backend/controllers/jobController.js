@@ -44,5 +44,28 @@ const decideApplication = async (req, res) => {
   }catch(err){ return res.status(500).json({ ok:false, error: err.message }) }
 }
 
-module.exports = { postJob, applyForJob, listApplications, decideApplication, listOpenJobs }
+const postParentJob = async (req, res) => {
+  try {
+    const parent_id = req.user.id;
+    const { title, child_age, salary_offered, schedule, location, special_requirements } = req.body;
+    const [result] = await require('../config/db').query(
+      'INSERT INTO parent_job_posts (parent_id, title, child_age, salary_offered, schedule, location, special_requirements, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, "open", NOW())',
+      [parent_id, title, child_age, salary_offered, schedule, location, special_requirements]
+    );
+    return res.json({ ok: true, jobId: result.insertId });
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+}
 
+const listParentJobs = async (req, res) => {
+  try {
+    const parent_id = req.user.id;
+    const [rows] = await require('../config/db').query('SELECT * FROM parent_job_posts WHERE parent_id = ? ORDER BY created_at DESC', [parent_id]);
+    return res.json({ ok: true, data: rows });
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+}
+
+module.exports = { postJob, applyForJob, listApplications, decideApplication, listOpenJobs, postParentJob, listParentJobs }

@@ -108,4 +108,19 @@ const getNannyDetails = async (req, res) => {
   return res.json({ ok: true, data: details })
 }
 
-module.exports = { saveProfile, getProfile, saveAvailability, getAvail, getAgencies, getIndividualNannies, getFeaturedNannies, getNannyDetails }
+const getPayments = async (req, res) => {
+  const paymentsData = {
+    summaries: [
+      { period: 'This week', amount: '$320', status: 'Pending' },
+      { period: 'Last week', amount: '$450', status: 'Paid' },
+      { period: 'This month', amount: '$1,240', status: 'In progress' }
+    ],
+    history: [
+      { session: 'After-school care', date: 'May 20', amount: '$80', status: 'Paid' },
+      { session: 'Weekend care', date: 'May 18', amount: '$140', status: 'Paid' }
+    ]
+  };
+  return res.json({ ok: true, data: paymentsData });
+}
+
+module.exports = { saveProfile, getProfile, saveAvailability, getAvail, getAgencies, getIndividualNannies, getFeaturedNannies, getNannyDetails, getPayments }

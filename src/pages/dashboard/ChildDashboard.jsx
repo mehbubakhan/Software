@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation, Routes, Route, Link } from 'react-router-dom'
+import api from '../../services/api'
 import LearningDashboard from './child/LearningDashboard'
 import AlphabetLearning from './child/AlphabetLearning'
 import NumbersLearning from './child/NumbersLearning'
@@ -52,6 +53,11 @@ export default function ChildDashboard() {
   const addCoins = (amount) => {
     setCoins(prev => prev + amount)
     playClick()
+    api.post('/learning/track', { 
+      activity: 'Learning Module Completion', 
+      duration: 5, 
+      coins_earned: amount 
+    }).catch(e => console.error('Failed to track activity', e))
   }
 
   const handleExit = () => {

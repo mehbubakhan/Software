@@ -27,4 +27,8 @@ router.get('/applications/:id/meetups', auth, adoptionController.getApplicationM
 // QA & Compatibility
 router.post('/qa', auth, adoptionController.submitQA);
 
+// Documents
+router.post('/documents', auth, permit('parent', 'admin'), adoptionController.uploadDocument);
+router.get('/applications/:id/documents', auth, adoptionController.getApplicationDocuments);
+
 module.exports = router;

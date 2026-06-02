@@ -1,4 +1,4 @@
-const { Orphanage, Child, Application, Meetup, QaResponse } = require('../models/AdoptionModel');
+const { Orphanage, Child, Application, Meetup, QaResponse, Document } = require('../models/AdoptionModel');
 
 const adoptionController = {
   // Orphanages
@@ -133,6 +133,27 @@ const adoptionController = {
       await Application.updateCompatibility(data.application_id, Math.min(score, 100));
 
       res.status(201).json({ ok: true, id, compatibility_calculated: true });
+    } catch (err) {
+      res.status(500).json({ ok: false, error: err.message });
+    }
+  },
+
+  // Documents
+  uploadDocument: async (req, res) => {
+    try {
+      // In MVP, we just receive the URL and type from frontend. 
+      // In production, this would handle multer and S3 upload.
+      const data = req.body; 
+      const id = await Document.create(data);
+      res.status(201).json({ ok: true, id });
+    } catch (err) {
+      res.status(500).json({ ok: false, error: err.message });
+    }
+  },
+  getApplicationDocuments: async (req, res) => {
+    try {
+      const documents = await Document.findByApplication(req.params.id);
+      res.json({ ok: true, data: documents });
     } catch (err) {
       res.status(500).json({ ok: false, error: err.message });
     }

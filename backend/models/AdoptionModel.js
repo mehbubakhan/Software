@@ -126,10 +126,29 @@ const QaResponse = {
   }
 };
 
+const Document = {
+  create: async (data) => {
+    const { application_id, doc_type, file_url } = data;
+    const [res] = await pool.query(
+      'INSERT INTO adoption_documents (application_id, doc_type, file_url) VALUES (?, ?, ?)',
+      [application_id, doc_type, file_url]
+    );
+    return res.insertId;
+  },
+  findByApplication: async (application_id) => {
+    const [rows] = await pool.query('SELECT * FROM adoption_documents WHERE application_id = ?', [application_id]);
+    return rows;
+  },
+  updateStatus: async (id, status, verified_by) => {
+    await pool.query('UPDATE adoption_documents SET verification_status = ?, verified_by = ? WHERE id = ?', [status, verified_by, id]);
+  }
+};
+
 module.exports = {
   Orphanage,
   Child,
   Application,
   Meetup,
-  QaResponse
+  QaResponse,
+  Document
 };
