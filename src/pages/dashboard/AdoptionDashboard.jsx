@@ -1,7 +1,7 @@
-import React, { useMemo, useState, useEffect } from 'react'
-import Sidebar from '../../components/Sidebar'
-import { useAuth } from '../../context/AuthContext'
-import { getChildren, getApplications } from '../../services/adoptionApi'
+import React, { useMemo, useState, useEffect } from 'react';
+import Sidebar from '../../components/Sidebar';
+import { useAuth } from '../../context/AuthContext';
+import { getChildren, getApplications, updateApplicationStatus, createMeetup, submitQA } from '../../services/adoptionApi';
 
 const items = [
   { label: 'Adoption Overview', path: '/dashboard/adoption' },
@@ -18,7 +18,7 @@ const items = [
   { label: 'Analytics', path: '/dashboard/adoption#analytics' },
   { label: 'Security', path: '/dashboard/adoption#security' },
   { label: 'Notifications', path: '/dashboard/adoption#notifications' },
-]
+];
 
 function Section({ id, eyebrow, title, children }) {
   return (
@@ -27,7 +27,7 @@ function Section({ id, eyebrow, title, children }) {
       <h2 className="mt-2 text-2xl font-black text-slate-950">{title}</h2>
       <div className="mt-5">{children}</div>
     </section>
-  )
+  );
 }
 
 function StatusBadge({ children, tone = 'slate' }) {
@@ -37,40 +37,83 @@ function StatusBadge({ children, tone = 'slate' }) {
     violet: 'bg-violet-100 text-violet-700',
     red: 'bg-red-100 text-red-700',
     slate: 'bg-slate-100 text-slate-700',
-  }
-  return <span className={`rounded-full px-3 py-1 text-xs font-bold ${colors[tone]}`}>{children}</span>
+  };
+  return <span className={`rounded-full px-3 py-1 text-xs font-bold ${colors[tone]}`}>{children}</span>;
 }
 
 export default function AdoptionDashboard() {
-  const { user } = useAuth() || {}
-  const [applicationStatus, setApplicationStatus] = useState('Evaluation Ongoing')
-  const [children, setChildren] = useState([])
-  const [applications, setApplications] = useState([])
-  
+  const { user } = useAuth() || {};
+  const [children, setChildren] = useState([]);
+  const [applications, setApplications] = useState([]);
+  const [meetups, setMeetups] = useState([
+    { id: 1, session: 1, child: 'Lucas', parent: 'Ariana Smith', date: '2026-05-25', attendance: 'Confirmed', note: 'Introductory play session' }
+  ]);
+  const [refresh, setRefresh] = useState(0);
+
   useEffect(() => {
-    getChildren().then(res => setChildren(res.data.data)).catch(console.error)
-    getApplications().then(res => setApplications(res.data.data)).catch(console.error)
-  }, [])
+    getChildren().then(res => {
+      if(res.data?.ok) setChildren(res.data.data);
+    }).catch(console.error);
+    getApplications().then(res => {
+      if(res.data?.ok) setApplications(res.data.data);
+    }).catch(console.error);
+  }, [refresh]);
 
   const averageCompatibility = useMemo(() => {
-    if (applications.length === 0) return 0
-    const total = applications.reduce((sum, item) => sum + (item.compatibility_score || 0), 0)
-    return Math.round(total / applications.length)
-  }, [applications])
+    if (applications.length === 0) return 0;
+    const total = applications.reduce((sum, item) => sum + (item.compatibility_score || 0), 0);
+    return Math.round(total / applications.length);
+  }, [applications]);
 
-  // Mock data for unimplemented sections
-  const meetups = [
-    { session: 1, child: 'Lucas', parent: 'Ariana Smith', date: '2026-05-25', attendance: 'Confirmed', note: 'Introductory play session' }
-  ]
-  const evaluations = [
-    { label: 'Parent Q&A submitted', value: '8', detail: 'Session-based emotional responses collected' }
-  ]
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await updateApplicationStatus(id, newStatus);
+      setRefresh(r => r + 1);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleAddMeetup = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const newMeetup = {
+      id: Date.now(),
+      session: meetups.length + 1,
+      child: formData.get('child'),
+      parent: formData.get('parent'),
+      date: formData.get('date'),
+      attendance: 'Scheduled',
+      note: formData.get('note')
+    };
+    setMeetups([...meetups, newMeetup]);
+    e.target.reset();
+  };
+
+  const handleEvaluationSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const appId = formData.get('application_id');
+    try {
+      await submitQA({
+        application_id: appId,
+        parent_answers: ["Answer 1", "Answer 2"],
+        orphanage_observations: formData.get('observation')
+      });
+      alert('Evaluation submitted! Compatibility score updated.');
+      setRefresh(r => r + 1);
+      e.target.reset();
+    } catch(err) {
+      console.error(err);
+    }
+  };
+
   const parentProfiles = [
     { name: 'Ariana Smith', status: 'Verified', background: 'Married, stable home, early childhood volunteer', finance: 'Approved', preference: 'Age 3-5' }
-  ]
+  ];
   const analytics = [
     ['Adoption success rate', '68%', 'Approved cases from completed evaluations']
-  ]
+  ];
 
   return (
     <div className="min-h-[calc(100vh-68px)] bg-slate-50 md:flex">
@@ -88,7 +131,7 @@ export default function AdoptionDashboard() {
           {[
             ['Children Managed', children.length, 'green'],
             ['Active Applications', applications.length, 'violet'],
-            ['Meetup Sessions', '10-12', 'yellow'],
+            ['Meetup Sessions', meetups.length, 'yellow'],
             ['Avg Compatibility', `${averageCompatibility}%`, 'green'],
           ].map(([label, value, tone]) => (
             <div key={label} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
@@ -102,8 +145,8 @@ export default function AdoptionDashboard() {
         <Section id="verification" eyebrow="Step 1" title="Orphanage Registration & Verification">
           <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
             <div className="space-y-3 text-sm text-slate-700">
-              <p><strong>Organization:</strong> {user?.name || 'Registered Orphanage'}</p>
-              <p><strong>Verification status:</strong> Documents submitted and awaiting admin verification.</p>
+              <p><strong>Organization:</strong> Hope Orphanage</p>
+              <p><strong>Verification status:</strong> <StatusBadge tone="yellow">Pending Admin Approval</StatusBadge></p>
               <p><strong>Security:</strong> Registration documents are restricted to admin and authorized reviewers.</p>
             </div>
             <div className="rounded-lg bg-violet-50 p-4">
@@ -155,22 +198,35 @@ export default function AdoptionDashboard() {
 
         <Section id="applications" eyebrow="Step 4" title="Adoption Application System">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] text-left text-sm">
+            <table className="w-full min-w-[860px] text-left text-sm">
               <thead className="bg-slate-100 text-slate-600">
                 <tr>
-                  {['Application', 'Parent', 'Child', 'Status', 'Internal Score'].map(head => (
+                  {['App ID', 'Parent', 'Child', 'Status', 'Compatibility', 'Action'].map(head => (
                     <th key={head} className="px-4 py-3 font-bold">{head}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {applications.map(app => (
-                  <tr key={app.id} className="border-b border-slate-100">
+                  <tr key={app.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
                     <td className="px-4 py-3 font-bold text-slate-900">{app.id}</td>
                     <td className="px-4 py-3">{app.parent_name || 'Parent ID: ' + app.parent_id}</td>
-                    <td className="px-4 py-3">{app.child_name}</td>
+                    <td className="px-4 py-3">{app.child_name || 'Child ID: ' + app.child_id}</td>
                     <td className="px-4 py-3"><StatusBadge tone="violet">{app.application_status}</StatusBadge></td>
                     <td className="px-4 py-3 font-bold text-slate-900">{app.compatibility_score}%</td>
+                    <td className="px-4 py-3">
+                      <select 
+                        value={app.application_status}
+                        onChange={(e) => handleStatusChange(app.id, e.target.value)}
+                        className="rounded border border-slate-300 px-2 py-1 outline-none text-xs"
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="Under Review">Under Review</option>
+                        <option value="Evaluation Ongoing">Evaluation Ongoing</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                      </select>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -179,38 +235,70 @@ export default function AdoptionDashboard() {
         </Section>
 
         <Section id="meetups" eyebrow="Step 5" title="Meetup & Bonding Sessions">
-          <div className="grid gap-3">
-            {meetups.map(meetup => (
-              <div key={`${meetup.child}-${meetup.session}`} className="grid gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 md:grid-cols-[100px_1fr_160px]">
-                <div>
-                  <p className="text-xs font-bold uppercase text-slate-500">Session</p>
-                  <p className="text-2xl font-black text-violet-600">{meetup.session}</p>
+          <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+            <div className="grid gap-3">
+              {meetups.map(meetup => (
+                <div key={meetup.id} className="grid gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 md:grid-cols-[100px_1fr_160px]">
+                  <div>
+                    <p className="text-xs font-bold uppercase text-slate-500">Session</p>
+                    <p className="text-2xl font-black text-violet-600">{meetup.session}</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900">{meetup.parent} with {meetup.child}</p>
+                    <p className="mt-1 text-sm text-slate-600">{meetup.note}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-slate-900">{meetup.date}</p>
+                    <StatusBadge tone={meetup.attendance === 'Confirmed' ? 'green' : 'yellow'}>{meetup.attendance}</StatusBadge>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-bold text-slate-900">{meetup.parent} with {meetup.child}</p>
-                  <p className="mt-1 text-sm text-slate-600">{meetup.note}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-900">{meetup.date}</p>
-                  <StatusBadge tone={meetup.attendance === 'Confirmed' ? 'green' : 'yellow'}>{meetup.attendance}</StatusBadge>
-                </div>
+              ))}
+            </div>
+            <form onSubmit={handleAddMeetup} className="rounded-lg bg-white border border-slate-200 p-4 shadow-sm h-fit">
+              <h3 className="font-bold text-slate-900 mb-4">Schedule Meetup</h3>
+              <div className="space-y-3 text-sm">
+                <input name="parent" placeholder="Parent Name" required className="w-full rounded border px-3 py-2 outline-none" />
+                <input name="child" placeholder="Child Name" required className="w-full rounded border px-3 py-2 outline-none" />
+                <input name="date" type="date" required className="w-full rounded border px-3 py-2 outline-none" />
+                <textarea name="note" placeholder="Session Note..." required className="w-full rounded border px-3 py-2 outline-none" />
+                <button type="submit" className="w-full rounded bg-violet-600 px-4 py-2 font-bold text-white hover:bg-violet-700 transition">Schedule</button>
               </div>
-            ))}
+            </form>
           </div>
         </Section>
 
-        <Section id="evaluations" eyebrow="Steps 6-7" title="Parent Q&A and Child Observation Reports">
-          <div className="grid gap-4 md:grid-cols-3">
-            {evaluations.map(item => (
-              <div key={item.label} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-                <p className="text-3xl font-black text-slate-950">{item.value}</p>
-                <h3 className="mt-2 font-bold text-slate-900">{item.label}</h3>
-                <p className="mt-1 text-sm text-slate-600">{item.detail}</p>
+        <Section id="evaluations" eyebrow="Steps 6-7" title="Submit Evaluation & Observation">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 flex flex-col justify-center">
+              <h3 className="font-bold text-slate-900 text-lg mb-2">Post-Meetup Reports</h3>
+              <p className="text-sm text-slate-600 mb-4">
+                Submit staff observations regarding the child's comfort level, communication, and emotional responses during the meetup. This data securely recalculates compatibility.
+              </p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white p-3 border rounded text-center">
+                  <div className="text-2xl font-black text-slate-900">{applications.length}</div>
+                  <div className="text-xs font-bold text-slate-500 uppercase">Total Apps</div>
+                </div>
+                <div className="bg-white p-3 border rounded text-center">
+                  <div className="text-2xl font-black text-violet-600">{averageCompatibility}%</div>
+                  <div className="text-xs font-bold text-slate-500 uppercase">Avg Score</div>
+                </div>
               </div>
-            ))}
-          </div>
-          <div className="mt-4 rounded-lg border border-cyan-200 bg-cyan-50 p-4 text-sm text-slate-700">
-            Evaluation forms capture comfort level, communication quality, attachment signs, anxiety indicators, interaction quality, and staff observations after every meetup.
+            </div>
+            
+            <form onSubmit={handleEvaluationSubmit} className="rounded-lg bg-white border border-slate-200 p-4 shadow-sm">
+              <div className="space-y-3 text-sm">
+                <label className="block font-bold">Select Application</label>
+                <select name="application_id" required className="w-full rounded border px-3 py-2 outline-none">
+                  {applications.map(app => (
+                    <option key={app.id} value={app.id}>APP-{app.id} ({app.parent_name || 'Parent '+app.parent_id} & {app.child_name || 'Child '+app.child_id})</option>
+                  ))}
+                </select>
+                <label className="block font-bold">Staff Observations</label>
+                <textarea name="observation" required rows={4} placeholder="e.g. The child showed high comfort level and engaged in active play." className="w-full rounded border px-3 py-2 outline-none" />
+                <button type="submit" className="w-full rounded bg-violet-600 px-4 py-2 font-bold text-white hover:bg-violet-700 transition">Submit & Recalculate</button>
+              </div>
+            </form>
           </div>
         </Section>
 
@@ -220,11 +308,11 @@ export default function AdoptionDashboard() {
               {applications.map(app => (
                 <div key={app.id} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
                   <div className="flex items-center justify-between gap-4">
-                    <p className="font-bold text-slate-900">{app.parent_name || 'Parent ID: ' + app.parent_id} and {app.child_name}</p>
+                    <p className="font-bold text-slate-900">{app.parent_name || 'Parent ID: ' + app.parent_id} and {app.child_name || 'Child ID: ' + app.child_id}</p>
                     <span className="font-black text-violet-700">{app.compatibility_score || 0}%</span>
                   </div>
                   <div className="mt-3 h-3 rounded-full bg-slate-200">
-                    <div className="h-3 rounded-full bg-violet-600" style={{ width: `${app.compatibility_score || 0}%` }} />
+                    <div className="h-3 rounded-full bg-violet-600 transition-all duration-1000" style={{ width: `${app.compatibility_score || 0}%` }} />
                   </div>
                 </div>
               ))}
@@ -241,21 +329,10 @@ export default function AdoptionDashboard() {
         <Section id="approval" eyebrow="Step 9" title="Final Adoption Approval">
           <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
             <div>
-              <label className="block">
-                <span className="text-sm font-bold text-slate-700">Application decision stage</span>
-                <select
-                  value={applicationStatus}
-                  onChange={event => setApplicationStatus(event.target.value)}
-                  className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:ring-2 focus:ring-violet-500"
-                >
-                  {['Pending', 'Under Review', 'Meetup Phase', 'Evaluation Ongoing', 'Approved', 'Rejected'].map(status => (
-                    <option key={status}>{status}</option>
-                  ))}
-                </select>
-              </label>
-              <p className="mt-3 text-sm text-slate-600">Current selected status: <strong>{applicationStatus}</strong></p>
+              <h3 className="font-bold text-slate-900 mb-2">Process Finalization</h3>
+              <p className="text-sm text-slate-600">Once an application achieves a sufficient compatibility score and all verifications are passed, change its status in the Applications table above to <strong>"Approved"</strong>.</p>
             </div>
-            <button className="rounded-lg bg-violet-600 px-5 py-3 font-bold text-white hover:bg-violet-700">
+            <button className="rounded-lg bg-violet-600 px-5 py-3 font-bold text-white hover:bg-violet-700 transition h-fit">
               Generate Final Report
             </button>
           </div>
@@ -336,5 +413,6 @@ export default function AdoptionDashboard() {
         </Section>
       </main>
     </div>
-  )
+  );
 }
+

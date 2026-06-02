@@ -1,7 +1,47 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Video, MapPin, Clock } from 'lucide-react';
+import api from '../../../services/api';
 
 export default function Schedule() {
+  const [availability, setAvailability] = useState({
+    Mon: true, Tue: true, Wed: true, Thu: true, Fri: true, Sat: false, Sun: false
+  });
+
+  useEffect(() => {
+    fetchAvail();
+  }, []);
+
+  const fetchAvail = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/nanny/availability', {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      const data = await response.json();
+      if(data.ok && data.data) {
+        setAvailability(data.data.days || availability);
+      }
+    } catch(err) {
+      console.error(err);
+    }
+  };
+
+  const toggleDay = async (day) => {
+    const nextState = { ...availability, [day]: !availability[day] };
+    setAvailability(nextState);
+    try {
+      await fetch('http://localhost:5000/api/nanny/availability', {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ days: nextState })
+      });
+    } catch(err) {
+      console.error('Failed to save availability', err);
+    }
+  };
+
   // Calendar data (May 2026 starts on Friday)
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const blanks = Array(5).fill(null); // Sun, Mon, Tue, Wed, Thu are empty
@@ -168,17 +208,20 @@ export default function Schedule() {
         <h2 className="text-xl font-bold text-slate-800 mb-6">Availability Status</h2>
         
         <div className="grid grid-cols-2 md:grid-cols-7 gap-3">
-          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map(day => (
-            <div key={day} className="border-2 border-[#22c55e] bg-[#f0fdf4] rounded-xl p-4 text-center cursor-pointer hover:bg-green-100 transition-colors">
-              <div className="font-bold text-[#16a34a] text-sm">{day}</div>
-              <div className="font-bold text-[#16a34a] text-sm mt-1">Available</div>
-            </div>
-          ))}
-          
-          {['Sat', 'Sun'].map(day => (
-            <div key={day} className="border-2 border-slate-200 bg-slate-50 rounded-xl p-4 text-center cursor-pointer hover:bg-slate-100 transition-colors">
-              <div className="font-bold text-slate-500 text-sm">{day}</div>
-              <div className="font-bold text-slate-500 text-sm mt-1">Off</div>
+          {Object.entries(availability).map(([day, isAvailable]) => (
+            <div 
+              key={day} 
+              onClick={() => toggleDay(day)}
+              className={`border-2 rounded-xl p-4 text-center cursor-pointer transition-colors ${
+                isAvailable 
+                  ? 'border-[#22c55e] bg-[#f0fdf4] hover:bg-green-100' 
+                  : 'border-slate-200 bg-slate-50 hover:bg-slate-100'
+              }`}
+            >
+              <div className={`font-bold text-sm ${isAvailable ? 'text-[#16a34a]' : 'text-slate-500'}`}>{day}</div>
+              <div className={`font-bold text-sm mt-1 ${isAvailable ? 'text-[#16a34a]' : 'text-slate-500'}`}>
+                {isAvailable ? 'Available' : 'Off'}
+              </div>
             </div>
           ))}
         </div>
