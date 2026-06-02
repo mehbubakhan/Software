@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import api from '../../../services/api'
 import { useAuth } from '../../../context/AuthContext'
+import ChildAuth from '../../../components/ChildAuth'
 
 export default function Overview() {
   const { user } = useAuth()
@@ -9,6 +10,8 @@ export default function Overview() {
   const [loading, setLoading] = useState(true)
   const [expandedWishlist, setExpandedWishlist] = useState(null)
   const [showMessageModal, setShowMessageModal] = useState(false)
+  const [showChildAuth, setShowChildAuth] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchOverview = async () => {
@@ -64,12 +67,21 @@ export default function Overview() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-10">
       {/* Welcome Banner */}
-      <div className="bg-[#1A1D27] rounded-3xl p-8 text-center border border-[#2A2E3D] shadow-lg relative overflow-hidden">
+      <div className="bg-[#1A1D27] rounded-3xl p-8 text-center border border-[#2A2E3D] shadow-lg relative overflow-hidden flex flex-col md:flex-row items-center justify-between text-left">
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-fuchsia-600/10 to-blue-600/10 pointer-events-none"></div>
-        <h1 className="text-3xl font-bold text-white relative z-10 flex items-center justify-center gap-3">
-          <span className="text-4xl">✨</span> Welcome back, {user?.name || data.user.name}!
-        </h1>
-        <p className="text-slate-400 mt-2 relative z-10">Here's what's happening with your children today</p>
+        <div className="relative z-10 mb-6 md:mb-0 text-center md:text-left w-full md:w-auto">
+          <h1 className="text-3xl font-bold text-white flex items-center justify-center md:justify-start gap-3">
+            <span className="text-4xl">✨</span> Welcome back, {user?.name || data.user.name}!
+          </h1>
+          <p className="text-slate-400 mt-2">Here's what's happening with your children today</p>
+        </div>
+        <button 
+          onClick={() => setShowChildAuth(true)}
+          className="relative z-10 shrink-0 rounded-2xl bg-gradient-to-r from-fuchsia-600 to-pink-500 px-8 py-4 font-bold text-white shadow-[0_0_20px_rgba(192,38,211,0.5)] transition hover:scale-105 hover:shadow-[0_0_30px_rgba(192,38,211,0.7)] flex flex-col items-center gap-1"
+        >
+          <span className="text-2xl">🎮</span>
+          <span className="tracking-wide">ENTER CHILD MODE</span>
+        </button>
       </div>
 
       {/* Child Profiles */}
@@ -215,7 +227,7 @@ export default function Overview() {
           <div className="bg-[#1A1D27] border border-[#2A2E3D] rounded-3xl p-5">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-bold text-white">Upcoming Schedule</h3>
-              <a href="#" className="text-xs text-slate-400 hover:text-white">View Calendar</a>
+              <Link to="/dashboard/parent/schedule" className="text-xs text-slate-400 hover:text-white">View Calendar</Link>
             </div>
             <div className="space-y-3">
               {upcomingSchedule.map((schedule) => (
@@ -335,6 +347,9 @@ export default function Overview() {
           </div>
         </div>
       )}
+
+      {/* Child Auth Modal */}
+      <ChildAuth isOpen={showChildAuth} onClose={() => setShowChildAuth(false)} onSuccess={() => navigate('/dashboard/child')} />
     </div>
   )
 }

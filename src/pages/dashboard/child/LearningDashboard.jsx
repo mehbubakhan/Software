@@ -35,7 +35,7 @@ export default function LearningDashboard({ coins, playClick }) {
               <div className="h-full bg-fuchsia-500 w-[40%] rounded-full"></div>
             </div>
           </div>
-          
+
           <div className="p-5 rounded-2xl bg-cyan-50 border border-cyan-100">
             <div className="flex items-center justify-between mb-4">
               <span className="font-bold text-cyan-800">Numbers</span>
