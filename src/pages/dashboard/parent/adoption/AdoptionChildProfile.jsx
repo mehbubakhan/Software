@@ -30,6 +30,19 @@ export default function AdoptionChildProfile() {
     return <div className="text-center text-slate-400 py-12">Child not found.</div>;
   }
 
+  const childName = child.child_name || child.name || 'Child Profile'
+  const interests = Array.isArray(child.interests)
+    ? child.interests
+    : String(child.interests || '').split(',').map(item => item.trim()).filter(Boolean)
+  const location = child.orphanage_name || child.currentLocation || 'Adoption center'
+  const status = child.adoption_status || child.matchStatus || 'available'
+  const description = child.short_description || child.description || 'No description available.'
+  const medicalInfo = child.medicalInfo || {
+    healthCondition: child.health_condition || 'Unknown',
+    medicalHistory: child.health_condition || 'Not specified',
+    specialNeeds: 'Not specified',
+  }
+
   return (
     <div className="bg-[#111322] min-h-[calc(100vh-68px)] text-slate-100 -m-6 p-8 font-sans">
       <div className="max-w-4xl mx-auto">
@@ -45,21 +58,21 @@ export default function AdoptionChildProfile() {
             <div className="w-32 h-32 rounded-full bg-gradient-to-tr from-fuchsia-600 to-purple-600 flex items-center justify-center text-white text-5xl font-bold mb-4 shadow-lg">
               {child.image}
             </div>
-            <h1 className="text-3xl font-bold text-white mb-6 text-center">{child.name}</h1>
+            <h1 className="text-3xl font-bold text-white mb-6 text-center">{childName}</h1>
             <button className="w-full bg-transparent hover:bg-slate-800 border border-slate-600 text-fuchsia-400 font-semibold py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
               ♡ Add to Favorites
             </button>
           </div>
 
           <div className="flex-1 w-full">
-            <h2 className="text-2xl font-bold text-white mb-1">{child.name}</h2>
+            <h2 className="text-2xl font-bold text-white mb-1">{childName}</h2>
             <div className="text-slate-400 mb-6">{child.age} • {child.gender}</div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8 text-sm">
               <div>
                 <div className="text-slate-500 mb-1">Match Status</div>
-                <div className={`inline-block px-3 py-1 rounded font-semibold ${child.matchStatus === 'Excellent' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'}`}>
-                  ✓ {child.matchStatus}
+                <div className={`inline-block px-3 py-1 rounded font-semibold ${status === 'adopted' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'}`}>
+                  ✓ {status}
                 </div>
               </div>
               
@@ -70,7 +83,7 @@ export default function AdoptionChildProfile() {
 
               <div>
                 <div className="text-slate-500 mb-1 flex items-center gap-1">📍 Current Location</div>
-                <div className="text-white font-medium">{child.currentLocation}</div>
+                <div className="text-white font-medium">{location}</div>
               </div>
 
               <div>
@@ -81,7 +94,7 @@ export default function AdoptionChildProfile() {
               <div className="md:col-span-2">
                 <div className="text-slate-500 mb-1 flex items-center gap-1">🌐 Languages</div>
                 <div className="flex gap-2">
-                  {child.languages.map(lang => (
+                  {(Array.isArray(child.languages) ? child.languages : []).map(lang => (
                     <span key={lang} className="bg-slate-800 border border-slate-700 text-fuchsia-300 px-3 py-1 rounded-md text-xs font-medium">
                       {lang}
                     </span>
@@ -98,14 +111,14 @@ export default function AdoptionChildProfile() {
           <div className="md:col-span-2 bg-[#1a1c2d] border border-slate-700 rounded-2xl p-6">
             <h3 className="text-lg font-bold text-white mb-4">Personality</h3>
             <p className="text-slate-300 text-sm leading-relaxed">
-              {child.description}
+              {description}
             </p>
           </div>
 
           <div className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-6">
             <h3 className="text-lg font-bold text-white mb-4">Interests & Hobbies</h3>
             <div className="flex flex-wrap gap-2">
-              {child.interests.map((interest, idx) => (
+              {interests.map((interest, idx) => (
                 <span key={idx} className="bg-slate-800 text-fuchsia-300 border border-slate-700 text-sm px-3 py-1.5 rounded-md">
                   {interest}
                 </span>
@@ -122,19 +135,19 @@ export default function AdoptionChildProfile() {
           <div className="space-y-6">
             <div>
               <div className="text-sm font-bold text-white mb-1">Health Condition</div>
-              <div className={`inline-flex items-center gap-1 text-sm font-semibold ${child.medicalInfo.healthCondition === 'Excellent' || child.medicalInfo.healthCondition === 'Good' ? 'text-green-400' : 'text-yellow-400'}`}>
-                ✓ {child.medicalInfo.healthCondition}
+              <div className={`inline-flex items-center gap-1 text-sm font-semibold ${medicalInfo.healthCondition === 'Excellent' || medicalInfo.healthCondition === 'Good' ? 'text-green-400' : 'text-yellow-400'}`}>
+                ✓ {medicalInfo.healthCondition}
               </div>
             </div>
 
             <div>
               <div className="text-sm font-bold text-white mb-1">Medical History</div>
-              <div className="text-sm text-slate-400">{child.medicalInfo.medicalHistory}</div>
+              <div className="text-sm text-slate-400">{medicalInfo.medicalHistory}</div>
             </div>
 
             <div>
               <div className="text-sm font-bold text-white mb-1">Special Needs</div>
-              <div className="text-sm text-slate-400">{child.medicalInfo.specialNeeds}</div>
+              <div className="text-sm text-slate-400">{medicalInfo.specialNeeds}</div>
             </div>
           </div>
         </div>
@@ -150,7 +163,7 @@ export default function AdoptionChildProfile() {
 
         {/* Bottom Actions */}
         <div className="flex flex-col sm:flex-row gap-4 mb-20">
-          <button 
+            <button 
             onClick={() => navigate('apply')}
             className="flex-1 bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-fuchsia-900/20"
           >

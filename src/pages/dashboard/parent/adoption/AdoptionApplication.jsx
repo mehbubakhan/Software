@@ -33,7 +33,11 @@ export default function AdoptionApplication() {
 
     setSubmitting(true);
     try {
-      await api.post('/adoption/apply');
+      await api.post('/adoption/apply', {
+        child_id: child.id,
+        orphanage_id: child.orphanage_id,
+        submitted_documents: [],
+      });
       navigate('/dashboard/parent/adoption/applications');
     } catch (err) {
       console.error('Error submitting application:', err);
@@ -43,6 +47,9 @@ export default function AdoptionApplication() {
 
   if (loading) return <div className="text-center text-slate-400 py-12">Loading application...</div>;
   if (!child) return <div className="text-center text-slate-400 py-12">Child not found.</div>;
+
+  const childName = child.child_name || child.name || 'Child Profile';
+  const childLocation = child.orphanage_name || child.currentLocation || 'Adoption center';
 
   return (
     <div className="bg-[#111322] min-h-[calc(100vh-68px)] text-slate-100 -m-6 p-8 font-sans">
@@ -55,8 +62,8 @@ export default function AdoptionApplication() {
         {/* Header */}
         <div className="mb-10">
           <h1 className="text-3xl font-bold text-white mb-2">Adoption Application</h1>
-          <p className="text-slate-400">Applying for: <span className="font-bold text-white">{child.name}</span> ({child.age}, {child.gender})</p>
-          <p className="text-slate-400 text-sm mt-1">{child.currentLocation}</p>
+          <p className="text-slate-400">Applying for: <span className="font-bold text-white">{childName}</span> ({child.age}, {child.gender})</p>
+          <p className="text-slate-400 text-sm mt-1">{childLocation}</p>
         </div>
 
         {/* Stepper */}
@@ -175,7 +182,7 @@ export default function AdoptionApplication() {
                 <h3 className="text-xl font-bold text-white mb-6">Motivation & Experience</h3>
                 
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-2">Why do you want to adopt {child.name}? (Minimum 100 characters) *</label>
+                  <label className="block text-sm font-medium text-slate-400 mb-2">Why do you want to adopt {childName}? (Minimum 100 characters) *</label>
                   <textarea rows={4} required minLength={100} placeholder="Please share your motivation for adoption and what you can offer to the child..." className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-fuchsia-500"></textarea>
                   <div className="text-right text-xs text-slate-500 mt-1">0 / 100 characters</div>
                 </div>

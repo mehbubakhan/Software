@@ -25,6 +25,11 @@ export default function OrphanageProfile() {
   if (loading) return <div className="text-center text-slate-400 py-12">Loading orphanage...</div>;
   if (!orphanage) return <div className="text-center text-slate-400 py-12">Orphanage not found.</div>;
 
+  const orphanageName = orphanage.orphanage_name || orphanage.name || 'Orphanage'
+  const toInterestList = (value) => Array.isArray(value)
+    ? value
+    : String(value || '').split(',').map(item => item.trim()).filter(Boolean)
+
   return (
     <div className="bg-[#111322] min-h-[calc(100vh-68px)] text-slate-100 -m-6 p-8 font-sans">
       <div className="max-w-5xl mx-auto">
@@ -36,7 +41,7 @@ export default function OrphanageProfile() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Children Available for Adoption</h1>
-          <p className="text-slate-400">Each child deserves a loving home. Browse profiles from <strong className="text-white">{orphanage.name}</strong> to learn about their personalities, interests, and needs.</p>
+          <p className="text-slate-400">Each child deserves a loving home. Browse profiles from <strong className="text-white">{orphanageName}</strong> to learn about their personalities, interests, and needs.</p>
         </div>
 
         {/* Filters */}
@@ -84,7 +89,7 @@ export default function OrphanageProfile() {
                   <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-fuchsia-600 to-purple-600 flex items-center justify-center text-white text-4xl font-bold mb-4 shadow-lg">
                     {child.image}
                   </div>
-                  <h3 className="text-xl font-bold text-white">{child.name}</h3>
+                  <h3 className="text-xl font-bold text-white">{child.child_name || child.name}</h3>
                 </div>
 
                 {/* Profile Body */}
@@ -92,15 +97,15 @@ export default function OrphanageProfile() {
                   
                   <div className="flex justify-between items-center mb-4">
                     <div className="font-bold text-white text-lg">{child.age}</div>
-                    <div className={`text-xs px-2 py-1 rounded font-semibold ${child.matchStatus === 'Excellent' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'}`}>
-                      {child.matchStatus}
+                    <div className={`text-xs px-2 py-1 rounded font-semibold ${child.adoption_status === 'available' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'}`}>
+                      {child.adoption_status || 'available'}
                     </div>
                   </div>
 
                   <div className="text-sm text-slate-400 mb-4 space-y-1">
                     <div><span className="font-semibold text-slate-300">{child.gender}</span></div>
                     <div className="flex items-start gap-2">
-                      <span>📍</span> <span>{child.currentLocation}</span>
+                      <span>📍</span> <span>{orphanageName}</span>
                     </div>
                     <div className="flex items-start gap-2">
                       <span>🕒</span> <span>Available since {child.availableSince}</span>
@@ -108,13 +113,13 @@ export default function OrphanageProfile() {
                   </div>
 
                   <p className="text-sm text-slate-300 leading-relaxed mb-6 flex-1">
-                    {child.description}
+                    {child.short_description || child.description}
                   </p>
 
                   <div className="mb-6">
                     <div className="text-xs text-slate-400 mb-2">Interests:</div>
                     <div className="flex flex-wrap gap-2">
-                      {child.interests.map((interest, idx) => (
+                      {toInterestList(child.interests).map((interest, idx) => (
                         <span key={idx} className="bg-slate-800 text-fuchsia-300 border border-slate-700 text-xs px-2 py-1 rounded-md">
                           {interest}
                         </span>

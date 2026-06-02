@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react'
 import Sidebar from '../../components/Sidebar'
 import { useAuth } from '../../context/AuthContext'
-import { getChildren, getApplications, updateApplicationStatus } from '../../services/adoptionApi'
+import { createChild, getChildren, getApplications, getMyOrphanage, updateApplicationStatus } from '../../services/adoptionApi'
 
 const items = [
   { label: 'Adoption Overview', path: '/dashboard/adoption' },
@@ -46,10 +46,14 @@ export default function AdoptionDashboard() {
   const [applicationStatus, setApplicationStatus] = useState('Evaluation Ongoing')
   const [children, setChildren] = useState([])
   const [applications, setApplications] = useState([])
+  const [orphanage, setOrphanage] = useState(null)
+  const [childForm, setChildForm] = useState({ child_name: '', age: '', gender: '', health_condition: '', interests: '', short_description: '' })
+  const [savingChild, setSavingChild] = useState(false)
   
   useEffect(() => {
     getChildren().then(res => setChildren(res.data.data)).catch(console.error)
     getApplications().then(res => setApplications(res.data.data)).catch(console.error)
+    getMyOrphanage().then(res => setOrphanage(res.data.data)).catch(() => setOrphanage(null))
   }, [])
 
   const averageCompatibility = useMemo(() => {
@@ -57,6 +61,36 @@ export default function AdoptionDashboard() {
     const total = applications.reduce((sum, item) => sum + (item.compatibility_score || 0), 0)
     return Math.round(total / applications.length)
   }, [applications])
+
+  const parentProfiles = useMemo(() => {
+    const seen = new Map()
+    applications.forEach(app => {
+      const parentId = app.parent_id
+      if (!seen.has(parentId)) {
+        seen.set(parentId, {
+          name: app.parent_name || `Parent ID: ${parentId}`,
+          status: app.application_status === 'approved' ? 'Verified' : app.application_status === 'under_review' ? 'Background Check' : 'Pending Review',
+          background: app.parent_background || 'Adoption profile available through the active application record.',
+          finance: app.finance_status || 'Review pending',
+          preference: app.parent_preference || 'See application details',
+        })
+      }
+    })
+    return [...seen.values()]
+  }, [applications])
+
+  const analytics = useMemo(() => {
+    const total = applications.length
+    const approved = applications.filter(app => app.application_status === 'approved').length
+    const review = applications.filter(app => app.application_status === 'under_review').length
+    const availableChildren = children.filter(child => child.adoption_status === 'available').length
+    return [
+      ['Active applications', String(total), 'All adoption requests currently on file'],
+      ['Approved cases', String(approved), 'Applications already approved by orphanage staff'],
+      ['Under review', String(review), 'Cases awaiting interviews, documents, or evaluation'],
+      ['Available children', String(availableChildren), 'Children currently open for matching'],
+    ]
+  }, [applications, children])
 
   const handleUpdateStatus = async (id, newStatus) => {
     try {
@@ -69,19 +103,63 @@ export default function AdoptionDashboard() {
     }
   };
 
-  // Mock data for unimplemented sections
-  const meetups = [
-    { session: 1, child: 'Lucas', parent: 'Ariana Smith', date: '2026-05-25', attendance: 'Confirmed', note: 'Introductory play session' }
-  ]
-  const evaluations = [
-    { label: 'Parent Q&A submitted', value: '8', detail: 'Session-based emotional responses collected' }
-  ]
-  const parentProfiles = [
-    { name: 'Ariana Smith', status: 'Verified', background: 'Married, stable home, early childhood volunteer', finance: 'Approved', preference: 'Age 3-5' }
-  ]
-  const analytics = [
-    ['Adoption success rate', '68%', 'Approved cases from completed evaluations']
-  ]
+  const handleCreateChild = async (event) => {
+    event.preventDefault()
+    if (!orphanage?.id) {
+      alert('Load your orphanage record before adding a child profile.')
+      return
+    }
+
+    setSavingChild(true)
+    try {
+      await createChild({ ...childForm, orphanage_id: orphanage.id })
+      const refreshed = await getChildren()
+      setChildren(refreshed.data.data)
+      setChildForm({ child_name: '', age: '', gender: '', health_condition: '', interests: '', short_description: '' })
+      alert('Child profile created successfully')
+    } catch (error) {
+      console.error(error)
+      alert('Failed to create child profile')
+    } finally {
+      setSavingChild(false)
+    }
+  }
+
+  const meetups = useMemo(() => {
+    if (applications.length === 0) {
+      return []
+    }
+
+    return applications.slice(0, 3).map((app, index) => ({
+      session: index + 1,
+      child: app.child_name || `Child ID: ${app.child_id}`,
+      parent: app.parent_name || `Parent ID: ${app.parent_id}`,
+      date: app.meetup_date || 'Pending scheduling',
+      attendance: app.meetup_status || (app.application_status === 'approved' ? 'Confirmed' : 'Pending'),
+      note: app.meetup_note || 'Bonding session managed from the adoption dashboard',
+    }))
+  }, [applications])
+
+  const evaluations = useMemo(() => ([
+    { label: 'Parent Q&A submitted', value: String(applications.length), detail: 'Application responses and compatibility notes collected' },
+    { label: 'Approved matches', value: String(applications.filter(app => app.application_status === 'approved').length), detail: 'Applications ready for final approvals or reporting' },
+  ]), [applications])
+
+  const followUps = useMemo(() => {
+    const reviewed = applications.filter(app => ['approved', 'under_review'].includes(app.application_status))
+    return reviewed.slice(0, 2).map(app => ({
+      title: `${app.child_name || `Child ID: ${app.child_id}`} follow-up`,
+      detail: `Monitor family transition and emotional adjustment for ${app.parent_name || `Parent ID: ${app.parent_id}`}.`,
+    }))
+  }, [applications])
+
+  const notifications = useMemo(() => {
+    const items = []
+    if (children.length > 0) items.push(['Child profiles updated', `${children.length} child profile${children.length === 1 ? '' : 's'} are currently active.`])
+    if (applications.length > 0) items.push(['Application review queue', `${applications.filter(app => app.application_status !== 'approved').length} application${applications.filter(app => app.application_status !== 'approved').length === 1 ? '' : 's'} still need attention.`])
+    if (averageCompatibility > 0) items.push(['Compatibility summary', `Average internal match score is ${averageCompatibility}%.`])
+    return items
+  }, [applications, averageCompatibility, children.length])
 
   return (
     <div className="min-h-[calc(100vh-68px)] bg-slate-50 md:flex">
@@ -113,8 +191,8 @@ export default function AdoptionDashboard() {
         <Section id="verification" eyebrow="Step 1" title="Orphanage Registration & Verification">
           <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
             <div className="space-y-3 text-sm text-slate-700">
-              <p><strong>Organization:</strong> {user?.name || 'Registered Orphanage'}</p>
-              <p><strong>Verification status:</strong> Documents submitted and awaiting admin verification.</p>
+              <p><strong>Organization:</strong> {orphanage?.orphanage_name || user?.name || 'Registered Orphanage'}</p>
+              <p><strong>Verification status:</strong> {orphanage?.verification_status || 'Documents submitted and awaiting admin verification.'}</p>
               <p><strong>Security:</strong> Registration documents are restricted to admin and authorized reviewers.</p>
             </div>
             <div className="rounded-lg bg-violet-50 p-4">
@@ -125,6 +203,22 @@ export default function AdoptionDashboard() {
         </Section>
 
         <Section id="children" eyebrow="Step 2" title="Child Profile Management">
+          <form onSubmit={handleCreateChild} className="mb-6 rounded-lg border border-cyan-100 bg-cyan-50 p-4">
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              <input value={childForm.child_name} onChange={e => setChildForm({ ...childForm, child_name: e.target.value })} required className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-400" placeholder="Child name" />
+              <input value={childForm.age} onChange={e => setChildForm({ ...childForm, age: e.target.value })} required className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-400" placeholder="Age" />
+              <input value={childForm.gender} onChange={e => setChildForm({ ...childForm, gender: e.target.value })} required className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-400" placeholder="Gender" />
+              <input value={childForm.health_condition} onChange={e => setChildForm({ ...childForm, health_condition: e.target.value })} className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-400 md:col-span-2 xl:col-span-3" placeholder="Health condition" />
+              <input value={childForm.interests} onChange={e => setChildForm({ ...childForm, interests: e.target.value })} className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-400 md:col-span-2 xl:col-span-3" placeholder="Interests" />
+              <textarea value={childForm.short_description} onChange={e => setChildForm({ ...childForm, short_description: e.target.value })} required className="min-h-24 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-400 md:col-span-2 xl:col-span-3" placeholder="Short description" />
+            </div>
+            <div className="mt-4 flex justify-end">
+              <button type="submit" disabled={savingChild} className="rounded-lg bg-violet-600 px-5 py-2 font-bold text-white hover:bg-violet-700 disabled:opacity-60">
+                {savingChild ? 'Saving...' : 'Add Child Profile'}
+              </button>
+            </div>
+          </form>
+
           <div className="grid gap-4 lg:grid-cols-3">
             {children.map(child => (
               <article key={child.id} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
@@ -273,10 +367,7 @@ export default function AdoptionDashboard() {
 
         <Section id="followups" eyebrow="Step 10" title="Post-Adoption Follow-up">
           <div className="grid gap-4 md:grid-cols-2">
-            {[
-              ['1 Month Check', 'Scheduled home visit, parent feedback, and child well-being report.'],
-              ['3 Month Check', 'Safety verification, adjustment review, and risk flag update.'],
-            ].map(([title, detail]) => (
+            {followUps.map(({ title, detail }) => (
               <div key={title} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
                 <h3 className="font-bold text-slate-900">{title}</h3>
                 <p className="mt-2 text-sm text-slate-600">{detail}</p>
@@ -331,12 +422,7 @@ export default function AdoptionDashboard() {
 
         <Section id="notifications" eyebrow="Realtime Updates" title="Notification Center">
           <div className="space-y-3">
-            {[
-              ['Meetup reminder', 'Lucas session 2 reminder scheduled for May 29, 2026.'],
-              ['Application update', 'APP-1025 moved to Under Review.'],
-              ['Follow-up schedule', 'One-month welfare check is ready to assign.'],
-              ['Emergency alert', 'Risk flag workflow is available for urgent child safety review.'],
-            ].map(([title, detail]) => (
+            {notifications.map(([title, detail]) => (
               <div key={title} className="rounded-lg border-l-4 border-violet-500 bg-violet-50 p-4">
                 <h3 className="font-bold text-slate-900">{title}</h3>
                 <p className="mt-1 text-sm text-slate-600">{detail}</p>

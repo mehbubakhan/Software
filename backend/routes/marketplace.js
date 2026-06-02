@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const marketplaceController = require('../controllers/marketplaceController');
 const auth = require('../middleware/auth');
+const { permit } = require('../middleware/roles');
 
 // Public routes
 router.get('/products', marketplaceController.getProducts);
@@ -25,11 +26,11 @@ router.delete('/wishlist/:wishlist_id', marketplaceController.removeFromWishlist
 router.post('/checkout', marketplaceController.checkout);
 
 // Seller routes
-router.get('/seller/products', marketplaceController.getSellerProducts);
-router.post('/seller/products', marketplaceController.addSellerProduct);
-router.put('/seller/products/:id', marketplaceController.updateSellerProduct);
-router.delete('/seller/products/:id', marketplaceController.deleteSellerProduct);
-router.get('/seller/orders', marketplaceController.getSellerOrders);
-router.put('/seller/orders/:id/status', marketplaceController.updateOrderStatus);
+router.get('/seller/products', permit('marketplace_seller', 'seller', 'admin'), marketplaceController.getSellerProducts);
+router.post('/seller/products', permit('marketplace_seller', 'seller', 'admin'), marketplaceController.addSellerProduct);
+router.put('/seller/products/:id', permit('marketplace_seller', 'seller', 'admin'), marketplaceController.updateSellerProduct);
+router.delete('/seller/products/:id', permit('marketplace_seller', 'seller', 'admin'), marketplaceController.deleteSellerProduct);
+router.get('/seller/orders', permit('marketplace_seller', 'seller', 'admin'), marketplaceController.getSellerOrders);
+router.put('/seller/orders/:id/status', permit('marketplace_seller', 'seller', 'admin'), marketplaceController.updateOrderStatus);
 
 module.exports = router;

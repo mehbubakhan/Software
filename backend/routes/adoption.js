@@ -11,17 +11,18 @@ router.get('/children', auth, adoptionController.getChildren);
 router.get('/children/:id', auth, adoptionController.getChildById);
 
 // Orphanage Manager specific routes
-router.post('/orphanages', auth, permit('orphanageManager', 'admin'), adoptionController.createOrphanage);
-router.get('/manager/my-orphanage', auth, permit('orphanageManager', 'admin'), adoptionController.getMyOrphanage);
-router.post('/children', auth, permit('orphanageManager', 'admin'), adoptionController.createChild);
+router.post('/orphanages', auth, permit('orphanage_manager', 'orphanageManager', 'admin'), adoptionController.createOrphanage);
+router.get('/manager/my-orphanage', auth, permit('orphanage_manager', 'orphanageManager', 'admin'), adoptionController.getMyOrphanage);
+router.post('/children', auth, permit('orphanage_manager', 'orphanageManager', 'admin'), adoptionController.createChild);
 
 // Applications
 router.post('/applications', auth, permit('parent', 'admin'), adoptionController.createApplication);
+router.post('/apply', auth, permit('parent', 'admin'), adoptionController.createApplication);
 router.get('/applications', auth, adoptionController.getApplications);
-router.patch('/applications/:id/status', auth, permit('orphanageManager', 'admin'), adoptionController.updateApplicationStatus);
+router.patch('/applications/:id/status', auth, permit('orphanage_manager', 'orphanageManager', 'admin'), adoptionController.updateApplicationStatus);
 
 // Meetups
-router.post('/meetups', auth, permit('orphanageManager', 'admin'), adoptionController.createMeetup);
+router.post('/meetups', auth, permit('orphanage_manager', 'orphanageManager', 'admin'), adoptionController.createMeetup);
 router.get('/applications/:id/meetups', auth, adoptionController.getApplicationMeetups);
 
 // QA & Compatibility

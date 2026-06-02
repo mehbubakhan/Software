@@ -70,6 +70,15 @@ const adoptionController = {
   createApplication: async (req, res) => {
     try {
       const data = { ...req.body, parent_id: req.user.id };
+      if (!data.orphanage_id && data.child_id) {
+        const child = await Child.findById(data.child_id);
+        if (child) {
+          data.orphanage_id = child.orphanage_id;
+        }
+      }
+      if (!data.child_id || !data.orphanage_id) {
+        return res.status(400).json({ ok: false, message: 'Child and orphanage are required' });
+      }
       const id = await Application.create(data);
       res.status(201).json({ ok: true, id });
     } catch (err) {

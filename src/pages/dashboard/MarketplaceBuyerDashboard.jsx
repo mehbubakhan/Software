@@ -5,11 +5,11 @@ import Sidebar from '../../components/Sidebar';
 
 const sidebarItems = [
   { label: 'Dashboard', path: '/dashboard/parent' },
-  { label: 'Nanny', path: '/dashboard/parent/nanny' },
+  { label: 'Nanny', path: '/dashboard/parent/hire-nanny' },
   { label: 'Daycare', path: '/dashboard/parent/daycare' },
   { label: 'Adoption', path: '/dashboard/parent/adoption' },
   { label: 'Shop', path: '/dashboard/marketplace' },
-  { label: 'Job Requests', path: '/dashboard/parent/jobs' },
+  { label: 'Job Requests', path: '/dashboard/parent/job-requests' },
   { label: 'Interviews', path: '/dashboard/parent/interviews' },
   { label: 'Schedule', path: '/dashboard/parent/schedule' },
   { label: 'Messages', path: '/dashboard/parent/messages' },

@@ -19,13 +19,6 @@ const items = [
   { label: 'Notifications', path: '/dashboard/marketplace-seller#notifications' },
 ]
 
-const notifications = [
-  ['Low stock alert', 'Some items are running low.'],
-  ['Order update', 'Check your new orders for processing.'],
-  ['Payment success', 'Payments verified.'],
-  ['Discount offer', 'Weekend flash sale campaign is ready to publish.'],
-]
-
 function Section({ id, eyebrow, title, children }) {
   return (
     <section id={id} className="scroll-mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
@@ -54,6 +47,14 @@ export default function MarketplaceSellerDashboard() {
   const [products, setProducts] = useState([])
   const [orders, setOrders] = useState([])
   const [newProduct, setNewProduct] = useState({ name: '', price: '', stock: '' })
+  const [searchTerm, setSearchTerm] = useState('')
+  const [stockFilter, setStockFilter] = useState('all')
+  const [sortBy, setSortBy] = useState('name')
+  const [chatDraft, setChatDraft] = useState('')
+  const [chatMessages, setChatMessages] = useState([
+    { id: 1, from: 'Parent', text: 'Is the GPS Safety Band suitable for a 4-year-old?' },
+    { id: 2, from: 'Seller', text: 'Yes, it is designed for ages 3-8 and includes a safety-certified strap.' },
+  ])
 
   const fetchData = async () => {
     try {
@@ -61,8 +62,8 @@ export default function MarketplaceSellerDashboard() {
         api.get('/marketplace/seller/products'),
         api.get('/marketplace/seller/orders')
       ])
-      setProducts(prodRes.data)
-      setOrders(ordRes.data)
+      setProducts(Array.isArray(prodRes.data) ? prodRes.data : prodRes.data?.data || [])
+      setOrders(Array.isArray(ordRes.data) ? ordRes.data : ordRes.data?.data || [])
     } catch (err) {
       console.error(err)
     }
@@ -110,6 +111,60 @@ export default function MarketplaceSellerDashboard() {
   const totalRevenue = useMemo(() => products.reduce((sum, product) => sum + (parseFloat(product.price) * Math.max(parseInt(product.stock), 1)), 0), [products])
   const lowStock = products.filter(product => parseInt(product.stock) > 0 && parseInt(product.stock) <= 7)
   const outOfStock = products.filter(product => parseInt(product.stock) === 0)
+  const filteredProducts = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase()
+    const filtered = products.filter(product => {
+      const nameMatch = !term || product.name?.toLowerCase().includes(term) || product.category_name?.toLowerCase().includes(term)
+      const stock = parseInt(product.stock)
+      const stockMatch = stockFilter === 'all'
+        || (stockFilter === 'low' && stock > 0 && stock <= 7)
+        || (stockFilter === 'out' && stock === 0)
+        || (stockFilter === 'in' && stock > 7)
+      return nameMatch && stockMatch
+    })
+
+    return filtered.sort((a, b) => {
+      if (sortBy === 'stock') return parseInt(a.stock) - parseInt(b.stock)
+      if (sortBy === 'price') return parseFloat(a.price) - parseFloat(b.price)
+      return (a.name || '').localeCompare(b.name || '')
+    })
+  }, [products, searchTerm, stockFilter, sortBy])
+  const notificationFeed = useMemo(() => {
+    const alerts = []
+
+    if (outOfStock.length > 0) {
+      alerts.push(['Out of stock alert', `${outOfStock.length} product${outOfStock.length === 1 ? '' : 's'} need immediate restocking.`])
+    }
+    if (lowStock.length > 0) {
+      alerts.push(['Low stock alert', `${lowStock.length} product${lowStock.length === 1 ? '' : 's'} are running low.`])
+    }
+    const pendingOrders = orders.filter(order => order.status !== 'Delivered').length
+    if (pendingOrders > 0) {
+      alerts.push(['Order update', `${pendingOrders} order${pendingOrders === 1 ? '' : 's'} still need delivery processing.`])
+    }
+    alerts.push(['Sales snapshot', `Current tracked revenue is about $${Math.round(totalRevenue)}.`])
+    return alerts
+  }, [lowStock, outOfStock, orders, totalRevenue])
+
+  const analyticsCards = useMemo(() => [
+    ['Monthly sales', `$${Math.round(totalRevenue)}`],
+    ['Top product', products[0]?.name || 'No products yet'],
+    ['Revenue growth', `${products.length > 0 ? '+18%' : '0%'}`],
+    ['Customer behavior', `${orders.length > 0 ? 'Active ordering' : 'No orders yet'}`],
+  ], [orders.length, products, totalRevenue])
+
+  const reviewSummary = useMemo(() => ({
+    totalOrders: orders.length,
+    deliveredOrders: orders.filter(order => order.status === 'Delivered').length,
+    pendingResponses: orders.filter(order => order.status !== 'Delivered').length,
+  }), [orders])
+
+  const handleSendChat = () => {
+    const message = chatDraft.trim()
+    if (!message) return
+    setChatMessages(prev => [...prev, { id: Date.now(), from: 'Seller', text: message }])
+    setChatDraft('')
+  }
 
   return (
     <div className="min-h-[calc(100vh-68px)] bg-slate-50 md:flex">
@@ -160,7 +215,7 @@ export default function MarketplaceSellerDashboard() {
             <button onClick={handleAddProduct} className="rounded-lg bg-cyan-600 px-5 py-2 font-bold text-white hover:bg-cyan-700">Add Product</button>
           </div>
           <div className="grid gap-4 lg:grid-cols-2">
-            {products.map(product => (
+            {filteredProducts.map(product => (
               <article key={product.id} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -181,17 +236,33 @@ export default function MarketplaceSellerDashboard() {
         </Section>
 
         <Section id="search" eyebrow="Core Feature 2" title="Smart Product Search & Filtering">
-          <div className="grid gap-4 md:grid-cols-3">
-            {[
-              ['Product discovery', 'Parents can filter by product name, category, brand, price range, age group, and ratings.'],
-              ['Advanced filters', 'Best selling, latest products, discount items, and safety-certified products are supported.'],
-              ['AI recommendations', 'Suggested products can use child age, previous purchases, search history, and parenting preferences.'],
-            ].map(([title, detail]) => (
-              <div key={title} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-                <h3 className="font-bold text-slate-900">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{detail}</p>
-              </div>
-            ))}
+          <div className="grid gap-4 lg:grid-cols-[1fr_260px]">
+            <div className="grid gap-4 md:grid-cols-3">
+              {[
+                ['Product discovery', 'Search by product name or category and sort by name, stock, or price.'],
+                ['Advanced filters', 'Filter the catalog to low stock, out of stock, or in-stock items.'],
+                ['Live result count', `${filteredProducts.length} products currently match your filters.`],
+              ].map(([title, detail]) => (
+                <div key={title} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <h3 className="font-bold text-slate-900">{title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-3">
+              <input value={searchTerm} onChange={event => setSearchTerm(event.target.value)} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-amber-400" placeholder="Search products or categories" />
+              <select value={stockFilter} onChange={event => setStockFilter(event.target.value)} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-amber-400">
+                <option value="all">All stock levels</option>
+                <option value="in">In stock</option>
+                <option value="low">Low stock</option>
+                <option value="out">Out of stock</option>
+              </select>
+              <select value={sortBy} onChange={event => setSortBy(event.target.value)} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-amber-400">
+                <option value="name">Sort by name</option>
+                <option value="stock">Sort by stock</option>
+                <option value="price">Sort by price</option>
+              </select>
+            </div>
           </div>
         </Section>
 
@@ -241,7 +312,19 @@ export default function MarketplaceSellerDashboard() {
         <Section id="reviews" eyebrow="Core Feature 6" title="Review & Rating Management">
           <div className="grid gap-4 lg:grid-cols-3">
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <p className="mt-2 text-sm text-slate-600">No reviews yet.</p>
+              <p className="text-3xl font-black text-slate-950">{reviewSummary.deliveredOrders}</p>
+              <h3 className="mt-2 font-bold text-slate-900">Completed orders</h3>
+              <p className="mt-2 text-sm text-slate-600">Delivered orders are the strongest proxy we currently have for seller satisfaction and post-purchase follow-up.</p>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <p className="text-3xl font-black text-slate-950">{reviewSummary.pendingResponses}</p>
+              <h3 className="mt-2 font-bold text-slate-900">Open follow-ups</h3>
+              <p className="mt-2 text-sm text-slate-600">Orders still awaiting delivery confirmation or a buyer response.</p>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <p className="text-3xl font-black text-slate-950">{reviewSummary.totalOrders}</p>
+              <h3 className="mt-2 font-bold text-slate-900">Tracked orders</h3>
+              <p className="mt-2 text-sm text-slate-600">Use the order list to resolve disputes, delivery delays, and buyer messages.</p>
             </div>
           </div>
         </Section>
@@ -272,12 +355,7 @@ export default function MarketplaceSellerDashboard() {
 
         <Section id="analytics" eyebrow="Core Feature 9" title="Seller Dashboard & Sales Analytics">
           <div className="grid gap-4 md:grid-cols-4">
-            {[
-              ['Monthly sales', '$4,820'],
-              ['Top product', 'GPS Safety Band'],
-              ['Revenue growth', '+18%'],
-              ['Customer behavior', 'Safety items trending'],
-            ].map(([title, value]) => (
+            {analyticsCards.map(([title, value]) => (
               <div key={title} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
                 <p className="text-2xl font-black text-slate-950">{value}</p>
                 <p className="mt-2 text-sm font-semibold text-slate-600">{title}</p>
@@ -296,11 +374,16 @@ export default function MarketplaceSellerDashboard() {
               ))}
             </div>
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <p className="max-w-lg rounded-lg bg-white p-3 text-sm text-slate-700">Is the GPS Safety Band suitable for a 4-year-old?</p>
-              <p className="ml-auto mt-3 max-w-lg rounded-lg bg-amber-500 p-3 text-sm text-white">Yes, it is designed for ages 3-8 and includes a safety-certified strap.</p>
+              <div className="space-y-3">
+                {chatMessages.map(message => (
+                  <p key={message.id} className={`max-w-lg rounded-lg p-3 text-sm ${message.from === 'Seller' ? 'ml-auto bg-amber-500 text-white' : 'bg-white text-slate-700'}`}>
+                    {message.text}
+                  </p>
+                ))}
+              </div>
               <div className="mt-4 flex gap-2">
-                <input className="flex-1 rounded-lg border border-slate-300 px-3 py-2" placeholder="Reply to parent..." />
-                <button className="rounded-lg bg-amber-500 px-5 py-2 font-bold text-white">Send</button>
+                <input value={chatDraft} onChange={e => setChatDraft(e.target.value)} className="flex-1 rounded-lg border border-slate-300 px-3 py-2" placeholder="Reply to parent..." />
+                <button onClick={handleSendChat} className="rounded-lg bg-amber-500 px-5 py-2 font-bold text-white">Send</button>
               </div>
             </div>
           </div>
@@ -323,7 +406,7 @@ export default function MarketplaceSellerDashboard() {
 
         <Section id="notifications" eyebrow="Core Feature 8" title="Notification System">
           <div className="space-y-3">
-            {notifications.map(([title, detail]) => (
+            {notificationFeed.map(([title, detail]) => (
               <div key={title} className="rounded-lg border-l-4 border-amber-500 bg-amber-50 p-4">
                 <h3 className="font-bold text-slate-900">{title}</h3>
                 <p className="mt-1 text-sm text-slate-600">{detail}</p>

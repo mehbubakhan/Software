@@ -22,8 +22,8 @@ async function seed() {
       ['parent1', 'parent@test.com', passwordHash, 'parent'],
       ['nanny1', 'nanny@test.com', passwordHash, 'nanny'],
       ['daycare1', 'daycare@test.com', passwordHash, 'daycare'],
-      ['seller1', 'seller@test.com', passwordHash, 'seller'],
-      ['orphanage_mgr', 'orphanage@test.com', passwordHash, 'orphanageManager']
+      ['seller1', 'seller@test.com', passwordHash, 'marketplace_seller'],
+      ['orphanage_mgr', 'orphanage@test.com', passwordHash, 'orphanage_manager']
     ];
     
     await connection.query('DELETE FROM users');
