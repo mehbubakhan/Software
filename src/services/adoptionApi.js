@@ -8,6 +8,8 @@ export const getChildById = (id) => api.get(`/adoption/children/${id}`);
 export const createOrphanage = (data) => api.post('/adoption/orphanages', data);
 export const getMyOrphanage = () => api.get('/adoption/manager/my-orphanage');
 export const createChild = (data) => api.post('/adoption/children', data);
+export const updateChild = (id, data) => api.patch(`/adoption/children/${id}`, data);
+export const deleteChild = (id) => api.delete(`/adoption/children/${id}`);
 
 export const createApplication = (data) => api.post('/adoption/applications', data);
 export const getApplications = () => api.get('/adoption/applications');

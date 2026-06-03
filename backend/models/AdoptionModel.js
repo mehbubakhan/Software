@@ -125,6 +125,17 @@ const Child = {
   updateStatus: async (id, status) => {
     await db.query('UPDATE adoption_children SET adoption_status = ? WHERE id = ?', [status, id])
   },
+
+  update: async (id, data) => {
+    await db.query(
+      'UPDATE adoption_children SET child_name = ?, age = ?, gender = ?, health_condition = ?, interests = ?, short_description = ?, adoption_status = ? WHERE id = ?',
+      [data.child_name || data.name, data.age, data.gender, data.health_condition, data.interests, data.short_description, data.adoption_status || data.availability || 'available', id]
+    )
+  },
+
+  delete: async (id) => {
+    await db.query('DELETE FROM adoption_children WHERE id = ?', [id])
+  },
 }
 
 const Application = {

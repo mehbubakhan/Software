@@ -107,6 +107,24 @@ const adoptionController = {
       });
     }
   },
+  updateChild: async (req, res) => {
+    try {
+      await Child.update(req.params.id, req.body);
+      res.json({ ok: true });
+    } catch (err) {
+      console.warn('updateChild failed', err.message);
+      res.status(500).json({ ok: false, error: err.message });
+    }
+  },
+  deleteChild: async (req, res) => {
+    try {
+      await Child.delete(req.params.id);
+      res.json({ ok: true });
+    } catch (err) {
+      console.warn('deleteChild failed', err.message);
+      res.status(500).json({ ok: false, error: err.message });
+    }
+  },
 
   // Applications
   createApplication: async (req, res) => {
