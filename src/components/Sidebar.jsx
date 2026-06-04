@@ -126,15 +126,23 @@ const renderIcon = (iconName) => {
 
   if (variant === 'adoption-workspace') {
     return (
-      <aside className="w-full border-b border-slate-100 bg-white px-5 py-7 shadow-sm md:sticky md:top-0 md:h-[calc(100vh-68px)] md:w-[382px] md:overflow-y-auto md:border-b-0 md:border-r">
-        <p className="text-lg font-black uppercase tracking-[0.32em] text-fuchsia-500">Workspace</p>
-        <nav className="mt-7">
-          <ul className="flex gap-3 overflow-x-auto pb-2 md:block md:space-y-6 md:overflow-visible md:pb-0">
+      <aside className="flex flex-col h-full transition-all duration-300 bg-slate-900 border-r border-slate-800 shrink-0 md:min-h-[calc(100vh-68px)] md:w-[260px] md:border-b-0 md:border-r">
+        <div className="flex items-center h-16 px-4 gap-3 border-b border-slate-800">
+          <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-cyan-600 flex-shrink-0 shadow-lg shadow-cyan-500/20">
+            <span className="text-white font-bold text-sm">AD</span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-sm font-extrabold text-white truncate">SmartNanny</h1>
+            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider truncate">Adoption</p>
+          </div>
+        </div>
+        <nav className="flex-1 overflow-y-auto py-4 space-y-1">
+          <ul className="flex flex-col gap-1 md:block md:space-y-1">
             {items.map(i => {
               const hash = i.path.includes('#') ? `#${i.path.split('#')[1]}` : ''
               const active = hash ? activeHash === hash : activeHash === ''
               return (
-                <li key={i.path} className="shrink-0 md:shrink">
+                <li key={i.path} className="shrink-0 md:shrink w-full">
                   <Link
                     to={i.path}
                     onClick={() => {
@@ -146,13 +154,14 @@ const renderIcon = (iconName) => {
                         window.scrollTo({ top: 0, behavior: 'smooth' })
                       }
                     }}
-                    className={`block rounded-2xl px-6 py-4 text-lg font-black text-slate-700 transition duration-200 md:text-xl ${
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all relative group text-left text-sm font-bold ${
                       active
-                        ? 'border border-cyan-200 bg-white text-cyan-700 shadow-lg shadow-cyan-900/10'
-                        : 'border border-transparent hover:border-cyan-100 hover:bg-cyan-50 hover:text-cyan-700'
+                        ? 'bg-slate-800 text-white border-l-4 border-cyan-500'
+                        : 'text-slate-400 hover:bg-slate-800/50 hover:text-white border-l-4 border-transparent'
                     }`}
                   >
-                    {i.label}
+                    {renderIcon(i.icon)}
+                    <span className="truncate">{i.label}</span>
                   </Link>
                 </li>
               )
@@ -165,15 +174,23 @@ const renderIcon = (iconName) => {
 
   if (variant === 'marketplace-workspace') {
     return (
-      <aside className="w-full border-b border-slate-100 bg-white px-5 py-7 shadow-sm md:sticky md:top-0 md:h-[calc(100vh-68px)] md:w-[382px] md:overflow-y-auto md:border-b-0 md:border-r">
-        <p className="text-lg font-black uppercase tracking-[0.32em] text-amber-500">Marketplace</p>
-        <nav className="mt-7">
-          <ul className="flex gap-3 overflow-x-auto pb-2 md:block md:space-y-6 md:overflow-visible md:pb-0">
+      <aside className="flex flex-col h-full transition-all duration-300 bg-slate-900 border-r border-slate-800 shrink-0 md:min-h-[calc(100vh-68px)] md:w-[260px] md:border-b-0 md:border-r">
+        <div className="flex items-center h-16 px-4 gap-3 border-b border-slate-800">
+          <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-amber-500 flex-shrink-0 shadow-lg shadow-amber-500/20">
+            <span className="text-white font-bold text-sm">MP</span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-sm font-extrabold text-white truncate">SmartNanny</h1>
+            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider truncate">Marketplace</p>
+          </div>
+        </div>
+        <nav className="flex-1 overflow-y-auto py-4 space-y-1">
+          <ul className="flex flex-col gap-1 md:block md:space-y-1">
             {items.map(i => {
               const hash = i.path.includes('#') ? `#${i.path.split('#')[1]}` : ''
               const active = hash ? activeHash === hash : activeHash === ''
               return (
-                <li key={i.path} className="shrink-0 md:shrink">
+                <li key={i.path} className="shrink-0 md:shrink w-full">
                   <Link
                     to={i.path}
                     onClick={() => {
@@ -185,13 +202,14 @@ const renderIcon = (iconName) => {
                         window.scrollTo({ top: 0, behavior: 'smooth' })
                       }
                     }}
-                    className={`block rounded-2xl px-6 py-4 text-lg font-black text-slate-700 transition duration-200 md:text-xl ${
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all relative group text-left text-sm font-bold ${
                       active
-                        ? 'border border-amber-200 bg-white text-amber-700 shadow-lg shadow-amber-900/10'
-                        : 'border border-transparent hover:border-amber-100 hover:bg-amber-50 hover:text-amber-700'
+                        ? 'bg-slate-800 text-white border-l-4 border-amber-500'
+                        : 'text-slate-400 hover:bg-slate-800/50 hover:text-white border-l-4 border-transparent'
                     }`}
                   >
-                    {i.label}
+                    {renderIcon(i.icon)}
+                    <span className="truncate">{i.label}</span>
                   </Link>
                 </li>
               )
@@ -204,39 +222,41 @@ const renderIcon = (iconName) => {
 
   if (variant === 'daycare-workspace') {
     return (
-      <aside className="w-full border-b border-slate-100 bg-white px-5 py-7 shadow-sm md:sticky md:top-0 md:h-[calc(100vh-68px)] md:w-[280px] md:overflow-y-auto md:border-b-0 md:border-r">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="flex h-8 w-8 items-center justify-center rounded bg-purple-600 text-sm font-bold text-white">DC</div>
-          <div>
-            <h1 className="font-bold text-slate-800">DaycareHub</h1>
-            <p className="text-xs text-slate-400">View Public Profile</p>
+      <aside className="flex flex-col h-full transition-all duration-300 bg-slate-900 border-r border-slate-800 shrink-0 md:min-h-[calc(100vh-68px)] md:w-[260px] md:border-b-0 md:border-r">
+        <div className="flex items-center h-16 px-4 gap-3 border-b border-slate-800">
+          <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-purple-600 flex-shrink-0 shadow-lg shadow-purple-500/20">
+            <span className="text-white font-bold text-sm">DC</span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-sm font-extrabold text-white truncate">SmartNanny</h1>
+            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider truncate">DaycareHub</p>
           </div>
         </div>
         
-        <nav className="flex-1">
-          <ul className="flex gap-2 overflow-x-auto pb-1 md:block md:space-y-2 md:overflow-visible md:pb-0">
+        <nav className="flex-1 overflow-y-auto py-4 space-y-1">
+          <ul className="flex flex-col gap-1 md:block md:space-y-1">
             {items.map(i => (
-              <li key={i.path} className="shrink-0 md:shrink">
+              <li key={i.path} className="shrink-0 md:shrink w-full">
                 <NavLink
                   to={i.path}
                   end={i.path === '/dashboard/daycare'}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition duration-200 focus:outline-none ${
-                      isActive ? 'bg-purple-50 text-purple-700 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-purple-600'
+                    `w-full flex items-center gap-3 px-4 py-2.5 transition-all relative group text-left text-sm font-bold ${
+                      isActive ? 'bg-slate-800 text-white border-l-4 border-purple-500' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white border-l-4 border-transparent'
                     }`
                   }
                 >
                   {renderIcon(i.icon)}
-                  {i.label}
+                  <span className="truncate">{i.label}</span>
                 </NavLink>
               </li>
             ))}
           </ul>
         </nav>
         
-        <div className="mt-8 pt-4 border-t border-slate-100">
-          <button className="flex items-center gap-2 text-sm font-medium text-red-500 hover:text-red-600 px-4 py-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+        <div className="p-4 border-t border-slate-800">
+          <button className="flex items-center gap-2 text-xs font-bold text-rose-400 hover:text-rose-300 px-4 py-2 w-full">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
             Logout
           </button>
         </div>

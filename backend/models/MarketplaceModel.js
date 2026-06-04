@@ -47,10 +47,10 @@ const MarketplaceModel = {
       category_id = cats[0].id;
     }
 
-    const { name, price, stock } = productData;
+    const { name, description, price, stock, image_url, status } = productData;
     const [result] = await db.query(
-      'INSERT INTO products (seller_id, category_id, name, price, stock) VALUES (?, ?, ?, ?, ?)',
-      [sellerId, category_id, name, price, stock]
+      'INSERT INTO products (seller_id, category_id, name, description, price, stock, image_url, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [sellerId, category_id, name, description || '', price || 0, stock || 0, image_url || '', status || 'active']
     );
     return result.insertId;
   },

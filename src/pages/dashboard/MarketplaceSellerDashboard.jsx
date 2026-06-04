@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react'
 import Sidebar from '../../components/Sidebar'
 import { useAuth } from '../../context/AuthContext'
 import api from '../../services/api'
+import SEO from '../../components/SEO'
 
 const items = [
   { label: 'Marketplace Overview', path: '/dashboard/marketplace-seller' },
@@ -168,6 +169,7 @@ export default function MarketplaceSellerDashboard() {
 
   return (
     <div className="min-h-[calc(100vh-68px)] bg-slate-50 md:flex">
+      <SEO title="Seller Dashboard - Marketplace" description="Manage marketplace products and orders." />
       <Sidebar items={items} variant="marketplace-workspace" />
       <main className="min-w-0 flex-1 space-y-6 p-4 sm:p-6 lg:p-8">
         <div className="rounded-lg border border-amber-100 bg-gradient-to-r from-amber-50 via-white to-cyan-50 p-6 shadow-sm">

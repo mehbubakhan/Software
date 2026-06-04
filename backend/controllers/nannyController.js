@@ -1,145 +1,241 @@
-const { upsertProfile, findByNanny } = require('../models/NannyProfile')
-const { setAvailability, getAvailability } = require('../models/Availability')
+const pool = require('../config/db')
 
 let mockNannyProfiles = {}
 let mockNannyAvailability = {}
 
 const saveProfile = async (req, res) => {
-  try{
+  try {
     const nanny_id = req.user.id
-    const { bio, experience, skills, photo_url } = req.body
-    const r = await upsertProfile({ nanny_id, bio, experience, skills, photo_url, verified: false })
-    return res.json({ ok:true, data: r })
-  }catch(err){ 
+    const { experience_years, expected_salary, preferred_work_type, availability_status } = req.body
+    
+    const [rows] = await pool.query('SELECT id FROM nanny_profiles WHERE user_id = ?', [nanny_id])
+    if (rows.length > 0) {
+      await pool.query('UPDATE nanny_profiles SET experience_years = ?, expected_salary = ?, preferred_work_type = ?, availability_status = ? WHERE user_id = ?', 
+        [experience_years, expected_salary, preferred_work_type, availability_status, nanny_id])
+    } else {
+      await pool.query('INSERT INTO nanny_profiles (user_id, experience_years, expected_salary, preferred_work_type, availability_status) VALUES (?, ?, ?, ?, ?)', 
+        [nanny_id, experience_years, expected_salary, preferred_work_type, availability_status])
+    }
+    return res.json({ ok:true, data: { user_id: nanny_id, experience_years, expected_salary, preferred_work_type, availability_status } })
+  } catch (err) {
     const nanny_id = req.user.id
-    const { bio, experience, skills, photo_url } = req.body
-    mockNannyProfiles[nanny_id] = { nanny_id, bio, experience, skills, photo_url, verified: false }
-    return res.json({ ok:true, data: mockNannyProfiles[nanny_id], mock: true }) 
+    return res.json({ ok:true, mock: true }) 
   }
 }
 
 const getProfile = async (req, res) => {
-  try{
+  try {
     const nanny_id = req.user.id
-    const p = await findByNanny(nanny_id)
-    return res.json({ ok:true, data: p })
-  }catch(err){ 
-    const nanny_id = req.user.id
-    return res.json({ ok:true, data: mockNannyProfiles[nanny_id] || null, mock: true }) 
+    const [rows] = await pool.query(`
+      SELECT np.*, u.name, u.email 
+      FROM nanny_profiles np 
+      JOIN users u ON np.user_id = u.id 
+      WHERE user_id = ?
+    `, [nanny_id])
+    if (rows.length === 0) return res.json({ ok: true, data: null })
+    return res.json({ ok:true, data: rows[0] })
+  } catch (err) {
+    return res.json({ ok:true, data: null, mock: true }) 
   }
 }
 
 const saveAvailability = async (req, res) => {
-  try{
+  try {
     const nanny_id = req.user.id
     const { availability } = req.body
-    const r = await setAvailability({ nanny_id, availability })
-    return res.json({ ok:true, data: r })
-  }catch(err){ 
-    const nanny_id = req.user.id
-    const { availability } = req.body
-    mockNannyAvailability[nanny_id] = availability
-    return res.json({ ok:true, data: { nanny_id, availability }, mock: true }) 
+    await pool.query('UPDATE nanny_profiles SET availability_status = ? WHERE user_id = ?', [availability, nanny_id])
+    return res.json({ ok:true, data: { nanny_id, availability } })
+  } catch (err) {
+    return res.json({ ok:true, mock: true }) 
   }
 }
 
 const getAvail = async (req, res) => {
-  try{
+  try {
     const nanny_id = req.user.id
-    const a = await getAvailability(nanny_id)
-    return res.json({ ok:true, data: a })
-  }catch(err){ 
-    const nanny_id = req.user.id
-    return res.json({ ok:true, data: { nanny_id, availability: mockNannyAvailability[nanny_id] || [] }, mock: true }) 
+    const [rows] = await pool.query('SELECT availability_status FROM nanny_profiles WHERE user_id = ?', [nanny_id])
+    const status = rows.length > 0 ? rows[0].availability_status : 'Offline'
+    return res.json({ ok:true, data: { availability: status } })
+  } catch (err) {
+    return res.json({ ok:true, data: { availability: 'Offline' }, mock: true }) 
   }
 }
 
 const getAgencies = async (req, res) => {
-  const agencies = [
-    { id: 1, name: 'Trust Nanny Network', logo: '🛡️', rating: 4.2, reviews: 28, location: 'Liverpool, AU', numNannies: 35, skills: ['Newborn Care', 'Teaching'], desc: 'Background checked professionals with certifications' },
-    { id: 2, name: 'Caring Hearts Agency', logo: '❤️', rating: 4.7, reviews: 35, location: 'Queens, NY', numNannies: 45, skills: ['Newborn Care', 'Teaching'], desc: 'Premium verified nannies with background checks' },
-    { id: 3, name: 'Elite Nanny Services', logo: '⭐', rating: 4.7, reviews: 35, location: 'Queens, NY', numNannies: 45, skills: ['Newborn Care', 'Teaching'], desc: 'Premium verified nannies with background checks' },
-    { id: 4, name: 'WC Nanny Services', logo: '🍼', rating: 4.7, reviews: 35, location: 'Vienna, Italy', numNannies: 52, skills: ['Newborn Care', 'Teaching'], desc: 'Experienced nannies specializing in early childhood' },
-    { id: 5, name: 'Nannies Glory', logo: '🌟', rating: 4.9, reviews: 65, location: 'Tokyo, Japan', numNannies: 39, skills: ['Newborn Care', 'Teaching'], desc: 'Get premium experience with care' },
-    { id: 6, name: 'ROCH', logo: '🏛️', rating: 4.5, reviews: 20, location: 'Queens, NY', numNannies: 55, skills: ['Newborn Care', 'Teaching'], desc: 'Professional nannies with experience' },
-  ]
-  return res.json({ ok: true, data: agencies })
+  try {
+    const [rows] = await pool.query(`
+      SELECT o.id, o.name, o.address as location, 
+             COUNT(os.nanny_id) as numNannies
+      FROM organizations o
+      LEFT JOIN organization_staff os ON o.id = os.org_id AND os.status = 'active'
+      WHERE o.verification_status = 'approved'
+      GROUP BY o.id
+    `);
+    
+    const agencies = rows.map(r => ({
+      id: r.id,
+      name: r.name,
+      logo: '🏢', 
+      rating: 4.5, // Default rating for now
+      reviews: Math.floor(Math.random() * 50) + 10,
+      location: r.location || 'Unknown',
+      numNannies: r.numNannies,
+      skills: ['Newborn Care', 'Teaching'],
+      desc: 'Verified professional agency'
+    }));
+    
+    return res.json({ ok: true, data: agencies });
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: err.message });
+  }
 }
 
 const getIndividualNannies = async (req, res) => {
-  const nannies = [
-    { id: 1, name: 'Kamrun Nahar', photo: '👩', experience: '4+ years', rating: 4.8, reviews: 42, location: 'Kuril, Dhaka', type: 'Full-time', rate: '$25/hour', skills: ['Newborn Care', 'Teaching'] },
-    { id: 2, name: 'Deedhity Dhara', photo: '👩‍🦰', experience: '7+ years', rating: 4.9, reviews: 78, location: 'Notun Bazar, Dhaka', type: 'Part-time', rate: '$40/hour', skills: ['Toddler Care', 'Cooking'] },
-    { id: 3, name: 'Nusrat Parvin', photo: '👩‍🦱', experience: '3+ years', rating: 4.7, reviews: 35, location: 'Mirpur, Dhaka', type: 'Hourly', rate: '$22/hour', skills: ['Newborn Care', 'Teaching'] },
-    { id: 4, name: 'Sadia Afrin', photo: '👩‍🦱', experience: '5+ years', rating: 4.8, reviews: 56, location: 'Chittagong', type: 'Full-time', rate: '$28/hour', skills: ['Toddler Care', 'Special Needs'] },
-    { id: 5, name: 'Samanta Khan', photo: '👩', experience: '6+ years', rating: 5.0, reviews: 92, location: 'Tangail', type: 'Part-time', rate: '$32/hour', skills: ['Newborn Care', 'Cooking'] },
-    { id: 6, name: 'Maria Mim', photo: '👩‍🦰', experience: '4+ years', rating: 4.6, reviews: 48, location: 'Gulshan, Dhaka', type: 'Full-time', rate: '$26/hour', skills: ['Teaching', 'Activities'] },
-  ]
-  return res.json({ ok: true, data: nannies })
+  try {
+    const [rows] = await pool.query(`
+      SELECT np.user_id as id, u.name, np.experience_years, np.expected_salary as rate, 
+             np.preferred_work_type as type, np.compatibility_score, np.verification_status
+      FROM nanny_profiles np
+      JOIN users u ON np.user_id = u.id
+      WHERE np.availability_status = 'Available'
+    `)
+    
+    const data = rows.map(r => ({
+      id: r.id,
+      name: r.name,
+      photo: '👩', // Mock photo
+      experience: r.experience_years ? r.experience_years + '+ years' : 'N/A',
+      rating: r.compatibility_score ? (r.compatibility_score / 20).toFixed(1) : '4.5',
+      reviews: Math.floor(Math.random() * 100) + 10,
+      location: 'Dhaka', // Default location
+      type: r.type === 'full-time' ? 'Full-time' : (r.type === 'part-time' ? 'Part-time' : 'Hourly'),
+      rate: r.rate ? '৳' + r.rate + '/mo' : 'N/A',
+      skills: ['Newborn Care', 'Teaching']
+    }))
+    
+    return res.json({ ok: true, data })
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: err.message });
+  }
 }
 
 const getFeaturedNannies = async (req, res) => {
-  const nannies = [
-    { id: 7, name: 'Adiba Irin', photo: '👩', experience: '5 years', rating: 4.8, reviews: 27, location: 'Dhaka', rate: '$25/hr', available: true },
-    { id: 8, name: 'Fairuj Smiha', photo: '👩‍🦰', experience: '6 years', rating: 4.9, reviews: 54, location: 'Mirpur, Dhaka', rate: '$22/hr', available: true },
-    { id: 9, name: 'Tamanna Khan', photo: '👩‍🦱', experience: '5 years', rating: 4.8, reviews: 56, location: 'Dhanmondi, Dhaka', rate: '$20/hr', available: true },
-    { id: 10, name: 'Nargis Akter', photo: '👩', experience: '5 years', rating: 4.9, reviews: 82, location: 'Kakrail, Dhaka', rate: '$24/hr', available: true },
-  ]
-  return res.json({ ok: true, data: nannies })
+  try {
+    const [rows] = await pool.query(`
+      SELECT np.user_id as id, u.name, np.experience_years, np.expected_salary as rate, 
+             np.compatibility_score, np.verification_status
+      FROM nanny_profiles np
+      JOIN users u ON np.user_id = u.id
+      WHERE np.compatibility_score > 80 AND np.availability_status = 'Available'
+      ORDER BY np.compatibility_score DESC LIMIT 4
+    `)
+    
+    const data = rows.map(r => ({
+      id: r.id,
+      name: r.name,
+      photo: '👩',
+      experience: r.experience_years ? r.experience_years + ' years' : 'N/A',
+      rating: r.compatibility_score ? (r.compatibility_score / 20).toFixed(1) : '4.8',
+      reviews: Math.floor(Math.random() * 100) + 20,
+      location: 'Dhaka',
+      rate: r.rate ? '৳' + r.rate + '/mo' : 'N/A',
+      available: true
+    }))
+    
+    return res.json({ ok: true, data })
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: err.message });
+  }
 }
 
 const getNannyDetails = async (req, res) => {
-  const { id } = req.params;
-  const details = {
-    id: id,
-    name: 'Kamrun Nahar',
-    title: 'Professional Childcare Specialist',
-    photo: '👩',
-    rating: 4.8,
-    reviews: 42,
-    location: 'Kuril, Dhaka',
-    availability: 'Full-time',
-    rate: '$25/hr',
-    experience: '4+ years',
-    languages: 3,
-    about: 'Experienced and dedicated nanny with over 4 years of professional childcare experience. I have a passion for nurturing children\'s development through play-based learning and creating a safe, loving environment.',
-    specializations: ['Newborn Care', 'Teaching'],
-    weeklyAvailability: [
-      { day: 'Monday', time: '8:00 AM - 6:00 PM', available: true },
-      { day: 'Tuesday', time: '8:00 AM - 6:00 PM', available: true },
-      { day: 'Wednesday', time: '8:00 AM - 6:00 PM', available: true },
-      { day: 'Thursday', time: '8:00 AM - 6:00 PM', available: true },
-      { day: 'Friday', time: '8:00 AM - 6:00 PM', available: true },
-      { day: 'Saturday', time: 'Not Available', available: false },
-      { day: 'Sunday', time: 'Not Available', available: false },
-    ],
-    certifications: [
-      'CPR & First Aid Certified',
-      'Early Childhood Education',
-      'Newborn Care Specialist'
-    ],
-    knownLanguages: [
-      { name: 'Bengali', level: 'Native' },
-      { name: 'English', level: 'Fluent' },
-      { name: 'Hindi', level: 'Conversational' }
-    ]
+  try {
+    const { id } = req.params;
+    const [rows] = await pool.query(`
+      SELECT np.*, u.name, u.email 
+      FROM nanny_profiles np 
+      JOIN users u ON np.user_id = u.id 
+      WHERE user_id = ?
+    `, [id])
+    
+    if (rows.length === 0) throw new Error("Nanny not found")
+    
+    const r = rows[0]
+    
+    const details = {
+      id: r.user_id,
+      name: r.name,
+      title: 'Professional Childcare Specialist',
+      photo: '👩',
+      rating: r.compatibility_score ? (r.compatibility_score / 20).toFixed(1) : '4.8',
+      reviews: Math.floor(Math.random() * 100) + 20,
+      location: 'Dhaka',
+      availability: r.preferred_work_type || 'Full-time',
+      rate: r.expected_salary ? '৳' + r.expected_salary + '/mo' : 'N/A',
+      experience: r.experience_years ? r.experience_years + '+ years' : 'N/A',
+      languages: 3,
+      about: 'Experienced and dedicated nanny. I have a passion for nurturing children.',
+      specializations: ['Newborn Care', 'Teaching'],
+      weeklyAvailability: [
+        { day: 'Monday', time: '8:00 AM - 6:00 PM', available: true },
+        { day: 'Tuesday', time: '8:00 AM - 6:00 PM', available: true },
+        { day: 'Wednesday', time: '8:00 AM - 6:00 PM', available: true },
+        { day: 'Thursday', time: '8:00 AM - 6:00 PM', available: true },
+        { day: 'Friday', time: '8:00 AM - 6:00 PM', available: true },
+        { day: 'Saturday', time: 'Not Available', available: false },
+        { day: 'Sunday', time: 'Not Available', available: false },
+      ],
+      certifications: ['CPR & First Aid Certified', 'Early Childhood Education'],
+      knownLanguages: [
+        { name: 'Bengali', level: 'Native' },
+        { name: 'English', level: 'Fluent' }
+      ]
+    }
+    return res.json({ ok: true, data: details })
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: err.message });
   }
-  return res.json({ ok: true, data: details })
 }
 
 const getPayments = async (req, res) => {
-  const paymentsData = {
-    summaries: [
-      { period: 'This week', amount: '$320', status: 'Pending' },
-      { period: 'Last week', amount: '$450', status: 'Paid' },
-      { period: 'This month', amount: '$1,240', status: 'In progress' }
-    ],
-    history: [
-      { session: 'After-school care', date: 'May 20', amount: '$80', status: 'Paid' },
-      { session: 'Weekend care', date: 'May 18', amount: '$140', status: 'Paid' }
-    ]
-  };
-  return res.json({ ok: true, data: paymentsData });
+  try {
+    const nanny_id = req.user.id
+    
+    // Get work sessions for payments
+    const [sessions] = await pool.query(`
+      SELECT ws.id, ws.start_time, ws.end_time, ws.status, u.name as parent_name,
+             TIMESTAMPDIFF(HOUR, ws.start_time, COALESCE(ws.end_time, NOW())) as hours
+      FROM work_sessions ws
+      JOIN users u ON ws.parent_id = u.id
+      WHERE ws.nanny_id = ?
+      ORDER BY ws.start_time DESC
+    `, [nanny_id])
+    
+    const history = sessions.map(s => ({
+      session: 'Care session with ' + s.parent_name,
+      date: new Date(s.start_time).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      amount: '৳' + (s.hours * 200), // Assuming 200 per hour
+      status: s.status === 'completed' ? 'Paid' : 'Pending'
+    }))
+    
+    const [totals] = await pool.query(`
+      SELECT SUM(TIMESTAMPDIFF(HOUR, start_time, COALESCE(end_time, NOW())) * 200) as total
+      FROM work_sessions
+      WHERE nanny_id = ? AND status = 'completed'
+    `, [nanny_id]);
+
+    const totalPaid = totals[0]?.total || 0;
+
+    const paymentsData = {
+      summaries: [
+        { period: 'Total Earnings', amount: '৳' + totalPaid, status: 'Paid' }
+      ],
+      history: history
+    };
+    return res.json({ ok: true, data: paymentsData });
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: err.message });
+  }
 }
 
 module.exports = { saveProfile, getProfile, saveAvailability, getAvail, getAgencies, getIndividualNannies, getFeaturedNannies, getNannyDetails, getPayments }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import Sidebar from '../../components/Sidebar';
+import SEO from '../../components/SEO';
 
 const sidebarItems = [
   { label: 'Dashboard', path: '/dashboard/parent' },
@@ -58,6 +59,7 @@ export default function MarketplaceBuyerDashboard() {
 
   return (
     <div className="flex min-h-screen bg-brand-dark text-white font-sans">
+      <SEO title="Shop - Smart Nanny" description="Browse baby products, toys, and accessories from verified sellers." />
       <Sidebar items={sidebarItems} variant="parent-workspace" />
       
       <main className="flex-1 p-8 overflow-y-auto h-screen">

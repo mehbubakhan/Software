@@ -4,6 +4,8 @@ import api from '../../../services/api'
 import { useAuth } from '../../../context/AuthContext'
 import ChildAuth from '../../../components/ChildAuth'
 
+import Skeleton, { SkeletonCard, SkeletonOverviewCards } from '../../../components/Skeleton'
+
 export default function Overview() {
   const { user } = useAuth()
   const [data, setData] = useState(null)
@@ -30,7 +32,16 @@ export default function Overview() {
   }, [])
 
   if (loading) {
-    return <div className="text-white text-center py-20">Loading dashboard data...</div>
+    return (
+      <div className="space-y-6 max-w-6xl mx-auto pb-10">
+        <Skeleton className="h-40 w-full rounded-3xl" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+        <SkeletonOverviewCards />
+      </div>
+    )
   }
 
   if (!data) {

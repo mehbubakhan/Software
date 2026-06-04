@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import Skeleton, { SkeletonOverviewCards } from '../../../components/Skeleton';
 
 export default function DaycareDashboard() {
+  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     activeChildren: 42,
     pendingApprovals: 5,
@@ -24,6 +26,24 @@ export default function DaycareDashboard() {
     { time: '3:00 PM', title: 'Snack & Activities', count: 40 },
     { time: '5:00 PM', title: 'Pickup Time', count: 18 }
   ];
+
+  useEffect(() => {
+    // Simulate API fetch
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="p-8 max-w-6xl mx-auto space-y-6 text-slate-800">
+        <SkeletonOverviewCards />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+          <Skeleton className="h-96 lg:col-span-2 rounded-2xl" />
+          <Skeleton className="h-96 rounded-2xl" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-6 text-slate-800">

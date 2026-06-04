@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { toast, Toaster } from 'sonner';
+import SEO from '../../components/SEO';
 
 // Import services
 import {
@@ -285,6 +286,7 @@ export default function AdoptionDashboard() {
 
   return (
     <>
+      <SEO title="Adoption Portal - Smart Nanny" description="Manage children, applications, and orphanage operations." />
       <Toaster position="top-right" richColors />
       <div className="flex h-screen overflow-hidden bg-gray-50">
         <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />

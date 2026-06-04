@@ -5,7 +5,6 @@ import {
   FileText,
   ShieldCheck,
   Calendar,
-  MessageCircle,
   Heart,
   Files,
   AlertCircle,
@@ -17,9 +16,11 @@ import {
   Settings,
   User,
   LogOut,
-  ChevronDown,
+  ChevronLeft,
   ChevronRight
 } from 'lucide-react';
+// @ts-ignore
+import { useAuth } from '../../../../context/AuthContext';
 
 interface SidebarProps {
   activeSection: string;
@@ -27,7 +28,8 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
-  const [expandedSections, setExpandedSections] = useState<string[]>([]);
+  const [collapsed, setCollapsed] = useState(false);
+  const { logout, user } = useAuth() || {};
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
@@ -47,67 +49,89 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
-  const bottomItems = [
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'logout', label: 'Logout', icon: LogOut },
-  ];
-
   return (
-    <div className="w-64 bg-[#1a1f36] text-white h-screen flex flex-col overflow-y-auto">
-      <div className="p-6 border-b border-gray-700">
-        <h1 className="text-xl font-bold">Orphanage Admin</h1>
-        <p className="text-sm text-gray-400 mt-1">Management Dashboard</p>
+    <div 
+      className="flex flex-col h-screen bg-slate-900 text-white border-r border-slate-800 transition-all duration-300 shrink-0 min-w-0"
+      style={{ width: collapsed ? 64 : 260 }}
+    >
+      {/* Sidebar Logo / Header */}
+      <div className="flex items-center h-16 px-4 gap-3 border-b border-slate-800">
+        <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-blue-600 flex-shrink-0 shadow-lg shadow-blue-500/20">
+          <Heart size={18} color="#fff" />
+        </div>
+        {!collapsed && (
+          <div className="flex-1 min-w-0">
+            <h1 className="text-sm font-extrabold text-white truncate">SmartNanny</h1>
+            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider truncate font-sans">Orphanage Admin</p>
+          </div>
+        )}
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors ml-auto"
+        >
+          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+        </button>
       </div>
 
-      <nav className="flex-1 p-4">
-        <ul className="space-y-1">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeSection === item.id;
+      {/* Navigation Items */}
+      <nav className="flex-1 overflow-y-auto py-4 space-y-1" style={{ scrollbarWidth: 'none' }}>
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = activeSection === item.id;
 
-            return (
-              <li key={item.id}>
-                <button
-                  onClick={() => onSectionChange(item.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                    isActive
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-300 hover:bg-gray-700'
-                  }`}
-                >
-                  <Icon className="w-5 h-5" />
-                  <span className="text-sm font-medium">{item.label}</span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+          return (
+            <button
+              key={item.id}
+              onClick={() => onSectionChange(item.id)}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all relative group text-left ${
+                isActive
+                  ? 'bg-slate-800 text-white border-l-4 border-blue-500'
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-white border-l-4 border-transparent'
+              }`}
+            >
+              <Icon size={18} className={isActive ? 'text-blue-400' : 'text-slate-400 group-hover:text-white'} />
+              {!collapsed && (
+                <span className="text-xs font-bold truncate flex-1">{item.label}</span>
+              )}
+              {collapsed && (
+                <div className="absolute left-full ml-3 px-2 py-1 bg-slate-950 text-white text-[10px] rounded font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-md">
+                  {item.label}
+                </div>
+              )}
+            </button>
+          );
+        })}
       </nav>
 
-      <div className="p-4 border-t border-gray-700">
-        <ul className="space-y-1">
-          {bottomItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeSection === item.id;
-
-            return (
-              <li key={item.id}>
-                <button
-                  onClick={() => onSectionChange(item.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                    isActive
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-300 hover:bg-gray-700'
-                  }`}
-                >
-                  <Icon className="w-5 h-5" />
-                  <span className="text-sm font-medium">{item.label}</span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+      {/* Footer info & Logout */}
+      <div className="p-4 border-t border-slate-800">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs font-extrabold text-white flex-shrink-0">
+            {user?.name ? user.name.slice(0, 2).toUpperCase() : 'OA'}
+          </div>
+          {!collapsed && (
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-white truncate">{user?.name || 'Orphanage Admin'}</p>
+              <button
+                onClick={logout}
+                className="flex items-center gap-1 text-[10px] font-bold text-rose-400 hover:text-rose-300 transition-colors mt-0.5"
+              >
+                <LogOut size={10} /> Log out
+              </button>
+            </div>
+          )}
+          {collapsed && (
+            <button
+              onClick={logout}
+              className="text-rose-400 hover:text-rose-300 p-1 rounded hover:bg-slate-800 transition-colors ml-auto"
+              title="Log out"
+            >
+              <LogOut size={14} />
+            </button>
+          )}
+        </div>
       </div>
+
     </div>
   );
 }

@@ -68,8 +68,8 @@ export default function App() {
       case 'logout':
         return (
           <div className="p-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Logout</h1>
-            <p className="text-gray-600">You have been logged out successfully.</p>
+            <h1 className="text-3xl font-bold text-slate-900 mb-4">Logout</h1>
+            <p className="text-slate-600">You have been logged out successfully.</p>
           </div>
         );
       default:
@@ -80,11 +80,38 @@ export default function App() {
   return (
     <>
       <Toaster position="top-right" richColors />
-      <div className="flex h-screen overflow-hidden bg-gray-50">
+      <div className="flex h-screen overflow-hidden bg-slate-50 font-sans text-slate-900">
         <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />
-        <main className="flex-1 overflow-y-auto">
-          {renderContent()}
-        </main>
+        
+        {/* Main Content Area */}
+        <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+          {/* Top Header Bar */}
+          <header className="flex items-center justify-between px-6 h-16 flex-shrink-0 border-b border-slate-200 bg-white">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-slate-400">Orphanage Portal</span>
+              <span className="text-xs text-slate-300">/</span>
+              <span className="text-xs font-extrabold text-slate-800 text-capitalize">
+                {activeSection.replace(/-/g, ' ')}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <span className="text-xs font-mono text-slate-500 hidden sm:inline">
+                {new Date().toLocaleDateString('en-BD', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
+              </span>
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-50 border border-blue-100">
+                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                <span className="text-[10px] font-bold text-blue-700">Online</span>
+              </div>
+            </div>
+          </header>
+
+          {/* Scrollable Viewport */}
+          <main className="flex-1 min-h-0 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+            {renderContent()}
+          </main>
+        </div>
+
         {activeModal && (
           <QuickActionModal action={activeModal} onClose={() => setActiveModal(null)} />
         )}
