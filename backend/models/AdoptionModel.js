@@ -137,16 +137,10 @@ const Child = {
   },
 
   update: async (id, data) => {
-<<<<<<< Updated upstream
-    await db.query(
-      'UPDATE adoption_children SET child_name = ?, age = ?, gender = ?, health_condition = ?, interests = ?, short_description = ?, adoption_status = ? WHERE id = ?',
-      [data.child_name || data.name, data.age, data.gender, data.health_condition, data.interests, data.short_description, data.adoption_status || data.availability || 'available', id]
-=======
     const payload = normalizeChild(data)
     await db.query(
       'UPDATE adoption_children SET child_name = ?, age = ?, gender = ?, health_condition = ?, interests = ?, short_description = ?, profile_image = ?, adoption_status = ? WHERE id = ?',
       [payload.child_name, payload.age, payload.gender, payload.health_condition, payload.interests, payload.short_description, payload.profile_image, payload.adoption_status, id]
->>>>>>> Stashed changes
     )
   },
 

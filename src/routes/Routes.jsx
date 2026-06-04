@@ -13,32 +13,13 @@ import ParentDashboard from '../pages/dashboard/ParentDashboard'
 import AdminDashboard from '../pages/dashboard/AdminDashboard'
 import NannyDashboard from '../pages/dashboard/NannyDashboard'
 import Overview from '../pages/dashboard/nanny/Overview'
-import OrphanageLayout from '../pages/dashboard/orphanage/OrphanageLayout'
-import DashboardHome from '../pages/dashboard/orphanage/DashboardHome'
-import ChildManagement from '../pages/dashboard/orphanage/ChildManagement'
-import OrphanageApplications from '../pages/dashboard/orphanage/Applications'
-import Meetings from '../pages/dashboard/orphanage/Meetings'
-import Counselling from '../pages/dashboard/orphanage/Counselling'
-import OrphanageStaffManagement from '../pages/dashboard/orphanage/StaffManagement'
-import Analytics from '../pages/dashboard/orphanage/Analytics'
-import Messages from '../pages/dashboard/orphanage/Messages'
-import Reports from '../pages/dashboard/orphanage/Reports'
-import OrphanageSettings from '../pages/dashboard/orphanage/Settings'
+import OrphanageApp from '../pages/dashboard/orphanage/components/OrphanageApp'
 import MarketplaceSellerDashboard from '../pages/dashboard/MarketplaceSellerDashboard'
 import MarketplaceBuyerDashboard from '../pages/dashboard/MarketplaceBuyerDashboard'
 import CartAndWishlist from '../pages/dashboard/CartAndWishlist'
 import OrderTracking from '../pages/dashboard/OrderTracking'
 import ContactSupport from '../pages/dashboard/ContactSupport'
-import DaycareLayout from '../pages/dashboard/daycare/DaycareLayout'
-import DaycareDashboard from '../pages/dashboard/daycare/DaycareDashboard'
-import DaycareProfile from '../pages/dashboard/daycare/DaycareProfile'
-import ProgramsAndPackages from '../pages/dashboard/daycare/ProgramsAndPackages'
-import BookingManagement from '../pages/dashboard/daycare/BookingManagement'
-import ChildrenManagement from '../pages/dashboard/daycare/ChildrenManagement'
-import StaffManagement from '../pages/dashboard/daycare/StaffManagement'
-import TransportManagement from '../pages/dashboard/daycare/TransportManagement'
-import FeesAndPayment from '../pages/dashboard/daycare/FeesAndPayment'
-import DailyUpdates from '../pages/dashboard/daycare/DailyUpdates'
+import DaycareApp from '../pages/dashboard/daycare/new-design/App'
 import Children from '../pages/dashboard/nanny/Children'
 import ChildDetail from '../pages/dashboard/nanny/ChildDetail'
 import Update from '../pages/dashboard/nanny/Update'
@@ -82,34 +63,13 @@ export default function AppRoutes(){
       <Route path="/dashboard/parent/*" element={<ProtectedRoute roles={["parent"]}><ParentDashboard/></ProtectedRoute>} />
       
       {/* Daycare Portal Routes */}
-      <Route path="/dashboard/daycare/*" element={<ProtectedRoute roles={["daycare", "admin"]}><DaycareLayout/></ProtectedRoute>}>
-        <Route index element={<DaycareDashboard/>} />
-        <Route path="profile" element={<DaycareProfile/>} />
-        <Route path="packages" element={<ProgramsAndPackages/>} />
-        <Route path="bookings" element={<BookingManagement/>} />
-        <Route path="children" element={<ChildrenManagement/>} />
-        <Route path="staff" element={<StaffManagement/>} />
-        <Route path="transport" element={<TransportManagement/>} />
-        <Route path="payments" element={<FeesAndPayment/>} />
-        <Route path="reports" element={<DailyUpdates/>} />
-      </Route>
+      <Route path="/dashboard/daycare/*" element={<ProtectedRoute roles={["daycare", "admin"]}><DaycareApp/></ProtectedRoute>} />
       
       <Route path="/adoption" element={<AdoptionLanding/>} />
       <Route path="/dashboard/admin/*" element={<ProtectedRoute roles={["admin"]}><AdminDashboard/></ProtectedRoute>} />
       
       {/* Orphanage Dashboard Routes */}
-      <Route path="/dashboard/adoption/*" element={<ProtectedRoute roles={["orphanage_manager", "counsellor", "verification_officer", "legal_officer", "super_admin"]}><OrphanageLayout/></ProtectedRoute>}>
-        <Route index element={<DashboardHome />} />
-        <Route path="children" element={<ChildManagement />} />
-        <Route path="applications" element={<OrphanageApplications />} />
-        <Route path="meetings" element={<Meetings />} />
-        <Route path="counselling" element={<Counselling />} />
-        <Route path="staff" element={<OrphanageStaffManagement />} />
-        <Route path="analytics" element={<Analytics />} />
-        <Route path="messages" element={<Messages />} />
-        <Route path="reports" element={<Reports />} />
-        <Route path="settings" element={<OrphanageSettings />} />
-      </Route>
+      <Route path="/dashboard/adoption/*" element={<ProtectedRoute roles={["orphanage_manager", "counsellor", "verification_officer", "legal_officer", "super_admin"]}><OrphanageApp/></ProtectedRoute>} />
 
       <Route path="/dashboard/marketplace" element={<ProtectedRoute roles={["parent"]}><MarketplaceBuyerDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/marketplace/cart" element={<ProtectedRoute roles={["parent"]}><CartAndWishlist/></ProtectedRoute>} />

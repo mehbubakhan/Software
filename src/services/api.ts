@@ -7,15 +7,15 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' }
 })
 
-api.interceptors.request.use((config) => {
+api.interceptors.request.use((config: any) => {
   const token = localStorage.getItem('token')
   if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
 
 api.interceptors.response.use(
-  res => res,
-  err => {
+  (res: any) => res,
+  (err: any) => {
     if(err.response){
       const code = err.response.status
       if(code === 401){

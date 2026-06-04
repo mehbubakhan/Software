@@ -130,6 +130,53 @@ class DaycareModel {
     )
     return result.insertId
   }
+
+  static async getInvoices(daycareId) {
+    const [rows] = await db.query('SELECT * FROM daycare_invoices WHERE daycare_id = ?', [daycareId])
+    return rows
+  }
+
+  static async addInvoice(daycareId, data) {
+    const [result] = await db.query(
+      'INSERT INTO daycare_invoices (daycare_id, amount, due_date, status, description) VALUES (?, ?, ?, ?, ?)',
+      [daycareId, data.amount, data.dueDate, data.status, data.description]
+    )
+    return result.insertId
+  }
+
+  static async updateInvoice(daycareId, id, data) {
+    await db.query('UPDATE daycare_invoices SET status = ? WHERE id = ? AND daycare_id = ?', [data.status, id, daycareId])
+  }
+
+  static async getComplaints(daycareId) {
+    const [rows] = await db.query('SELECT * FROM daycare_complaints WHERE daycare_id = ?', [daycareId])
+    return rows
+  }
+
+  static async addComplaint(daycareId, data) {
+    const [result] = await db.query(
+      'INSERT INTO daycare_complaints (daycare_id, type, priority, status, description) VALUES (?, ?, ?, ?, ?)',
+      [daycareId, data.type, data.priority, data.status, data.description]
+    )
+    return result.insertId
+  }
+
+  static async updateComplaint(daycareId, id, data) {
+    await db.query('UPDATE daycare_complaints SET status = ? WHERE id = ? AND daycare_id = ?', [data.status, id, daycareId])
+  }
+
+  static async getMessages(daycareId) {
+    const [rows] = await db.query('SELECT * FROM daycare_messages WHERE daycare_id = ?', [daycareId])
+    return rows
+  }
+
+  static async addMessage(daycareId, data) {
+    const [result] = await db.query(
+      'INSERT INTO daycare_messages (daycare_id, sender_id, receiver_id, content) VALUES (?, ?, ?, ?)',
+      [daycareId, 'daycare_admin', data.receiver_id, data.content]
+    )
+    return result.insertId
+  }
 }
 
 module.exports = DaycareModel

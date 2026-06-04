@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 # pyrefly: ignore [missing-import]
->>>>>>> prova
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 from selenium.webdriver.common.by import By
@@ -39,12 +36,9 @@ def test_parent_dashboard():
         
         time.sleep(2)
         
-<<<<<<< HEAD
-=======
         # Login test step (manually providing credentials for the user to see, or waiting)
         # We created parent@gmail.com with password 1234
         
->>>>>>> prova
         # Test 2: Check Sidebar Navigation
         print("Testing Sidebar Navigation...")
         
@@ -59,11 +53,8 @@ def test_parent_dashboard():
         browse_children = driver.find_element(By.XPATH, "//*[contains(text(), 'Browse Children')]")
         browse_children.click()
         time.sleep(3)
-<<<<<<< HEAD
-=======
         # Enter name
         driver.find_element(By.CLASS_NAME, "mt-2").send_keys("Somik")
->>>>>>> prova
         
         print("Navigation test completed successfully.")
         

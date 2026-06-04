@@ -18,12 +18,8 @@ router.get('/manager/my-orphanage', auth, permit('orphanage_manager', 'orphanage
 router.post('/children', auth, permit('orphanage_manager', 'orphanageManager', 'admin'), adoptionController.createChild);
 router.patch('/children/:id', auth, permit('orphanage_manager', 'orphanageManager', 'admin'), adoptionController.updateChild);
 router.delete('/children/:id', auth, permit('orphanage_manager', 'orphanageManager', 'admin'), adoptionController.deleteChild);
-<<<<<<< Updated upstream
-=======
-
 // Dashboard
 router.get('/dashboard', auth, permit('orphanage_manager', 'orphanageManager', 'admin'), adoptionController.getDashboardStats);
->>>>>>> Stashed changes
 
 // Applications
 router.post('/applications', auth, permit('parent', 'admin'), adoptionController.createApplication);

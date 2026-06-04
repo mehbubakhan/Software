@@ -4,7 +4,8 @@ const {
   getDaycares, getDaycareById, getChildReport, submitApplication, processPayment,
   ensureDaycare, getDashboardStats, getProfile, updateProfile, createProfile,
   getPackages, createPackage, getApplications, updateApplication, getChildren,
-  getStaff, addStaff, updateStaff, deleteStaff, getTransport, addTransport, getDailyReports, addDailyReport
+  getStaff, addStaff, updateStaff, deleteStaff, getTransport, addTransport, getDailyReports, addDailyReport,
+  getInvoices, addInvoice, updateInvoice, getComplaints, addComplaint, updateComplaint, getMessages, addMessage
 } = require('../controllers/daycareController');
 const authMiddleware = require('../middleware/auth');
 
@@ -42,5 +43,16 @@ router.post('/portal/transport', ensureDaycare, addTransport);
 
 router.get('/portal/reports', ensureDaycare, getDailyReports);
 router.post('/portal/reports', ensureDaycare, addDailyReport);
+
+router.get('/portal/invoices', ensureDaycare, getInvoices);
+router.post('/portal/invoices', ensureDaycare, addInvoice);
+router.put('/portal/invoices/:id', ensureDaycare, updateInvoice);
+
+router.get('/portal/complaints', ensureDaycare, getComplaints);
+router.post('/portal/complaints', ensureDaycare, addComplaint);
+router.put('/portal/complaints/:id', ensureDaycare, updateComplaint);
+
+router.get('/portal/messages', ensureDaycare, getMessages);
+router.post('/portal/messages', ensureDaycare, addMessage);
 
 module.exports = router;
