@@ -22,6 +22,7 @@ export default function AdminDashboard(){
 
   const [pendingVerifications, setPendingVerifications] = useState([])
   const [activeSOS, setActiveSOS] = useState([])
+  const [orphanages, setOrphanages] = useState([])
   const [refresh, setRefresh] = useState(0)
 
   useEffect(() => {
@@ -33,12 +34,25 @@ export default function AdminDashboard(){
       api.get('/sos/all').then(res => {
         if(res.data?.ok) setActiveSOS(res.data.data)
       }).catch(console.error)
+      
+      api.get('/orphanages').then(res => {
+        if(res.data?.ok) setOrphanages(res.data.data)
+      }).catch(console.error)
     }
   }, [isSystemAdmin, refresh])
 
   const handleVerify = async (id, status) => {
     try {
       await api.patch(`/admin/verifications/${id}`, { status })
+      setRefresh(r => r + 1)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const handleVerifyOrphanage = async (id, status) => {
+    try {
+      await api.patch(`/orphanages/${id}/status`, { status })
       setRefresh(r => r + 1)
     } catch (err) {
       console.error(err)
@@ -208,21 +222,24 @@ export default function AdminDashboard(){
                 <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">12 Registered</span>
               </div>
               <div className="grid gap-4 md:grid-cols-3">
-                {[
-                  { name: 'Little Stars Daycare Center', type: 'Daycare', status: 'Active', members: '48 children' },
-                  { name: 'Trust Nanny Network Corp', type: 'Agency', status: 'Active', members: '35 nannies' },
-                  { name: 'Greenfields Orphanage Home', type: 'Orphanage', status: 'Pending Approval', members: '18 kids registered' }
-                ].map((org, idx) => (
+                {orphanages.length > 0 ? orphanages.map((org, idx) => (
                   <div key={idx} className="border border-slate-100 p-4 rounded-xl hover:shadow-md transition bg-slate-50/50">
-                    <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded ${org.type === 'Daycare' ? 'bg-indigo-100 text-indigo-700' : org.type === 'Agency' ? 'bg-amber-100 text-amber-700' : 'bg-fuchsia-100 text-fuchsia-700'}`}>{org.type}</span>
-                    <h4 className="font-bold text-slate-900 mt-2">{org.name}</h4>
-                    <p className="text-xs text-slate-500 mt-1">{org.members}</p>
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-fuchsia-100 text-fuchsia-700">Orphanage</span>
+                    <h4 className="font-bold text-slate-900 mt-2">{org.orphanage_name}</h4>
+                    <p className="text-xs text-slate-500 mt-1">License: {org.license_number || 'N/A'}</p>
                     <div className="flex items-center justify-between mt-4 pt-2 border-t border-slate-100">
-                      <span className={`text-xs font-semibold ${org.status === 'Active' ? 'text-emerald-600' : 'text-amber-500 animate-pulse'}`}>{org.status}</span>
-                      <button onClick={() => alert(`Configuring ${org.name}`)} className="text-xs text-cyan-600 font-bold hover:underline">Manage</button>
+                      <span className={`text-xs font-semibold ${org.verification_status === 'verified' ? 'text-emerald-600' : 'text-amber-500 animate-pulse'}`}>{org.verification_status}</span>
+                      {org.verification_status === 'pending' && (
+                        <div className="flex gap-2">
+                          <button onClick={() => handleVerifyOrphanage(org.id, 'verified')} className="text-xs text-emerald-600 font-bold hover:underline">Approve</button>
+                          <button onClick={() => handleVerifyOrphanage(org.id, 'rejected')} className="text-xs text-red-600 font-bold hover:underline">Reject</button>
+                        </div>
+                      )}
                     </div>
                   </div>
-                ))}
+                )) : (
+                  <div className="col-span-3 text-center text-slate-500 py-4">No orphanages found.</div>
+                )}
               </div>
             </section>
 

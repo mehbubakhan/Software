@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS adoption_applications (
   orphanage_id INT NOT NULL,
   application_status ENUM('pending', 'under_review', 'meetup_phase', 'compatibility_evaluation', 'approved', 'rejected', 'follow_up_ongoing') DEFAULT 'pending',
   submitted_documents JSON,
+  form_data JSON,
   meetup_count INT DEFAULT 0,
   compatibility_score INT DEFAULT 0,
   final_decision TEXT,

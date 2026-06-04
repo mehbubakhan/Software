@@ -11,7 +11,8 @@ export default function StaffManagement() {
   const fetchStaff = async () => {
     try {
       const res = await api.get('/daycare/portal/staff');
-      setStaff(res.data);
+      const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+      setStaff(data);
     } catch (err) {
       console.error(err);
     } finally {

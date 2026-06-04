@@ -9,7 +9,8 @@ export default function BookingManagement() {
   const fetchBookings = async () => {
     try {
       const res = await api.get('/daycare/portal/applications');
-      setBookings(res.data);
+      const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+      setBookings(data);
     } catch (err) {
       console.error(err);
     } finally {

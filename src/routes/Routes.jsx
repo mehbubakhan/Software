@@ -13,7 +13,17 @@ import ParentDashboard from '../pages/dashboard/ParentDashboard'
 import AdminDashboard from '../pages/dashboard/AdminDashboard'
 import NannyDashboard from '../pages/dashboard/NannyDashboard'
 import Overview from '../pages/dashboard/nanny/Overview'
-import AdoptionDashboard from '../pages/dashboard/AdoptionDashboard'
+import OrphanageLayout from '../pages/dashboard/orphanage/OrphanageLayout'
+import DashboardHome from '../pages/dashboard/orphanage/DashboardHome'
+import ChildManagement from '../pages/dashboard/orphanage/ChildManagement'
+import OrphanageApplications from '../pages/dashboard/orphanage/Applications'
+import Meetings from '../pages/dashboard/orphanage/Meetings'
+import Counselling from '../pages/dashboard/orphanage/Counselling'
+import OrphanageStaffManagement from '../pages/dashboard/orphanage/StaffManagement'
+import Analytics from '../pages/dashboard/orphanage/Analytics'
+import Messages from '../pages/dashboard/orphanage/Messages'
+import Reports from '../pages/dashboard/orphanage/Reports'
+import OrphanageSettings from '../pages/dashboard/orphanage/Settings'
 import MarketplaceSellerDashboard from '../pages/dashboard/MarketplaceSellerDashboard'
 import MarketplaceBuyerDashboard from '../pages/dashboard/MarketplaceBuyerDashboard'
 import CartAndWishlist from '../pages/dashboard/CartAndWishlist'
@@ -86,7 +96,21 @@ export default function AppRoutes(){
       
       <Route path="/adoption" element={<AdoptionLanding/>} />
       <Route path="/dashboard/admin/*" element={<ProtectedRoute roles={["admin"]}><AdminDashboard/></ProtectedRoute>} />
-      <Route path="/dashboard/adoption/*" element={<ProtectedRoute roles={["orphanage_manager", "counsellor", "verification_officer", "legal_officer", "super_admin"]}><AdoptionDashboard/></ProtectedRoute>} />
+      
+      {/* Orphanage Dashboard Routes */}
+      <Route path="/dashboard/adoption/*" element={<ProtectedRoute roles={["orphanage_manager", "counsellor", "verification_officer", "legal_officer", "super_admin"]}><OrphanageLayout/></ProtectedRoute>}>
+        <Route index element={<DashboardHome />} />
+        <Route path="children" element={<ChildManagement />} />
+        <Route path="applications" element={<OrphanageApplications />} />
+        <Route path="meetings" element={<Meetings />} />
+        <Route path="counselling" element={<Counselling />} />
+        <Route path="staff" element={<OrphanageStaffManagement />} />
+        <Route path="analytics" element={<Analytics />} />
+        <Route path="messages" element={<Messages />} />
+        <Route path="reports" element={<Reports />} />
+        <Route path="settings" element={<OrphanageSettings />} />
+      </Route>
+
       <Route path="/dashboard/marketplace" element={<ProtectedRoute roles={["parent"]}><MarketplaceBuyerDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/marketplace/cart" element={<ProtectedRoute roles={["parent"]}><CartAndWishlist/></ProtectedRoute>} />
       <Route path="/dashboard/marketplace/wishlist" element={<ProtectedRoute roles={["parent"]}><CartAndWishlist/></ProtectedRoute>} />

@@ -46,6 +46,7 @@ const normalizeApplication = (data = {}, parentId) => ({
   orphanage_id: data.orphanage_id,
   application_status: data.application_status || 'pending',
   submitted_documents: toJson(data.submitted_documents || data.documents || null),
+  form_data: toJson(data.form_data || null),
   meetup_count: data.meetup_count || 0,
   compatibility_score: data.compatibility_score || 0,
   final_decision: data.final_decision || null,
@@ -60,6 +61,7 @@ const mapChildRow = (row) => ({
 const mapApplicationRow = (row) => ({
   ...row,
   submitted_documents: fromJson(row.submitted_documents),
+  form_data: fromJson(row.form_data),
 })
 
 const Orphanage = {
@@ -89,6 +91,14 @@ const Orphanage = {
 
   updateStatus: async (id, status) => {
     await db.query('UPDATE adoption_orphanages SET verification_status = ? WHERE id = ?', [status, id])
+  },
+
+  update: async (id, data) => {
+    const payload = normalizeOrphanage(data)
+    await db.query(
+      'UPDATE adoption_orphanages SET orphanage_name = ?, license_number = ?, address = ?, contact_number = ?, email = ?, description = ?, profile_image = ? WHERE id = ?',
+      [payload.orphanage_name, payload.license_number, payload.address, payload.contact_number, payload.email, payload.description, payload.profile_image, id]
+    )
   },
 }
 
@@ -127,9 +137,16 @@ const Child = {
   },
 
   update: async (id, data) => {
+<<<<<<< Updated upstream
     await db.query(
       'UPDATE adoption_children SET child_name = ?, age = ?, gender = ?, health_condition = ?, interests = ?, short_description = ?, adoption_status = ? WHERE id = ?',
       [data.child_name || data.name, data.age, data.gender, data.health_condition, data.interests, data.short_description, data.adoption_status || data.availability || 'available', id]
+=======
+    const payload = normalizeChild(data)
+    await db.query(
+      'UPDATE adoption_children SET child_name = ?, age = ?, gender = ?, health_condition = ?, interests = ?, short_description = ?, profile_image = ?, adoption_status = ? WHERE id = ?',
+      [payload.child_name, payload.age, payload.gender, payload.health_condition, payload.interests, payload.short_description, payload.profile_image, payload.adoption_status, id]
+>>>>>>> Stashed changes
     )
   },
 
@@ -142,8 +159,8 @@ const Application = {
   create: async (data) => {
     const payload = normalizeApplication(data, data.parent_id)
     const [result] = await db.query(
-      'INSERT INTO adoption_applications (parent_id, child_id, orphanage_id, application_status, submitted_documents, meetup_count, compatibility_score, final_decision) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [payload.parent_id, payload.child_id, payload.orphanage_id, payload.application_status, payload.submitted_documents, payload.meetup_count, payload.compatibility_score, payload.final_decision]
+      'INSERT INTO adoption_applications (parent_id, child_id, orphanage_id, application_status, submitted_documents, form_data, meetup_count, compatibility_score, final_decision) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [payload.parent_id, payload.child_id, payload.orphanage_id, payload.application_status, payload.submitted_documents, payload.form_data, payload.meetup_count, payload.compatibility_score, payload.final_decision]
     )
     return result.insertId
   },
@@ -177,6 +194,14 @@ const Application = {
 
   updateStatus: async (id, status) => {
     await db.query('UPDATE adoption_applications SET application_status = ? WHERE id = ?', [status, id])
+  },
+  
+  update: async (id, data) => {
+    const payload = normalizeApplication(data, data.parent_id)
+    await db.query(
+      'UPDATE adoption_applications SET parent_id = ?, child_id = ?, orphanage_id = ?, application_status = ?, submitted_documents = ?, form_data = ?, meetup_count = ?, compatibility_score = ?, final_decision = ? WHERE id = ?',
+      [payload.parent_id, payload.child_id, payload.orphanage_id, payload.application_status, payload.submitted_documents, payload.form_data, payload.meetup_count, payload.compatibility_score, payload.final_decision, id]
+    )
   },
 
   updateCompatibility: async (id, score) => {
