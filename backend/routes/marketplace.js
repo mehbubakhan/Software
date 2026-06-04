@@ -33,4 +33,13 @@ router.delete('/seller/products/:id', permit('marketplace_seller', 'seller', 'ad
 router.get('/seller/orders', permit('marketplace_seller', 'seller', 'admin'), marketplaceController.getSellerOrders);
 router.put('/seller/orders/:id/status', permit('marketplace_seller', 'seller', 'admin'), marketplaceController.updateOrderStatus);
 
+// Admin routes
+router.get('/admin/sellers', permit('marketplace_seller', 'seller', 'admin'), marketplaceController.getAdminSellers);
+router.get('/admin/deliveries', permit('marketplace_seller', 'seller', 'admin'), marketplaceController.getAdminDeliveries);
+router.get('/admin/payments', permit('marketplace_seller', 'seller', 'admin'), marketplaceController.getAdminPayments);
+router.get('/admin/complaints', permit('marketplace_seller', 'seller', 'admin'), marketplaceController.getAdminComplaints);
+router.get('/admin/reviews', permit('marketplace_seller', 'seller', 'admin'), marketplaceController.getAdminReviews);
+router.get('/admin/notifications', permit('marketplace_seller', 'seller', 'admin'), marketplaceController.getAdminNotifications);
+router.get('/admin/analytics', permit('marketplace_seller', 'seller', 'admin'), marketplaceController.getAdminAnalytics);
+
 module.exports = router;
