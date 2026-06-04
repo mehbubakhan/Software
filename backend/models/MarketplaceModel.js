@@ -25,6 +25,48 @@ const MarketplaceModel = {
     return rows[0];
   },
 
+  getSellerProducts: async (sellerId) => {
+    const query = `
+      SELECT p.*, c.name as category_name 
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      WHERE p.seller_id = ?
+    `;
+    const [rows] = await db.query(query, [sellerId]);
+    return rows;
+  },
+
+  addProduct: async (sellerId, productData) => {
+    // Ensure at least one category exists
+    const [cats] = await db.query('SELECT id FROM categories LIMIT 1');
+    let category_id = 1;
+    if (cats.length === 0) {
+      const [res] = await db.query('INSERT INTO categories (name, description) VALUES ("Default", "Default Category")');
+      category_id = res.insertId;
+    } else {
+      category_id = cats[0].id;
+    }
+
+    const { name, price, stock } = productData;
+    const [result] = await db.query(
+      'INSERT INTO products (seller_id, category_id, name, price, stock) VALUES (?, ?, ?, ?, ?)',
+      [sellerId, category_id, name, price, stock]
+    );
+    return result.insertId;
+  },
+
+  updateProduct: async (sellerId, productId, data) => {
+    const { name, price, stock } = data;
+    await db.query(
+      'UPDATE products SET name = ?, price = ?, stock = ? WHERE id = ? AND seller_id = ?',
+      [name, price, stock, productId, sellerId]
+    );
+  },
+
+  deleteProduct: async (sellerId, productId) => {
+    await db.query('DELETE FROM products WHERE id = ? AND seller_id = ?', [productId, sellerId]);
+  },
+
   // --- Cart ---
   getCartByUserId: async (userId) => {
     const query = `
@@ -138,6 +180,25 @@ const MarketplaceModel = {
     const [items] = await db.query(itemsQuery, [order.id]);
     order.items = items;
     return order;
+  },
+
+  updateOrderStatus: async (sellerId, orderId, status) => {
+    // In a real app we'd verify the seller owns a product in the order.
+    await db.query('UPDATE orders SET status = ? WHERE id = ?', [status, orderId]);
+  },
+
+  getSellerOrders: async (sellerId) => {
+    // Return all orders containing products sold by this seller
+    const query = `
+      SELECT DISTINCT o.*, u.name as customer_name
+      FROM orders o
+      JOIN order_items oi ON o.id = oi.order_id
+      JOIN products p ON oi.product_id = p.id
+      JOIN users u ON o.user_id = u.id
+      WHERE p.seller_id = ?
+    `;
+    const [rows] = await db.query(query, [sellerId]);
+    return rows;
   }
 };
 

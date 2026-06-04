@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import api from '../../../services/api'
 import { useAuth } from '../../../context/AuthContext'
+import ChildAuth from '../../../components/ChildAuth'
 
 export default function Overview() {
   const { user } = useAuth()
@@ -9,6 +10,8 @@ export default function Overview() {
   const [loading, setLoading] = useState(true)
   const [expandedWishlist, setExpandedWishlist] = useState(null)
   const [showMessageModal, setShowMessageModal] = useState(false)
+  const [showChildAuth, setShowChildAuth] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchOverview = async () => {
@@ -55,21 +58,30 @@ export default function Overview() {
   ]
 
   const wishlistItems = [
-    { title: 'Saved Nannies (2)', items: [{name: 'Kamrun Nahar', path: '/dashboard/parent/hire-nanny/1'}, {name: 'Aisha Khan', path: '/dashboard/parent/hire-nanny/2'}] },
-    { title: 'Saved Daycares (4)', items: [{name: 'Happy Kids Daycare', path: '/dashboard/parent/daycare'}, {name: 'Sunny Days Center', path: '/dashboard/parent/daycare'}, {name: 'Little Angels', path: '/dashboard/parent/daycare'}, {name: 'Tiny Tots', path: '/dashboard/parent/daycare'}] },
-    { title: 'Saved Videos (5)', items: [{name: 'Childcare Tips', path: '#'}, {name: 'Healthy Recipes', path: '#'}, {name: 'Activity Ideas', path: '#'}, {name: 'Potty Training', path: '#'}, {name: 'Sleep Training', path: '#'}] },
-    { title: 'Saved Products (8)', items: [{name: 'Baby Monitor', path: '#'}, {name: 'Stroller', path: '#'}, {name: 'Educational Toys', path: '#'}, {name: 'Diapers', path: '#'}] },
+    { title: 'Saved Nannies (2)', items: [{ name: 'Kamrun Nahar', path: '/dashboard/parent/hire-nanny/1' }, { name: 'Aisha Khan', path: '/dashboard/parent/hire-nanny/2' }] },
+    { title: 'Saved Daycares (4)', items: [{ name: 'Happy Kids Daycare', path: '/dashboard/parent/daycare' }, { name: 'Sunny Days Center', path: '/dashboard/parent/daycare' }, { name: 'Little Angels', path: '/dashboard/parent/daycare' }, { name: 'Tiny Tots', path: '/dashboard/parent/daycare' }] },
+    { title: 'Saved Videos (5)', items: [{ name: 'Childcare Tips', path: '#' }, { name: 'Healthy Recipes', path: '#' }, { name: 'Activity Ideas', path: '#' }, { name: 'Potty Training', path: '#' }, { name: 'Sleep Training', path: '#' }] },
+    { title: 'Saved Products (8)', items: [{ name: 'Baby Monitor', path: '#' }, { name: 'Stroller', path: '#' }, { name: 'Educational Toys', path: '#' }, { name: 'Diapers', path: '#' }] },
   ]
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-10">
       {/* Welcome Banner */}
-      <div className="bg-[#1A1D27] rounded-3xl p-8 text-center border border-[#2A2E3D] shadow-lg relative overflow-hidden">
+      <div className="bg-[#1A1D27] rounded-3xl p-8 text-center border border-[#2A2E3D] shadow-lg relative overflow-hidden flex flex-col md:flex-row items-center justify-between text-left">
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-fuchsia-600/10 to-blue-600/10 pointer-events-none"></div>
-        <h1 className="text-3xl font-bold text-white relative z-10 flex items-center justify-center gap-3">
-          <span className="text-4xl">✨</span> Welcome back, {user?.name || data.user.name}!
-        </h1>
-        <p className="text-slate-400 mt-2 relative z-10">Here's what's happening with your children today</p>
+        <div className="relative z-10 mb-6 md:mb-0 text-center md:text-left w-full md:w-auto">
+          <h1 className="text-3xl font-bold text-white flex items-center justify-center md:justify-start gap-3">
+            <span className="text-4xl">✨</span> Welcome back, {user?.name || data.user.name}!
+          </h1>
+          <p className="text-slate-400 mt-2">Here's what's happening with your children today</p>
+        </div>
+        <button 
+          onClick={() => setShowChildAuth(true)}
+          className="relative z-10 shrink-0 rounded-2xl bg-gradient-to-r from-fuchsia-600 to-pink-500 px-8 py-4 font-bold text-white shadow-[0_0_20px_rgba(192,38,211,0.5)] transition hover:scale-105 hover:shadow-[0_0_30px_rgba(192,38,211,0.7)] flex flex-col items-center gap-1"
+        >
+          <span className="text-2xl">🎮</span>
+          <span className="tracking-wide">ENTER CHILD MODE</span>
+        </button>
       </div>
 
       {/* Child Profiles */}
@@ -88,7 +100,7 @@ export default function Overview() {
               </div>
               <button className="text-slate-400 hover:text-white">♡</button>
             </div>
-            
+
             <div className="space-y-4 mb-5">
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0">🏫</div>
@@ -123,8 +135,8 @@ export default function Overview() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {statCards.map((stat, idx) => (
-          <div 
-            key={idx} 
+          <div
+            key={idx}
             onClick={() => stat.label === 'Messages' ? setShowMessageModal(true) : null}
             className={`bg-[#1A1D27] border border-[#2A2E3D] rounded-2xl p-4 flex flex-col justify-between ${stat.label === 'Messages' ? 'cursor-pointer hover:border-pink-500/50 transition' : ''}`}
           >
@@ -215,7 +227,7 @@ export default function Overview() {
           <div className="bg-[#1A1D27] border border-[#2A2E3D] rounded-3xl p-5">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-bold text-white">Upcoming Schedule</h3>
-              <a href="#" className="text-xs text-slate-400 hover:text-white">View Calendar</a>
+              <Link to="/dashboard/parent/schedule" className="text-xs text-slate-400 hover:text-white">View Calendar</Link>
             </div>
             <div className="space-y-3">
               {upcomingSchedule.map((schedule) => (
@@ -283,7 +295,7 @@ export default function Overview() {
         <div className="space-y-2">
           {wishlistItems.map((category, idx) => (
             <div key={idx} className="border-b border-[#2A2E3D] last:border-0">
-              <div 
+              <div
                 onClick={() => setExpandedWishlist(expandedWishlist === idx ? null : idx)}
                 className="flex justify-between items-center p-3 rounded-xl hover:bg-white/5 cursor-pointer"
               >
@@ -335,6 +347,9 @@ export default function Overview() {
           </div>
         </div>
       )}
+
+      {/* Child Auth Modal */}
+      <ChildAuth isOpen={showChildAuth} onClose={() => setShowChildAuth(false)} onSuccess={() => navigate('/dashboard/child')} />
     </div>
   )
 }

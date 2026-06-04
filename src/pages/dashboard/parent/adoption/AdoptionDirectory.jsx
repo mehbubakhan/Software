@@ -99,22 +99,22 @@ export default function AdoptionDirectory() {
                       <span>📍</span> <span>{child.orphanage_name}</span>
                     </div>
                     <div className="flex items-start gap-2">
-                      <span>🕒</span> <span>Available since {new Date(child.created_at).toLocaleDateString()}</span>
+                      <span>🕒</span> <span>Available since {child.created_at ? new Date(child.created_at).toLocaleDateString() : 'Recently'}</span>
                     </div>
                   </div>
 
                   <p className="text-sm text-slate-300 leading-relaxed mb-6 flex-1">
-                    {child.description}
+                    {child.short_description || child.description}
                   </p>
 
                   <div className="mb-6">
                     <div className="text-xs text-slate-400 mb-2">Interests:</div>
                     <div className="flex flex-wrap gap-2">
-                      {child.interests ? child.interests.split(',').map((interest, idx) => (
+                      {String(child.interests || '').split(',').filter(Boolean).map((interest, idx) => (
                         <span key={idx} className="bg-slate-800 text-fuchsia-300 border border-slate-700 text-xs px-2 py-1 rounded-md">
                           {interest.trim()}
                         </span>
-                      )) : null}
+                      ))}
                     </div>
                   </div>
 

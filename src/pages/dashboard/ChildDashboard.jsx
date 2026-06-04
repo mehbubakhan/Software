@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation, Routes, Route, Link } from 'react-router-dom'
+import api from '../../services/api'
 import LearningDashboard from './child/LearningDashboard'
+import ChildOverview from './child/ChildOverview'
 import AlphabetLearning from './child/AlphabetLearning'
 import NumbersLearning from './child/NumbersLearning'
 import ShapesLearning from './child/ShapesLearning'
@@ -14,6 +16,7 @@ import LearnTogether from './child/LearnTogether'
 import RewardsShop from './child/RewardsShop'
 import DrawingCanvas from './child/DrawingCanvas'
 import AdvancedLearning from './child/AdvancedLearning'
+import ChildAuth from '../../components/ChildAuth'
 
 export default function ChildDashboard() {
   const navigate = useNavigate()
@@ -22,6 +25,7 @@ export default function ChildDashboard() {
     const saved = localStorage.getItem('child_coins')
     return saved ? parseInt(saved, 10) : 50
   })
+  const [showExitAuth, setShowExitAuth] = useState(false)
 
   // Basic sound effect for clicks
   const playClick = useCallback(() => {
@@ -52,32 +56,34 @@ export default function ChildDashboard() {
   const addCoins = (amount) => {
     setCoins(prev => prev + amount)
     playClick()
+    api.post('/learning/track', {
+      activity: 'Learning Module Completion',
+      duration: 5,
+      coins_earned: amount
+    }).catch(e => console.error('Failed to track activity', e))
   }
 
   const handleExit = () => {
-    const pin = prompt("Enter 4-digit PIN to exit Child Mode:")
-    if (pin) {
-      navigate('/dashboard/parent')
-    }
+    setShowExitAuth(true)
   }
 
   // Provide context-like props down to routes
   const props = { coins, setCoins, addCoins, playClick, speak }
 
   return (
-    <div className="min-h-screen bg-fuchsia-50/50 flex flex-col font-sans">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-fuchsia-100 via-pink-100 to-white flex flex-col font-sans">
       {/* Universal Header */}
       <header className="sticky top-0 z-50 flex items-center justify-between bg-white px-6 py-4 shadow-sm">
         <div className="flex items-center gap-4">
-          <button 
+          <button
             onClick={handleExit}
             className="rounded-full bg-red-100 px-4 py-2 font-bold text-red-600 transition hover:bg-red-200"
           >
             Exit to Parent
           </button>
-          
+
           {location.pathname !== '/dashboard/child' && location.pathname !== '/dashboard/child/' && (
-            <button 
+            <button
               onClick={() => navigate(-1)}
               className="flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 font-bold text-slate-700 transition hover:bg-slate-200"
             >
@@ -89,7 +95,7 @@ export default function ChildDashboard() {
             <span className="text-xl font-black tracking-tight text-fuchsia-600">MiniMate</span>
           </Link>
         </div>
-        
+
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2 rounded-full bg-amber-100 px-4 py-1.5 font-bold text-amber-700">
             <span>⭐</span> {coins} Coins
@@ -103,22 +109,32 @@ export default function ChildDashboard() {
       {/* Main Content Area */}
       <main className="flex-1 w-full max-w-7xl mx-auto p-6 md:p-10">
         <Routes>
-          <Route index element={<LearningDashboard {...props} />} />
-          <Route path="alphabet" element={<AlphabetLearning {...props} />} />
-          <Route path="numbers" element={<NumbersLearning {...props} />} />
-          <Route path="shapes" element={<ShapesLearning {...props} />} />
-          <Route path="draw" element={<DrawingCanvas {...props} />} />
+          <Route index element={<ChildOverview {...props} />} />
+          <Route path="overview" element={<ChildOverview {...props} />} />
+          <Route path="learn" element={<LearningDashboard {...props} />} />
           <Route path="games" element={<GamesHub {...props} />} />
+          <Route path="tests" element={<div className="p-8 text-center"><h1 className="text-4xl font-black text-fuchsia-600">Tests Area Coming Soon!</h1></div>} />
+          <Route path="rewards" element={<RewardsShop {...props} />} />
+          <Route path="draw" element={<DrawingCanvas {...props} />} />
+          <Route path="collaboration" element={<LearnTogether {...props} />} />
+          <Route path="progress" element={<div className="p-8 text-center"><h1 className="text-4xl font-black text-fuchsia-600">Progress Tracking Coming Soon!</h1></div>} />
+          <Route path="settings" element={<div className="p-8 text-center"><h1 className="text-4xl font-black text-fuchsia-600">Child Settings Coming Soon!</h1></div>} />
+
+          {/* Legacy sub-routes for games and learning */}
+          <Route path="learn/alphabet" element={<AlphabetLearning {...props} />} />
+          <Route path="learn/numbers" element={<NumbersLearning {...props} />} />
+          <Route path="learn/shapes" element={<ShapesLearning {...props} />} />
           <Route path="games/memory" element={<MemoryGame {...props} />} />
           <Route path="games/tictactoe" element={<TicTacToe {...props} />} />
           <Route path="games/puzzle" element={<PuzzleGame {...props} />} />
           <Route path="games/wordsearch" element={<WordSearch {...props} />} />
           <Route path="videos" element={<VideoLibrary {...props} />} />
-          <Route path="learn-together" element={<LearnTogether {...props} />} />
-          <Route path="rewards" element={<RewardsShop {...props} />} />
           <Route path="advanced" element={<AdvancedLearning {...props} />} />
         </Routes>
       </main>
+
+      {/* Exit Auth Modal */}
+      <ChildAuth isOpen={showExitAuth} onClose={() => setShowExitAuth(false)} onSuccess={() => navigate('/dashboard/parent')} />
     </div>
   )
 }

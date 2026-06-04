@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 
 const VIDEOS = [
-  { id: 1, title: 'ABC Song', cat: 'ABC Video', icon: '🔤', color: 'bg-blue-500' },
-  { id: 2, title: '123 Rhymes', cat: 'Math Rhymes', icon: '🔢', color: 'bg-pink-500' },
-  { id: 3, title: 'Shape Sorter', cat: 'Logic Thinking', icon: '🧠', color: 'bg-green-500' },
-  { id: 4, title: 'Please & Thank You', cat: 'Etiquette', icon: '🤝', color: 'bg-amber-500' },
-  { id: 5, title: 'Hello in Sign', cat: 'Sign Language', icon: '👋', color: 'bg-purple-500' },
+  { id: 1, title: 'ABC Song', cat: 'ABC Video', icon: '🔤', color: 'bg-blue-500', youtubeId: '_UR-l3QI2nE' },
+  { id: 2, title: '123 Rhymes', cat: 'Math Rhymes', icon: '🔢', color: 'bg-pink-500', youtubeId: 'e0dJWfQHF8Y' },
+  { id: 3, title: 'Shape Sorter', cat: 'Logic Thinking', icon: '🧠', color: 'bg-green-500', youtubeId: 'anoGJsVkaWo' },
+  { id: 4, title: 'Please & Thank You', cat: 'Etiquette', icon: '🤝', color: 'bg-amber-500', youtubeId: 'ANnK2FkY_wI' },
+  { id: 5, title: 'Hello in Sign', cat: 'Sign Language', icon: '👋', color: 'bg-purple-500', youtubeId: 'v1p2nXm0Yw8' },
 ]
 
 export default function VideoLibrary({ playClick, addCoins }) {
@@ -66,13 +66,17 @@ export default function VideoLibrary({ playClick, addCoins }) {
               <h3 className="font-bold text-xl">{activeVideo.title}</h3>
               <button onClick={closeVideo} className="text-slate-400 hover:text-white transition bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">✕</button>
             </div>
-            <div className={`${activeVideo.color} aspect-video flex flex-col items-center justify-center relative`}>
-              <span className="text-9xl mb-4 animate-bounce">{activeVideo.icon}</span>
-              <p className="text-white/80 font-bold text-2xl tracking-widest uppercase">Video Playing...</p>
-              
-              <div className="absolute bottom-4 left-4 right-4 bg-black/40 h-2 rounded-full overflow-hidden">
-                <div className="bg-white h-full w-1/3 animate-[pulse_2s_ease-in-out_infinite]"></div>
-              </div>
+            <div className="aspect-video w-full bg-black relative">
+              <iframe
+                width="100%"
+                height="100%"
+                src={`https://www.youtube.com/embed/${activeVideo.youtubeId}?autoplay=1`}
+                title={activeVideo.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="absolute inset-0"
+              ></iframe>
             </div>
           </div>
         </div>

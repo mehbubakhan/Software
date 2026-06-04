@@ -13,22 +13,13 @@ import ParentDashboard from '../pages/dashboard/ParentDashboard'
 import AdminDashboard from '../pages/dashboard/AdminDashboard'
 import NannyDashboard from '../pages/dashboard/NannyDashboard'
 import Overview from '../pages/dashboard/nanny/Overview'
-import AdoptionDashboard from '../pages/dashboard/AdoptionDashboard'
-import MarketplaceSellerDashboard from '../pages/dashboard/MarketplaceSellerDashboard'
+import OrphanageApp from '../pages/dashboard/orphanage/components/OrphanageApp'
+import MarketplaceSellerDashboard from '../pages/dashboard/marketplace-seller/new-design/App'
 import MarketplaceBuyerDashboard from '../pages/dashboard/MarketplaceBuyerDashboard'
 import CartAndWishlist from '../pages/dashboard/CartAndWishlist'
 import OrderTracking from '../pages/dashboard/OrderTracking'
 import ContactSupport from '../pages/dashboard/ContactSupport'
-import DaycareLayout from '../pages/dashboard/daycare/DaycareLayout'
-import DaycareDashboard from '../pages/dashboard/daycare/DaycareDashboard'
-import DaycareProfile from '../pages/dashboard/daycare/DaycareProfile'
-import ProgramsAndPackages from '../pages/dashboard/daycare/ProgramsAndPackages'
-import BookingManagement from '../pages/dashboard/daycare/BookingManagement'
-import ChildrenManagement from '../pages/dashboard/daycare/ChildrenManagement'
-import StaffManagement from '../pages/dashboard/daycare/StaffManagement'
-import TransportManagement from '../pages/dashboard/daycare/TransportManagement'
-import FeesAndPayment from '../pages/dashboard/daycare/FeesAndPayment'
-import DailyUpdates from '../pages/dashboard/daycare/DailyUpdates'
+import DaycareApp from '../pages/dashboard/daycare/new-design/App'
 import Children from '../pages/dashboard/nanny/Children'
 import ChildDetail from '../pages/dashboard/nanny/ChildDetail'
 import Update from '../pages/dashboard/nanny/Update'
@@ -40,10 +31,16 @@ import Safety from '../pages/dashboard/nanny/Safety'
 import Communication from '../pages/dashboard/nanny/Communication'
 import Reviews from '../pages/dashboard/nanny/Reviews'
 import Payments from '../pages/dashboard/nanny/Payments'
+import Learning from '../pages/dashboard/nanny/Learning'
+import ActiveJobs from '../pages/dashboard/nanny/ActiveJobs'
+import Verification from '../pages/dashboard/nanny/Verification'
+import Wellness from '../pages/dashboard/nanny/Wellness'
+import Settings from '../pages/dashboard/nanny/Settings'
 import ProtectedRoute from '../components/ProtectedRoute'
 import RoleRedirect from '../components/RoleRedirect'
 import ChildDashboard from '../pages/dashboard/ChildDashboard'
 import LearningLanding from '../pages/LearningLanding'
+import AdoptionLanding from '../pages/adoption/AdoptionLanding'
 
 export default function AppRoutes(){
   return (
@@ -66,20 +63,14 @@ export default function AppRoutes(){
       <Route path="/dashboard/parent/*" element={<ProtectedRoute roles={["parent"]}><ParentDashboard/></ProtectedRoute>} />
       
       {/* Daycare Portal Routes */}
-      <Route path="/dashboard/daycare/*" element={<ProtectedRoute roles={["daycare", "admin"]}><DaycareLayout/></ProtectedRoute>}>
-        <Route index element={<DaycareDashboard/>} />
-        <Route path="profile" element={<DaycareProfile/>} />
-        <Route path="packages" element={<ProgramsAndPackages/>} />
-        <Route path="bookings" element={<BookingManagement/>} />
-        <Route path="children" element={<ChildrenManagement/>} />
-        <Route path="staff" element={<StaffManagement/>} />
-        <Route path="transport" element={<TransportManagement/>} />
-        <Route path="payments" element={<FeesAndPayment/>} />
-        <Route path="reports" element={<DailyUpdates/>} />
-      </Route>
+      <Route path="/dashboard/daycare/*" element={<ProtectedRoute roles={["daycare", "admin"]}><DaycareApp/></ProtectedRoute>} />
       
+      <Route path="/adoption" element={<AdoptionLanding/>} />
       <Route path="/dashboard/admin/*" element={<ProtectedRoute roles={["admin"]}><AdminDashboard/></ProtectedRoute>} />
-      <Route path="/dashboard/adoption/*" element={<ProtectedRoute roles={["orphanage_manager"]}><AdoptionDashboard/></ProtectedRoute>} />
+      
+      {/* Orphanage Dashboard Routes */}
+      <Route path="/dashboard/adoption/*" element={<ProtectedRoute roles={["orphanage_manager", "counsellor", "verification_officer", "legal_officer", "super_admin"]}><OrphanageApp/></ProtectedRoute>} />
+
       <Route path="/dashboard/marketplace" element={<ProtectedRoute roles={["parent"]}><MarketplaceBuyerDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/marketplace/cart" element={<ProtectedRoute roles={["parent"]}><CartAndWishlist/></ProtectedRoute>} />
       <Route path="/dashboard/marketplace/wishlist" element={<ProtectedRoute roles={["parent"]}><CartAndWishlist/></ProtectedRoute>} />
@@ -96,9 +87,15 @@ export default function AppRoutes(){
         <Route path="profile" element={<Profile/>} />
         <Route path="availability" element={<Availability/>} />
         <Route path="safety" element={<Safety/>} />
+        <Route path="sos" element={<Safety/>} />
         <Route path="communication" element={<Communication/>} />
         <Route path="reviews" element={<Reviews/>} />
         <Route path="payments" element={<Payments/>} />
+        <Route path="learning" element={<Learning/>} />
+        <Route path="active-jobs" element={<ActiveJobs/>} />
+        <Route path="verification" element={<Verification/>} />
+        <Route path="wellness" element={<Wellness/>} />
+        <Route path="settings" element={<Settings/>} />
       </Route>
     </Routes>
   )

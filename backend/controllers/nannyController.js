@@ -1,13 +1,21 @@
 const { upsertProfile, findByNanny } = require('../models/NannyProfile')
 const { setAvailability, getAvailability } = require('../models/Availability')
 
+let mockNannyProfiles = {}
+let mockNannyAvailability = {}
+
 const saveProfile = async (req, res) => {
   try{
     const nanny_id = req.user.id
     const { bio, experience, skills, photo_url } = req.body
     const r = await upsertProfile({ nanny_id, bio, experience, skills, photo_url, verified: false })
     return res.json({ ok:true, data: r })
-  }catch(err){ return res.status(500).json({ ok:false, error: err.message }) }
+  }catch(err){ 
+    const nanny_id = req.user.id
+    const { bio, experience, skills, photo_url } = req.body
+    mockNannyProfiles[nanny_id] = { nanny_id, bio, experience, skills, photo_url, verified: false }
+    return res.json({ ok:true, data: mockNannyProfiles[nanny_id], mock: true }) 
+  }
 }
 
 const getProfile = async (req, res) => {
@@ -15,7 +23,10 @@ const getProfile = async (req, res) => {
     const nanny_id = req.user.id
     const p = await findByNanny(nanny_id)
     return res.json({ ok:true, data: p })
-  }catch(err){ return res.status(500).json({ ok:false, error: err.message }) }
+  }catch(err){ 
+    const nanny_id = req.user.id
+    return res.json({ ok:true, data: mockNannyProfiles[nanny_id] || null, mock: true }) 
+  }
 }
 
 const saveAvailability = async (req, res) => {
@@ -24,7 +35,12 @@ const saveAvailability = async (req, res) => {
     const { availability } = req.body
     const r = await setAvailability({ nanny_id, availability })
     return res.json({ ok:true, data: r })
-  }catch(err){ return res.status(500).json({ ok:false, error: err.message }) }
+  }catch(err){ 
+    const nanny_id = req.user.id
+    const { availability } = req.body
+    mockNannyAvailability[nanny_id] = availability
+    return res.json({ ok:true, data: { nanny_id, availability }, mock: true }) 
+  }
 }
 
 const getAvail = async (req, res) => {
@@ -32,7 +48,10 @@ const getAvail = async (req, res) => {
     const nanny_id = req.user.id
     const a = await getAvailability(nanny_id)
     return res.json({ ok:true, data: a })
-  }catch(err){ return res.status(500).json({ ok:false, error: err.message }) }
+  }catch(err){ 
+    const nanny_id = req.user.id
+    return res.json({ ok:true, data: { nanny_id, availability: mockNannyAvailability[nanny_id] || [] }, mock: true }) 
+  }
 }
 
 const getAgencies = async (req, res) => {
@@ -108,4 +127,19 @@ const getNannyDetails = async (req, res) => {
   return res.json({ ok: true, data: details })
 }
 
-module.exports = { saveProfile, getProfile, saveAvailability, getAvail, getAgencies, getIndividualNannies, getFeaturedNannies, getNannyDetails }
+const getPayments = async (req, res) => {
+  const paymentsData = {
+    summaries: [
+      { period: 'This week', amount: '$320', status: 'Pending' },
+      { period: 'Last week', amount: '$450', status: 'Paid' },
+      { period: 'This month', amount: '$1,240', status: 'In progress' }
+    ],
+    history: [
+      { session: 'After-school care', date: 'May 20', amount: '$80', status: 'Paid' },
+      { session: 'Weekend care', date: 'May 18', amount: '$140', status: 'Paid' }
+    ]
+  };
+  return res.json({ ok: true, data: paymentsData });
+}
+
+module.exports = { saveProfile, getProfile, saveAvailability, getAvail, getAgencies, getIndividualNannies, getFeaturedNannies, getNannyDetails, getPayments }

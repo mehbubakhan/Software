@@ -33,6 +33,9 @@ export default function AdoptionSchedule() {
   if (loading) return <div className="text-center text-slate-400 py-12">Loading schedule...</div>;
   if (!child) return <div className="text-center text-slate-400 py-12">Child not found.</div>;
 
+  const childName = child.child_name || child.name || 'Child Profile';
+  const childLocation = child.orphanage_name || child.currentLocation || 'Adoption center';
+
   return (
     <div className="bg-[#111322] min-h-[calc(100vh-68px)] text-slate-100 -m-6 p-8 font-sans">
       <div className="max-w-4xl mx-auto">
@@ -43,7 +46,7 @@ export default function AdoptionSchedule() {
 
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Schedule a Meeting</h1>
-          <p className="text-slate-400">{child.currentLocation}</p>
+          <p className="text-slate-400">{childLocation}</p>
         </div>
 
         <div className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-8 mb-8">

@@ -1,17 +1,33 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import api from '../../services/api';
 
 export default function OrderTracking() {
   const navigate = useNavigate();
+  const { tracking_number } = useParams();
+  const [order, setOrder] = useState(null);
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      try {
+        const res = await api.get(`/marketplace/orders/track/${tracking_number}`);
+        setOrder(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    if (tracking_number) fetchOrder();
+  }, [tracking_number]);
 
   const timelineSteps = [
-    { label: 'Order Placed', date: 'Jan 4, 2026 10:30 AM', status: 'completed' },
-    { label: 'Order Confirmed', date: 'Jan 5, 2026 11:15 AM', status: 'completed' },
-    { label: 'Shipped', date: 'Jan 7, 2026 2:45 PM', status: 'completed' },
-    { label: 'In Transit', date: 'Jan 8, 2026 9:00 AM', status: 'current' },
-    { label: 'Out for Delivery', date: 'Estimated Jan 11, 2026', status: 'pending' },
-    { label: 'Delivered', date: 'Estimated Jan 12, 2026', status: 'pending' }
+    { label: 'Order Placed', date: order?.created_at ? new Date(order.created_at).toLocaleString() : 'Jan 4, 2026 10:30 AM', status: 'completed' },
+    { label: 'Order Confirmed', date: 'Jan 5, 2026 11:15 AM', status: order?.status === 'processing' || order?.status === 'shipped' || order?.status === 'delivered' ? 'completed' : 'pending' },
+    { label: 'Shipped', date: 'Jan 7, 2026 2:45 PM', status: order?.status === 'shipped' || order?.status === 'delivered' ? 'completed' : 'pending' },
+    { label: 'In Transit', date: 'Jan 8, 2026 9:00 AM', status: order?.status === 'shipped' ? 'current' : order?.status === 'delivered' ? 'completed' : 'pending' },
+    { label: 'Delivered', date: 'Estimated Jan 12, 2026', status: order?.status === 'delivered' ? 'completed' : 'pending' }
   ];
+
+  if (!order) return <div className="p-8 text-white">Loading order...</div>;
 
   return (
     <div className="min-h-screen bg-brand-dark text-white p-8">
@@ -25,22 +41,22 @@ export default function OrderTracking() {
         {/* Header Card */}
         <div className="bg-brand-card border border-[#2A2E3D] rounded-2xl p-6 flex justify-between items-start">
           <div>
-            <h1 className="text-2xl font-bold mb-1">Order #SMAQTP</h1>
-            <p className="text-sm text-slate-400">Placed on 1/4/2026</p>
+            <h1 className="text-2xl font-bold mb-1">Order #{order.id}</h1>
+            <p className="text-sm text-slate-400">Placed on {new Date(order.created_at).toLocaleDateString()}</p>
             <div className="mt-6 flex gap-12">
               <div>
                 <p className="text-xs text-slate-500 mb-1">Tracking Number</p>
-                <p className="text-sm font-bold">TRKSMAQTP</p>
+                <p className="text-sm font-bold">{order.tracking_number}</p>
               </div>
               <div>
                 <p className="text-xs text-slate-500 mb-1">Shipping Address</p>
-                <p className="text-sm font-bold">123 Main St, New York, NY 10001</p>
+                <p className="text-sm font-bold">{order.shipping_address}</p>
               </div>
             </div>
           </div>
           <div className="text-right">
-            <span className="inline-block bg-brand-purple/20 text-brand-violet px-4 py-1 rounded-full text-sm font-bold border border-brand-purple/30 mb-2">In Transit</span>
-            <p className="text-xs text-slate-400 block">Est. Delivery: 1/12/2026</p>
+            <span className="inline-block bg-brand-purple/20 text-brand-violet px-4 py-1 rounded-full text-sm font-bold border border-brand-purple/30 mb-2 capitalize">{order.status}</span>
+            <p className="text-xs text-slate-400 block">Est. Delivery: Soon</p>
           </div>
         </div>
 
@@ -70,29 +86,21 @@ export default function OrderTracking() {
         <div className="bg-brand-card border border-[#2A2E3D] rounded-2xl p-6">
           <h2 className="text-lg font-bold mb-6">Order Items</h2>
           <div className="space-y-4">
-            <div className="flex items-center justify-between pb-4 border-b border-[#2A2E3D]">
-              <div className="flex items-center gap-4">
-                <img src="https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=150&q=80" alt="Item" className="w-12 h-12 rounded object-cover" />
-                <div>
-                  <p className="font-bold text-sm">Organic Cotton Baby Onesie</p>
-                  <p className="text-xs text-slate-400">Quantity: 2</p>
+            {order.items?.map(item => (
+              <div key={item.id} className="flex items-center justify-between pb-4 border-b border-[#2A2E3D]">
+                <div className="flex items-center gap-4">
+                  <img src={item.image_url || "https://via.placeholder.com/150"} alt="Item" className="w-12 h-12 rounded object-cover" />
+                  <div>
+                    <p className="font-bold text-sm">{item.name}</p>
+                    <p className="text-xs text-slate-400">Quantity: {item.quantity}</p>
+                  </div>
                 </div>
+                <p className="text-sm font-bold">${(item.price * item.quantity).toFixed(2)}</p>
               </div>
-              <p className="text-sm font-bold">$49.98</p>
-            </div>
-            <div className="flex items-center justify-between pb-4 border-b border-[#2A2E3D]">
-              <div className="flex items-center gap-4">
-                <img src="https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=150&q=80" alt="Item" className="w-12 h-12 rounded object-cover" />
-                <div>
-                  <p className="font-bold text-sm">Educational Wooden Toy Set</p>
-                  <p className="text-xs text-slate-400">Quantity: 1</p>
-                </div>
-              </div>
-              <p className="text-sm font-bold">$39.99</p>
-            </div>
+            ))}
             <div className="flex items-center justify-between pt-2">
               <p className="font-bold">Total</p>
-              <p className="font-bold text-xl">$89.97</p>
+              <p className="font-bold text-xl">${Number(order.total_amount).toFixed(2)}</p>
             </div>
           </div>
         </div>

@@ -137,6 +137,15 @@ const renderIcon = (iconName) => {
                 <li key={i.path} className="shrink-0 md:shrink">
                   <Link
                     to={i.path}
+                    onClick={() => {
+                      if (hash) {
+                        setTimeout(() => {
+                          document.getElementById(hash.substring(1))?.scrollIntoView({ behavior: 'smooth' })
+                        }, 50)
+                      } else {
+                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                      }
+                    }}
                     className={`block rounded-2xl px-6 py-4 text-lg font-black text-slate-700 transition duration-200 md:text-xl ${
                       active
                         ? 'border border-cyan-200 bg-white text-cyan-700 shadow-lg shadow-cyan-900/10'
@@ -167,6 +176,15 @@ const renderIcon = (iconName) => {
                 <li key={i.path} className="shrink-0 md:shrink">
                   <Link
                     to={i.path}
+                    onClick={() => {
+                      if (hash) {
+                        setTimeout(() => {
+                          document.getElementById(hash.substring(1))?.scrollIntoView({ behavior: 'smooth' })
+                        }, 50)
+                      } else {
+                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                      }
+                    }}
                     className={`block rounded-2xl px-6 py-4 text-lg font-black text-slate-700 transition duration-200 md:text-xl ${
                       active
                         ? 'border border-amber-200 bg-white text-amber-700 shadow-lg shadow-amber-900/10'

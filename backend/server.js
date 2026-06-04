@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config({ path: require('path').join(__dirname, '.env'), override: true })
 const express = require('express')
 const cors = require('cors')
 const app = express()
@@ -9,7 +9,10 @@ const routes = require('./routes')
 app.use(cors())
 app.use(express.json())
 
+const path = require('path')
+
 app.use('/api', routes)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
 app.get('/', (req, res) => res.json({ ok: true, msg: 'Daycare API running' }))
 

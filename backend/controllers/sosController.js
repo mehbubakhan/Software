@@ -1,4 +1,4 @@
-const { sendSos } = require('../models/Sos')
+const { sendSos, findAll, resolveSos } = require('../models/Sos')
 const { notifyParentsOfNanny } = require('../utils/notifier')
 
 const sos = async (req, res) => {
@@ -16,4 +16,22 @@ const sos = async (req, res) => {
   }catch(err){ return res.status(500).json({ ok:false, error: err.message }) }
 }
 
-module.exports = { sos }
+const getAllSos = async (req, res) => {
+  try {
+    const data = await findAll();
+    res.json({ ok: true, data });
+  } catch(err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+}
+
+const updateSos = async (req, res) => {
+  try {
+    await resolveSos(req.params.id, req.body.status);
+    res.json({ ok: true });
+  } catch(err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+}
+
+module.exports = { sos, getAllSos, updateSos }

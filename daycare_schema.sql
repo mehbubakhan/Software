@@ -222,4 +222,92 @@ CREATE TABLE IF NOT EXISTS daycare_transport (
   FOREIGN KEY (daycare_id) REFERENCES daycares(id) ON DELETE CASCADE
 );
 
+-- Nanny Ecosystem Tables
+CREATE TABLE IF NOT EXISTS nanny_profiles (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL UNIQUE,
+  experience_years INT,
+  expected_salary DECIMAL(10,2),
+  preferred_work_type ENUM('full-time', 'part-time', 'live-in', 'live-out'),
+  availability_status ENUM('Available', 'Busy', 'Working', 'Offline') DEFAULT 'Offline',
+  verification_status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+  compatibility_score INT DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS verification_documents (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  doc_type ENUM('NID', 'selfie', 'police_clearance', 'medical', 'certificate', 'trade_license'),
+  doc_url VARCHAR(500) NOT NULL,
+  status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+  uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS organizations (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  owner_id INT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  address TEXT,
+  phone VARCHAR(50),
+  verification_status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS organization_staff (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  org_id INT NOT NULL,
+  nanny_id INT NOT NULL,
+  status ENUM('active', 'inactive') DEFAULT 'active',
+  joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (org_id) REFERENCES organizations(id) ON DELETE CASCADE,
+  FOREIGN KEY (nanny_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS parent_job_posts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  parent_id INT NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  child_age VARCHAR(50),
+  salary_offered DECIMAL(10,2),
+  schedule VARCHAR(255),
+  location VARCHAR(255),
+  special_requirements TEXT,
+  status ENUM('open', 'filled', 'closed') DEFAULT 'open',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (parent_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS work_sessions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nanny_id INT NOT NULL,
+  job_id INT, -- Can be NULL if not tied to a specific job post yet
+  parent_id INT NOT NULL,
+  start_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+  end_time DATETIME,
+  status ENUM('active', 'break', 'completed') DEFAULT 'active',
+  last_location_lat DECIMAL(10, 8),
+  last_location_lng DECIMAL(11, 8),
+  FOREIGN KEY (nanny_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (parent_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (job_id) REFERENCES parent_job_posts(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS emergency_alerts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nanny_id INT NOT NULL,
+  session_id INT,
+  category ENUM('unsafe', 'medical', 'harassment', 'payment', 'other'),
+  location_lat DECIMAL(10, 8),
+  location_lng DECIMAL(11, 8),
+  status ENUM('active', 'resolved') DEFAULT 'active',
+  resolution_notes TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (nanny_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (session_id) REFERENCES work_sessions(id) ON DELETE SET NULL
+);
+
 SET FOREIGN_KEY_CHECKS = 1;

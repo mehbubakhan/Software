@@ -21,6 +21,28 @@ export default function AdoptionTracker() {
     fetchApplications();
   }, []);
 
+  const handleUpload = async (appId, docName, file) => {
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('document', file);
+    formData.append('document_name', docName);
+
+    try {
+      await api.post(`/adoption/applications/${appId}/documents`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      // Refresh applications after successful upload
+      const response = await api.get('/adoption/applications');
+      setApplications(response.data.data || []);
+      alert(`${docName} uploaded successfully!`);
+    } catch (err) {
+      console.error('Upload failed:', err);
+      alert('Upload failed. Please try again.');
+    }
+  };
+
   return (
     <div className="bg-[#111322] min-h-[calc(100vh-68px)] text-slate-100 -m-6 p-8 font-sans">
       <div className="max-w-4xl mx-auto">
@@ -122,11 +144,14 @@ export default function AdoptionTracker() {
                             <div className="text-xs text-slate-500">{doc.uploaded ? 'Uploaded successfully' : 'Not uploaded'}</div>
                           </div>
                         </div>
-                        <button 
-                          className={`text-xs font-semibold py-1.5 px-4 rounded-lg transition ${doc.uploaded ? 'bg-slate-700 text-slate-300 cursor-default' : 'bg-fuchsia-600 hover:bg-fuchsia-700 text-white'}`}
-                        >
+                        <label className={`text-xs font-semibold py-1.5 px-4 rounded-lg transition ${doc.uploaded ? 'bg-slate-700 text-slate-300 cursor-default' : 'bg-fuchsia-600 hover:bg-fuchsia-700 text-white cursor-pointer'}`}>
                           {doc.uploaded ? 'Update' : 'Upload'}
-                        </button>
+                          <input 
+                            type="file" 
+                            className="hidden" 
+                            onChange={(e) => handleUpload(app.id, doc.name, e.target.files[0])}
+                          />
+                        </label>
                       </div>
                     ))}
                   </div>

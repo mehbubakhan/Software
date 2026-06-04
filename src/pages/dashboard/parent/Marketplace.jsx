@@ -120,7 +120,7 @@ export default function Marketplace() {
 
   const handleCheckout = async () => {
     try {
-      await api.post('/marketplace/order', {
+      await api.post('/marketplace/checkout', {
         items: cart,
         total: total
       })
