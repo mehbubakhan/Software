@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import api from '../../../services/api';
 
 export default function ChildOverview({ coins, playClick }) {
+  const [nextLesson, setNextLesson] = useState('English Alphabet - Letter A');
   const modules = [
     { label: 'Learn', icon: '📚', path: 'learn', color: 'from-pink-400 to-pink-600' },
     { label: 'Games', icon: '🎮', path: 'games', color: 'from-purple-400 to-purple-600' },
@@ -11,6 +13,16 @@ export default function ChildOverview({ coins, playClick }) {
     { label: 'Friends', icon: '🤝', path: 'collaboration', color: 'from-green-400 to-emerald-600' },
     { label: 'Progress', icon: '⭐', path: 'progress', color: 'from-indigo-400 to-indigo-600' },
   ];
+
+  useEffect(() => {
+    api.get('/child/progress').then(res => {
+      if (Array.isArray(res.data) && res.data.length > 0) {
+        // Find the most recently accessed or highest level
+        const latest = res.data[0];
+        setNextLesson(`${latest.module.charAt(0).toUpperCase() + latest.module.slice(1)} - Level ${latest.current_level}`);
+      }
+    }).catch(err => console.error(err));
+  }, []);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -49,11 +61,10 @@ export default function ChildOverview({ coins, playClick }) {
         </div>
       </div>
 
-      {/* Continue Learning */}
       <div className="bg-gradient-to-r from-fuchsia-500 to-pink-500 rounded-3xl p-8 text-center text-white shadow-[0_8px_30px_rgba(217,70,239,0.4)] relative overflow-hidden group border-4 border-white/20 cursor-pointer hover:scale-[1.02] transition-transform" onClick={playClick}>
         <div className="absolute top-0 right-0 -mr-8 -mt-8 w-40 h-40 bg-white/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
         <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-2 drop-shadow-md">Keep Going! 🚀</h2>
-        <p className="text-xl md:text-2xl font-bold text-white/90 mb-6 drop-shadow">Next: English Alphabet - Letter C</p>
+        <p className="text-xl md:text-2xl font-bold text-white/90 mb-6 drop-shadow">Next: {nextLesson}</p>
         <Link to="learn" className="inline-block bg-white text-fuchsia-600 px-10 py-4 rounded-full font-black text-xl shadow-[0_0_20px_rgba(255,255,255,0.6)] hover:shadow-[0_0_30px_rgba(255,255,255,0.8)] hover:scale-105 transition-all">
           PLAY NOW
         </Link>

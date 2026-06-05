@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 
+
 interface LocationData {
   latitude: string | null;
   longitude: string | null;

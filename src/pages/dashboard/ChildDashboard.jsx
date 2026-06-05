@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation, Routes, Route, Link } from 'react-router-dom'
 import api from '../../services/api'
-import LearningDashboard from './child/LearningDashboard'
+import ChildModeLearn from './child/ChildModeLearn'
+import EnglishFormatMenu from './child/EnglishFormatMenu'
+import MathFormatMenu from './child/MathFormatMenu'
+import BanglaFormatMenu from './child/BanglaFormatMenu'
+import TracingWrapper from './child/components/TracingWrapper'
+import EnglishRhymePlayer from './child/components/EnglishRhymePlayer'
 import ChildOverview from './child/ChildOverview'
 import AlphabetLearning from './child/AlphabetLearning'
 import NumbersLearning from './child/NumbersLearning'
@@ -111,7 +116,31 @@ export default function ChildDashboard() {
         <Routes>
           <Route index element={<ChildOverview {...props} />} />
           <Route path="overview" element={<ChildOverview {...props} />} />
-          <Route path="learn" element={<LearningDashboard {...props} />} />
+            <Route path="learn" element={<ChildModeLearn playClick={playClick} />} />
+            
+            {/* English Routes */}
+            <Route path="learn/english" element={<EnglishFormatMenu playClick={playClick} />} />
+            <Route path="learn/english/uppercase" element={<TracingWrapper moduleType="english_uppercase" playClick={playClick} />} />
+            <Route path="learn/english/lowercase" element={<TracingWrapper moduleType="english_lowercase" playClick={playClick} />} />
+            <Route path="learn/english/word-making" element={<TracingWrapper moduleType="english_words" playClick={playClick} />} />
+            <Route path="learn/english/rhyme" element={<EnglishRhymePlayer playClick={playClick} />} />
+            
+            {/* Math Routes */}
+            <Route path="learn/math" element={<MathFormatMenu playClick={playClick} />} />
+            <Route path="learn/math/bangla" element={<TracingWrapper moduleType="math_bangla" playClick={playClick} />} />
+            <Route path="learn/math/english" element={<TracingWrapper moduleType="math_english" playClick={playClick} />} />
+            <Route path="learn/math/bangla-spelling" element={<TracingWrapper moduleType="math_spelling_bangla" playClick={playClick} />} />
+            <Route path="learn/math/english-spelling" element={<TracingWrapper moduleType="math_spelling_english" playClick={playClick} />} />
+
+            {/* Bangla Routes */}
+            <Route path="learn/bangla" element={<BanglaFormatMenu playClick={playClick} />} />
+            <Route path="learn/bangla/shoroborno" element={<TracingWrapper moduleType="bangla_shoroborno" playClick={playClick} />} />
+            <Route path="learn/bangla/benjonborno" element={<TracingWrapper moduleType="bangla_benjonborno" playClick={playClick} />} />
+            <Route path="learn/bangla/shoroborno-words" element={<TracingWrapper moduleType="bangla_shoroborno_words" playClick={playClick} />} />
+            <Route path="learn/bangla/benjonborno-words" element={<TracingWrapper moduleType="bangla_benjonborno_words" playClick={playClick} />} />
+
+            {/* Shape Route (directly loads canvas) */}
+            <Route path="learn/shapes" element={<TracingWrapper moduleType="shapes" playClick={playClick} />} />
           <Route path="games" element={<GamesHub {...props} />} />
           <Route path="tests" element={<div className="p-8 text-center"><h1 className="text-4xl font-black text-fuchsia-600">Tests Area Coming Soon!</h1></div>} />
           <Route path="rewards" element={<RewardsShop {...props} />} />
@@ -123,7 +152,6 @@ export default function ChildDashboard() {
           {/* Legacy sub-routes for games and learning */}
           <Route path="learn/alphabet" element={<AlphabetLearning {...props} />} />
           <Route path="learn/numbers" element={<NumbersLearning {...props} />} />
-          <Route path="learn/shapes" element={<ShapesLearning {...props} />} />
           <Route path="games/memory" element={<MemoryGame {...props} />} />
           <Route path="games/tictactoe" element={<TicTacToe {...props} />} />
           <Route path="games/puzzle" element={<PuzzleGame {...props} />} />
