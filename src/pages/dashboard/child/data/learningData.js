@@ -1,11 +1,11 @@
 export const ENGLISH_UPPERCASE = Array.from({ length: 26 }, (_, i) => {
   const letter = String.fromCharCode(65 + i);
-  return { id: letter, display: `Alphabet: ${letter}`, maskText: letter, speechText: `The alphabet is ${letter}`, level: i + 1 };
+  return { id: letter, display: letter, maskText: letter, speechText: `The alphabet is ${letter}`, level: i + 1 };
 });
 
 export const ENGLISH_LOWERCASE = Array.from({ length: 26 }, (_, i) => {
   const letter = String.fromCharCode(97 + i);
-  return { id: letter, display: `Alphabet: ${letter}`, maskText: letter, speechText: `The alphabet is ${letter}`, level: i + 1 };
+  return { id: letter, display: letter, maskText: letter, speechText: `The alphabet is ${letter}`, level: i + 1 };
 });
 
 const englishWordsMap = {
@@ -15,9 +15,15 @@ const englishWordsMap = {
   "P":"Pet, Picture", "Q":"Question, Queen", "R":"Rat, Run", "S":"Sad, Sugar", "T":"Tomato, Team",
   "U":"Under, Up", "V":"Video, Voice", "W":"White, Wall", "X":"X-ray, Xerox", "Y":"Yes, You", "Z":"Zoo, Zero"
 };
-export const ENGLISH_WORDS = Object.entries(englishWordsMap).map(([letter, words], i) => ({
-  id: letter, display: `${letter} = ${words}`, maskText: `${letter} = ${words}`, speechText: `${letter} for ${words.replace(',', ' and')}`, level: i + 1
-}));
+export const ENGLISH_WORDS = Object.entries(englishWordsMap).flatMap(([letter, wordsStr], i) => {
+  return wordsStr.split(', ').map((word, j) => ({
+    id: word, 
+    display: word, 
+    maskText: word, 
+    speechText: `Select the word ${word}`, 
+    level: i * 2 + j + 1
+  }));
+});
 
 export const englishNums = Array.from({length: 100}, (_, i) => String(i + 1));
 export const MATH_ENGLISH = englishNums.map((num, i) => ({
@@ -70,7 +76,7 @@ export const MATH_SPELLING_BANGLA = banglaNums.map((num, i) => ({
 
 const shoroborno = ["অ","আ","ই","ঈ","উ","ঊ","ঋ","এ","ঐ","ও","ঔ"];
 export const BANGLA_SHOROBORNO = shoroborno.map((char, i) => ({
-  id: char, display: `স্বরবর্ণ: ${char}`, maskText: char, speechText: `The alphabet is ${char}`, level: i + 1,
+  id: char, display: char, maskText: char, speechText: `The alphabet is ${char}`, level: i + 1,
   audioPath: `/assets/audio/Shoroborno.mp3/${char}.mp3`
 }));
 
@@ -90,7 +96,7 @@ const benjonborno = [
   "স","হ","ড়","ঢ়","য়","ৎ","ং","ঃ","ঁ"
 ];
 export const BANGLA_BENJONBORNO = benjonborno.map((char, i) => ({
-  id: char, display: `ব্যঞ্জনবর্ণ: ${char}`, maskText: char, speechText: `The alphabet is ${char}`, level: i + 1,
+  id: char, display: char, maskText: char, speechText: `The alphabet is ${char}`, level: i + 1,
   audioPath: `/assets/audio/Benjonbornoo/${char}.mp3`
 }));
 

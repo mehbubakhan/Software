@@ -1,160 +1,88 @@
-import React, { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import api from '../../../services/api'
-
-const QUIZZES = {
-  bangla: {
-    title: 'Bangla Basic Test',
-    questions: [
-      { q: 'প্রথম স্বরবর্ণ কোনটি?', options: ['আ', 'অ', 'ই', 'উ'], answer: 'অ' },
-      { q: '"আম" শব্দের প্রথম বর্ণ কী?', options: ['অ', 'ই', 'আ', 'এ'], answer: 'আ' }
-    ]
-  },
-  english: {
-    title: 'English Basic Test',
-    questions: [
-      { q: 'Which letter comes after A?', options: ['C', 'B', 'D', 'E'], answer: 'B' },
-      { q: 'A is for...', options: ['Apple', 'Banana', 'Cat', 'Dog'], answer: 'Apple' }
-    ]
-  },
-  shape: {
-    title: 'Shape Test',
-    questions: [
-      { q: 'Which shape has 3 sides?', options: ['Square', 'Circle', 'Triangle', 'Rectangle'], answer: 'Triangle' },
-      { q: 'Which shape is perfectly round?', options: ['Triangle', 'Square', 'Circle', 'Star'], answer: 'Circle' }
-    ]
-  },
-  memory: {
-    title: 'Memory Test',
-    questions: [
-      { q: 'What color is the sky on a clear day?', options: ['Red', 'Green', 'Blue', 'Yellow'], answer: 'Blue' },
-      { q: 'How many legs does a dog have?', options: ['2', '4', '6', '8'], answer: '4' }
-    ]
-  }
-}
+import React from 'react'
+import { useParams } from 'react-router-dom'
+import QuizRunner from './components/QuizRunner'
+import { 
+  BANGLA_SHOROBORNO, 
+  BANGLA_BENJONBORNO, 
+  ENGLISH_UPPERCASE,
+  ENGLISH_LOWERCASE,
+  ENGLISH_WORDS,
+  MATH_BANGLA,
+  MATH_ENGLISH,
+  SHAPES
+} from './data/learningData'
 
 export default function Quiz({ playClick, addCoins, speak }) {
-  const { testId } = useParams()
-  const navigate = useNavigate()
+  const { subject, mode } = useParams()
   
-  const quiz = QUIZZES[testId]
-  const [currentQIndex, setCurrentQIndex] = useState(0)
-  const [score, setScore] = useState(0)
-  const [showResult, setShowResult] = useState(false)
-  const [animating, setAnimating] = useState(null)
+  let items = []
+  let title = "Test"
+  let isHardMode = false
 
-  if (!quiz) return <div className="p-8 text-center text-xl">Quiz not found!</div>
+  // Helper to map type onto items
+  const withType = (arr, type) => arr.map(i => ({ ...i, itemType: type }))
 
-  const currentQ = quiz.questions[currentQIndex]
-
-  const handleAnswer = (option) => {
-    playClick()
-    const isCorrect = option === currentQ.answer
-    setAnimating(isCorrect ? 'correct' : 'wrong')
-
-    if (isCorrect) {
-      speak('Correct! Great job!')
-      setScore(score + 1)
-    } else {
-      speak('Oops, try again next time!')
-    }
-
-    setTimeout(() => {
-      setAnimating(null)
-      if (currentQIndex < quiz.questions.length - 1) {
-        setCurrentQIndex(currentQIndex + 1)
-      } else {
-        finishQuiz(score + (isCorrect ? 1 : 0))
-      }
-    }, 1500)
+  if (subject === 'bangla') {
+    const swar = withType(BANGLA_SHOROBORNO, 'letter')
+    const byanjon = withType(BANGLA_BENJONBORNO, 'letter')
+    
+    if (mode === 'shoroborno') { items = swar; title = "স্বরবর্ণ পরীক্ষা" }
+    else if (mode === 'benjonborno') { items = byanjon; title = "ব্যঞ্জনবর্ণ পরীক্ষা" }
+    else if (mode === 'medium-mixed') { items = [...swar, ...byanjon]; title = "বাংলা পরীক্ষা — মধ্যম" }
+    else if (mode === 'hard') { items = [...swar, ...byanjon]; title = "বাংলা পরীক্ষা — কঠিন"; isHardMode = true }
+  } else if (subject === 'english') {
+    const upper = withType(ENGLISH_UPPERCASE, 'letter')
+    const lower = withType(ENGLISH_LOWERCASE, 'letter')
+    const words = withType(ENGLISH_WORDS, 'word')
+    
+    if (mode === 'uppercase') { items = upper; title = "Uppercase Letters Test" }
+    else if (mode === 'lowercase') { items = lower; title = "Lowercase Letters Test" }
+    else if (mode === 'words') { items = words; title = "Word Making Test" }
+    else if (mode === 'medium-mixed') { items = [...upper, ...lower, ...words]; title = "English Test (Medium)" }
+    else if (mode === 'hard') { items = [...upper, ...lower, ...words]; title = "English Test (Hard)"; isHardMode = true }
+  } else if (subject === 'math') {
+    const bnNums = withType(MATH_BANGLA, 'number')
+    const enNums = withType(MATH_ENGLISH, 'number')
+    
+    if (mode === 'bangla-numbers') { items = bnNums; title = "সংখ্যা পরীক্ষা (১-১০০)" }
+    else if (mode === 'english-numbers') { items = enNums; title = "Numbers Test (1-100)" }
+    else if (mode === 'medium-mixed') { items = [...bnNums, ...enNums]; title = "Math Test (Medium)" }
+    else if (mode === 'hard') { items = [...bnNums, ...enNums]; title = "Math Test (Hard)"; isHardMode = true }
+  } else if (subject === 'shape') {
+    const s = withType(SHAPES.filter(i => !i.display.includes('Color')), 'shape')
+    const c = withType(SHAPES.filter(i => i.display.includes('Color')), 'color')
+    
+    if (mode === 'shapes') { items = s; title = "Shapes Recognition Test" }
+    else if (mode === 'colors') { items = c; title = "Colors Recognition Test" }
+    else if (mode === 'medium-mixed') { items = SHAPES.map(i => ({...i, itemType: i.display.includes('Color') ? 'color' : 'shape'})); title = "Shape & Color (Medium)" }
+    else if (mode === 'hard') { items = SHAPES.map(i => ({...i, itemType: i.display.includes('Color') ? 'color' : 'shape'})); title = "Shape & Color (Hard)"; isHardMode = true }
   }
 
-  const finishQuiz = async (finalScore) => {
-    setShowResult(true)
-    const percentage = (finalScore / quiz.questions.length) * 100
-    const earnedCoins = finalScore * 5
+  // Filter out any items that don't have id/display
+  const validItems = items.filter(item => item.id && item.display)
 
-    if (earnedCoins > 0) {
-      addCoins(earnedCoins)
-    }
-
-    speak(`You finished! You scored ${finalScore} out of ${quiz.questions.length}`)
-
-    try {
-      await api.post('/child/test/submit', {
-        childId: 1,
-        module: testId,
-        lesson: 'basic',
-        score: percentage,
-        stars: finalScore >= quiz.questions.length ? 3 : (finalScore > 0 ? 1 : 0)
-      })
-    } catch (e) {
-      console.error('Failed to save score')
-    }
-  }
-
-  if (showResult) {
+  if (validItems.length === 0) {
     return (
-      <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 max-w-2xl mx-auto text-center mt-12 animate-in zoom-in duration-500">
-        <h2 className="text-4xl font-black text-slate-800 mb-4">Quiz Finished! 🎉</h2>
-        <p className="text-2xl text-slate-600 mb-8">You scored {score} out of {quiz.questions.length}</p>
-        <div className="text-6xl mb-8">
-          {score === quiz.questions.length ? '🌟🌟🌟' : score > 0 ? '🌟' : '💪'}
-        </div>
-        <p className="text-lg text-amber-600 font-bold mb-8">+ {score * 5} Coins Earned!</p>
-        <button 
-          onClick={() => { playClick(); navigate('/dashboard/child/tests') }}
-          className="px-8 py-3 bg-fuchsia-600 text-white rounded-full font-bold text-xl hover:bg-fuchsia-700 transition"
-        >
-          Back to Tests
-        </button>
+      <div className="p-8 text-center mt-12">
+        <h2 className="text-3xl font-bold text-slate-800">Coming Soon!</h2>
+        <p className="text-slate-500 mt-4">We are still preparing the questions for {mode}.</p>
       </div>
     )
   }
 
+  const isBangla = subject === 'bangla' || (subject === 'math' && mode === 'bangla-numbers')
+
   return (
-    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 max-w-3xl mx-auto mt-12 relative overflow-hidden">
-      <div className="flex justify-between items-center mb-8 border-b pb-4">
-        <h2 className="text-2xl font-bold text-slate-800">{quiz.title}</h2>
-        <span className="text-fuchsia-600 font-bold bg-fuchsia-50 px-4 py-1 rounded-full">
-          Question {currentQIndex + 1} of {quiz.questions.length}
-        </span>
-      </div>
-
-      <div className="mb-12">
-        <h3 className="text-3xl font-bold text-center text-slate-800 mb-8 leading-tight">
-          {currentQ.q}
-        </h3>
-        
-        <div className="grid grid-cols-2 gap-4">
-          {currentQ.options.map((opt, i) => (
-            <button
-              key={i}
-              onClick={() => !animating && handleAnswer(opt)}
-              disabled={animating !== null}
-              className={`p-6 text-2xl font-bold rounded-2xl transition border-4 
-                ${animating && opt === currentQ.answer 
-                  ? 'bg-green-100 border-green-500 text-green-700 scale-105' 
-                  : animating 
-                    ? 'bg-slate-50 border-slate-100 text-slate-400 opacity-50' 
-                    : 'bg-slate-50 border-slate-100 text-slate-700 hover:border-fuchsia-300 hover:bg-fuchsia-50 hover:-translate-y-1'
-                }
-              `}
-            >
-              {opt}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Animation Overlay */}
-      {animating && (
-        <div className={`absolute inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm z-10 animate-in fade-in`}>
-          <div className={`text-9xl transform ${animating === 'correct' ? 'animate-bounce' : 'animate-pulse'}`}>
-            {animating === 'correct' ? '✅' : '❌'}
-          </div>
-        </div>
-      )}
+    <div className="pt-8 px-4">
+      <QuizRunner 
+        subject={subject}
+        items={validItems} 
+        title={title} 
+        playClick={playClick} 
+        speak={speak} 
+        addCoins={addCoins}
+        isHardMode={isHardMode}
+      />
     </div>
   )
 }

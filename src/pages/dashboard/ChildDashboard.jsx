@@ -22,6 +22,9 @@ import RewardsShop from './child/RewardsShop'
 import DrawingCanvas from './child/DrawingCanvas'
 import AdvancedLearning from './child/AdvancedLearning'
 import ChildAuth from '../../components/ChildAuth'
+import TestsHub from './child/TestsHub'
+import TestFormatMenu from './child/TestFormatMenu'
+import Quiz from './child/Quiz'
 
 export default function ChildDashboard() {
   const navigate = useNavigate()
@@ -142,7 +145,9 @@ export default function ChildDashboard() {
             {/* Shape Route (directly loads canvas) */}
             <Route path="learn/shapes" element={<TracingWrapper moduleType="shapes" playClick={playClick} />} />
           <Route path="games" element={<GamesHub {...props} />} />
-          <Route path="tests" element={<div className="p-8 text-center"><h1 className="text-4xl font-black text-fuchsia-600">Tests Area Coming Soon!</h1></div>} />
+          <Route path="tests" element={<TestsHub playClick={playClick} />} />
+          <Route path="tests/:subject" element={<TestFormatMenu playClick={playClick} />} />
+          <Route path="tests/play/:subject/:mode" element={<Quiz playClick={playClick} addCoins={addCoins} speak={speak} />} />
           <Route path="rewards" element={<RewardsShop {...props} />} />
           <Route path="draw" element={<DrawingCanvas {...props} />} />
           <Route path="collaboration" element={<LearnTogether {...props} />} />
