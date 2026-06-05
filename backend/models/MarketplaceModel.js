@@ -199,6 +199,98 @@ const MarketplaceModel = {
     `;
     const [rows] = await db.query(query, [sellerId]);
     return rows;
+  },
+
+  // --- Admin Endpoints for Extended Tables ---
+
+  getAdminSellers: async () => {
+    const query = `
+      SELECT s.id, s.logo, s.business_name as name, s.business_type as business, s.revenue, s.status, 
+             s.trade_license as tradeLicense, s.nid_verified as nidVerified, s.bank_verified as bankVerified, 
+             s.phone, s.joined_date as joined, u.email,
+             (SELECT COUNT(*) FROM products p WHERE p.seller_id = s.user_id) as products,
+             (SELECT COUNT(DISTINCT o.id) FROM orders o JOIN order_items oi ON o.id = oi.order_id JOIN products p ON oi.product_id = p.id WHERE p.seller_id = s.user_id) as orders
+      FROM seller_profiles s
+      JOIN users u ON s.user_id = u.id
+    `;
+    const [rows] = await db.query(query);
+    return rows;
+  },
+
+  getAdminDeliveries: async () => {
+    const query = `
+      SELECT d.id, o.tracking_number as orderId, o.customer_name as customer, o.shipping_address as address, 
+             d.courier, d.tracking_id as trackingId, d.status, d.estimated_date as estimatedDate, d.weight
+      FROM marketplace_deliveries d
+      JOIN orders o ON d.order_id = o.id
+    `;
+    const [rows] = await db.query(query);
+    return rows;
+  },
+
+  getAdminPayments: async () => {
+    const query = `
+      SELECT p.id, s.business_name as seller, p.amount, p.method, p.status, p.request_date as requestDate, p.account_info as accountInfo
+      FROM marketplace_payments p
+      JOIN seller_profiles s ON p.seller_id = s.user_id
+    `;
+    const [rows] = await db.query(query);
+    return rows;
+  },
+
+  getAdminComplaints: async () => {
+    const query = `
+      SELECT c.id, c.type, c.reporter, s.business_name as seller, p.name as product, c.priority, c.status, c.complaint_date as date, c.description
+      FROM marketplace_complaints c
+      LEFT JOIN seller_profiles s ON c.seller_id = s.user_id
+      LEFT JOIN products p ON c.product_id = p.id
+    `;
+    const [rows] = await db.query(query);
+    return rows;
+  },
+
+  getAdminReviews: async () => {
+    const query = `
+      SELECT r.id, u.name as customer, p.name as product, s.business_name as seller, r.rating, r.comment, r.review_date as date, r.status, r.helpful
+      FROM product_reviews r
+      JOIN users u ON r.user_id = u.id
+      JOIN products p ON r.product_id = p.id
+      JOIN seller_profiles s ON p.seller_id = s.user_id
+    `;
+    const [rows] = await db.query(query);
+    return rows;
+  },
+
+  getAdminNotifications: async () => {
+    const query = `
+      SELECT id, type, title, message, time_display as time, is_read as \`read\`, priority
+      FROM marketplace_notifications
+      ORDER BY id ASC
+    `;
+    const [rows] = await db.query(query);
+    return rows;
+  },
+
+  getAdminAnalytics: async () => {
+    const [[{totalRevenue}]] = await db.query("SELECT SUM(total_amount) as totalRevenue FROM orders");
+    const [[{activeSellers}]] = await db.query("SELECT COUNT(*) as activeSellers FROM seller_profiles WHERE status = 'Active'");
+    const [[{totalOrders}]] = await db.query("SELECT COUNT(*) as totalOrders FROM orders");
+    const [[{pendingComplaints}]] = await db.query("SELECT COUNT(*) as pendingComplaints FROM marketplace_complaints WHERE status = 'Open'");
+    
+    return {
+        totalRevenue: totalRevenue ? `৳${(totalRevenue/1000).toFixed(1)}k` : "৳0",
+        activeSellers: activeSellers || 0,
+        totalOrders: totalOrders || 0,
+        pendingComplaints: pendingComplaints || 0,
+        revenueData: [
+            { month: "Jan", amount: 150000 },
+            { month: "Feb", amount: 180000 },
+            { month: "Mar", amount: 210000 },
+            { month: "Apr", amount: 190000 },
+            { month: "May", amount: 250000 },
+            { month: "Jun", amount: 320000 }
+        ]
+    };
   }
 };
 

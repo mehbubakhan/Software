@@ -73,8 +73,30 @@ class DaycareModel {
   }
 
   static async getChildren(daycareId) {
-    const [rows] = await db.query('SELECT c.*, p.type as package_type, u.name as parent_name FROM daycare_children c LEFT JOIN daycare_packages p ON c.package_id = p.id LEFT JOIN users u ON c.parent_id = u.id WHERE c.daycare_id = ?', [daycareId])
-    return rows
+    const [rows] = await db.query('SELECT c.*, p.type as package_type, u.name as parent_name FROM daycare_children c LEFT JOIN daycare_packages p ON c.package_id = p.id LEFT JOIN users u ON c.parent_id = u.id WHERE c.daycare_id = ? ORDER BY c.id DESC', [daycareId])
+    return rows.map(r => ({ ...r, ...r.data }))
+  }
+
+  static async addChild(daycareId, data) {
+    const [result] = await db.query(
+      'INSERT INTO daycare_children (daycare_id, child_name, child_age, status, data) VALUES (?, ?, ?, ?, ?)',
+      [daycareId, data.name || 'New Child', data.age || 2, data.status || 'Active', JSON.stringify(data)]
+    )
+    return result.insertId
+  }
+
+  static async getParents(daycareId) {
+    const [rows] = await db.query('SELECT * FROM daycare_parents WHERE daycare_id = ? ORDER BY id DESC', [daycareId])
+    return rows.map(r => ({ ...r, ...(r.data || {}) }))
+  }
+
+  static async addParent(daycareId, data) {
+    const { parentId, name, email, phone, alternatePhone, occupation, relationship, address, emergencyContact, notes } = data
+    const [result] = await db.query(
+      'INSERT INTO daycare_parents (daycare_id, parent_id_code, name, email, phone, alternate_phone, occupation, relationship, address, emergency_contact, notes, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [daycareId, parentId || `PAR-${Date.now()}`, name, email || null, phone || null, alternatePhone || null, occupation || null, relationship || null, address || null, emergencyContact || null, notes || null, JSON.stringify(data)]
+    )
+    return result.insertId
   }
 
   static async getStaff(daycareId) {

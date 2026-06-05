@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import api from "../../../../../services/api";
 import {
   Plus, Eye, Pencil, Trash2, Phone, Mail, MapPin, Shield,
   ShieldOff, MessageSquare, CreditCard, Search, Filter,
@@ -106,6 +107,8 @@ export function Parents() {
   const [parents, setParents] = useState<ParentExt[]>(INITIAL_PARENTS);
   const [search, setSearch] = useState("");
   const [showFilter, setShowFilter] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const [filters, setFilters] = useState({ status: "All", payment: "All" });
   const [selected, setSelected] = useState<ParentExt | null>(null);
   const [profileTab, setProfileTab] = useState<ProfileTab>("info");
@@ -122,6 +125,13 @@ export function Parents() {
     const pay = filters.payment === "All" || p.paymentStatus === filters.payment;
     return m && s && pay;
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, filters]);
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const paginatedParents = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   function openProfile(p: ParentExt, tab: ProfileTab = "info") {
     setSelected(p); setProfileTab(tab); setModal("profile");
@@ -173,9 +183,71 @@ export function Parents() {
     if (confirm("Remove this parent record?")) setParents(prev => prev.filter(p => p.id !== id));
   }
 
-  function saveEdit() {
-    if (!selected) return;
-    setParents(prev => prev.map(p => p.id === selected.id ? { ...p, ...form } : p));
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await api.get('/daycare/portal/parents');
+        const data = res.data?.data || [];
+        if (data.length > 0) {
+          // If the backend returns data, merge it or format it
+          // For now, we'll just set it. We'll map backend columns to the frontend state
+          const formatted = data.map((p: any) => ({
+            ...p,
+            id: p.id.toString(),
+            parentId: p.parentId || p.parent_id_code,
+            alternatePhone: p.alternatePhone || p.alternate_phone || "",
+            emergencyContact: p.emergencyContact || p.emergency_contact || "",
+            lastSeen: p.lastSeen || p.last_seen || "Just now",
+            pickupPersons: p.pickupPersons || [],
+            paymentHistory: p.paymentHistory || [],
+            commHistory: p.commHistory || [],
+            childNames: p.childNames || [],
+            children: p.children || []
+          }));
+          // Combine mock with real data so UI looks full
+          setParents([...formatted, ...INITIAL_PARENTS]);
+        }
+      } catch (err) {
+        console.error("Failed to load parents", err);
+      }
+    }
+    load();
+  }, []);
+
+  async function saveEdit() {
+    if (modal === "add") {
+      const newParent: ParentExt = {
+        ...form,
+        id: `p${Date.now()}`,
+        parentId: `PAR-${Date.now()}`,
+        name: form.name || "New Parent",
+        email: form.email || "",
+        phone: form.phone || "",
+        children: [],
+        status: form.status as any || "Active",
+        occupation: form.occupation || "Not specified",
+        alternatePhone: form.alternatePhone || "",
+        relationship: "Parent",
+        paymentStatus: "Pending",
+        pickupPersons: [],
+        paymentHistory: [],
+        commHistory: [],
+        childNames: [],
+        blocked: false,
+        lastSeen: "Just now",
+        notes: "",
+        address: form.address || "",
+        emergencyContact: form.emergencyContact || ""
+      };
+      setParents(prev => [newParent, ...prev]);
+      try {
+        await api.post('/daycare/portal/parents', newParent);
+      } catch (err) {
+        console.error("Failed to save parent to DB", err);
+      }
+    } else if (modal === "edit" && selected) {
+      setParents(prev => prev.map(p => p.id === selected.id ? { ...p, ...form } : p));
+    }
     setModal(null);
   }
 
@@ -232,7 +304,7 @@ export function Parents() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map(p => {
+              {paginatedParents.map(p => {
                 const approvedPickups = p.pickupPersons.filter(pp => pp.status === "Approved").length;
                 const blockedPickups = p.pickupPersons.filter(pp => pp.status === "Blocked").length;
                 return (
@@ -287,7 +359,18 @@ export function Parents() {
             </tbody>
           </table>
         </div>
-        <div className="px-4 py-3 border-t border-gray-100 text-xs text-gray-400">Showing {filtered.length} of {parents.length} parents</div>
+        <div className="px-4 py-3 border-t border-gray-100 flex items-center justify-between">
+          <div className="text-xs text-gray-400">
+            Showing {filtered.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} parents
+          </div>
+          {totalPages > 1 && (
+            <div className="flex gap-1">
+              <Btn variant="secondary" size="sm" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>Previous</Btn>
+              <div className="flex items-center px-2 text-sm text-gray-600">Page {currentPage} of {totalPages}</div>
+              <Btn variant="secondary" size="sm" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>Next</Btn>
+            </div>
+          )}
+        </div>
       </Card>
 
       {/* ═══ PROFILE MODAL ═══════════════════════════════════════════════ */}

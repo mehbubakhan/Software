@@ -1,3 +1,4 @@
+import { exportToCSV } from '../../../utils/exportUtils';
 import React from 'react';
 
 export default function FeesAndPayment() {
@@ -35,7 +36,7 @@ export default function FeesAndPayment() {
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
         <div className="flex justify-between items-center p-6 border-b border-slate-100">
           <h2 className="font-bold text-lg">Payment History</h2>
-          <button className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded hover:bg-slate-50 transition">Export CSV</button>
+          <button onClick={() => exportToCSV(payments, 'export.csv')} className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded hover:bg-slate-50 transition">Export CSV</button>
         </div>
         
         <div className="overflow-x-auto">

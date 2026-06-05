@@ -174,6 +174,12 @@ export default function DocumentManagement() {
     setDocuments(documents.map(d =>
       d.id === doc.id ? { ...d, accessCount: d.accessCount + 1 } : d
     ));
+
+    if (doc.fileUrl) {
+      window.open(`http://localhost:5001${doc.fileUrl}`, '_blank');
+    } else {
+      toast.error('Real file URL not available for mock document');
+    }
   };
 
   const handleArchiveDocument = (docId) => {
@@ -204,10 +210,11 @@ export default function DocumentManagement() {
       virusScan: 'Scanning',
       watermark: newDocument.watermark,
       accessCount: 0,
-      relatedTo: newDocument.relatedTo
+      relatedTo: newDocument.relatedTo,
+      fileUrl: newDocument.fileUrl // Save the real URL from the backend
     };
     setDocuments([doc, ...documents]);
-    toast.success('Document uploaded successfully');
+    toast.success('Document added to list successfully');
   };
 
   const getStatusColor = (status) => {

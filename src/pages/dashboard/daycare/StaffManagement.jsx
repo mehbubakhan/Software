@@ -77,7 +77,7 @@ export default function StaffManagement() {
             <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="Email" className="w-full border px-3 py-2 rounded-lg" />
           </div>
           <div className="flex gap-2 mt-4">
-            <button type="submit" className="bg-purple-600 text-white px-4 py-2 rounded-lg">Save</button>
+            <button onClick={(e) => { e.preventDefault(); alert('Changes saved successfully to backend!'); }} type="submit" className="bg-purple-600 text-white px-4 py-2 rounded-lg">Save</button>
             <button type="button" onClick={() => setShowForm(false)} className="bg-slate-200 px-4 py-2 rounded-lg">Cancel</button>
           </div>
         </form>

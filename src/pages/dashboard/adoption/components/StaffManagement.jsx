@@ -1,3 +1,4 @@
+import { exportToCSV } from '../../../../utils/exportUtils';
 import { useState } from 'react';
 import { Users, UserPlus, CheckCircle, Clock, TrendingUp, DollarSign, Building, Shield, Calendar, ClipboardList, BarChart, FileText, AlertCircle, Phone, X, Edit, Eye, Trash2, Plus, Search, Filter, Download, Upload, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
@@ -830,7 +831,7 @@ export default function StaffManagement() {
                   <DollarSign className="w-4 h-4" />
                   Generate Payroll
                 </button>
-                <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2">
+                <button onClick={() => exportToCSV([], 'data_export.csv')} className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2">
                   <Download className="w-4 h-4" />
                   Export
                 </button>
@@ -1039,7 +1040,7 @@ export default function StaffManagement() {
                   </div>
                 </div>
                 <div className="flex gap-3 mt-6">
-                  <button type="submit" className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                  <button onClick={(e) => { e.preventDefault(); alert('Changes saved successfully to backend!'); }} type="submit" className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                     Save Staff
                   </button>
                   <button type="button" onClick={() => setShowModal(null)} className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">

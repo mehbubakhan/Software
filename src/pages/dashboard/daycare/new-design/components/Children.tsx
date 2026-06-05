@@ -10,6 +10,8 @@ import {
 import { Card, StatusBadge, Modal, Btn, Avatar, PageHeader } from "./ui";
 import { mockChildren as initial, mockStaff } from "./mockData";
 import type { Child } from "./types";
+import { exportToCSV } from "../../../../../utils/exportUtils";
+import { importFromCSV } from "../../../../../utils/importUtils";
 
 // ── Extended Child type for this page ────────────────────────────────────
 interface ChildExtended extends Child {
@@ -172,14 +174,20 @@ const vaccinColors = {
 // ── Component ─────────────────────────────────────────────────────────────
 export function Children() {
   const [children, setChildren] = useState<ChildExtended[]>(INITIAL_CHILDREN);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     api.get('/daycare/portal/children')
-      .then((res: any) => setChildren(res.data.map(enrichChild)))
-      .catch((err: any) => console.error(err));
+      .then((res: any) => {
+         const d = res.data?.data || [];
+         setChildren([...d.map((c: any, i: number) => c.childId ? c : enrichChild(c, i)), ...INITIAL_CHILDREN]);
+      })
+      .catch((err: any) => console.error("Failed to load children", err));
   }, []);
   const [search, setSearch] = useState("");
   const [showFilter, setShowFilter] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const [filters, setFilters] = useState({
     group: "All", gender: "All", package: "All",
     health: "All", attendance: "All", specialNeeds: "All", archived: false,
@@ -208,12 +216,19 @@ export function Children() {
     return true;
   });
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, filters]);
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const paginatedChildren = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   // ── Actions ───────────────────────────────────────────────────────────
   function openAdd() { setForm(EMPTY_FORM); setModal("add"); }
   function openEdit(c: ChildExtended) { setSelected(c); setForm({ ...c }); setModal("edit"); }
   function openProfile(c: ChildExtended) { setSelected(c); setProfileTab("basic"); setModal("profile"); }
 
-  function save() {
+  async function save() {
     const now = `TS-${Date.now()}`;
     if (modal === "add") {
       const newChild: ChildExtended = {
@@ -221,6 +236,11 @@ export function Children() {
         timeline: [], media: [],
       };
       setChildren(prev => [newChild, ...prev]);
+      try {
+        await api.post('/daycare/portal/children', newChild);
+      } catch (err) {
+        console.error("Failed to save child to DB", err);
+      }
     } else if (modal === "edit" && selected) {
       setChildren(prev => prev.map(c => c.id === selected.id ? { ...c, ...form } : c));
     }
@@ -285,8 +305,31 @@ export function Children() {
         <Btn variant="secondary" onClick={() => setShowFilter(!showFilter)}>
           <Filter size={15} /> Filters {showFilter ? <ChevronDown size={13} className="rotate-180" /> : <ChevronDown size={13} />}
         </Btn>
-        <Btn variant="secondary"><Upload size={15} /> Import</Btn>
-        <Btn variant="secondary"><Download size={15} /> Export</Btn>
+        <input 
+          type="file" 
+          accept=".csv" 
+          ref={fileInputRef} 
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if(file) {
+              try {
+                const data = await importFromCSV(file);
+                // Simple parsing assumption for now
+                setChildren(prev => [...data.map((c, i) => enrichChild(c as any, prev.length + i)), ...prev]);
+                alert('Import successful!');
+              } catch(err) {
+                alert('Import failed');
+              }
+            }
+          }} 
+          className="hidden" 
+        />
+        <Btn variant="secondary" onClick={() => fileInputRef.current?.click()}>
+          <Upload size={15} /> Import
+        </Btn>
+        <Btn variant="secondary" onClick={() => exportToCSV(filtered, 'children_export.csv')}>
+          <Download size={15} /> Export
+        </Btn>
         <Btn variant={filters.archived ? "primary" : "ghost"} size="sm" onClick={() => filt("archived", !filters.archived)}>
           <Archive size={14} /> {filters.archived ? "Show Active" : "Show Archived"}
         </Btn>
@@ -332,7 +375,7 @@ export function Children() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map(c => (
+              {paginatedChildren.map(c => (
                 <tr key={c.id} className={`border-b border-gray-50 hover:bg-gray-50 transition-colors ${c.archived ? "opacity-60" : ""}`}>
                   <td className="px-4 py-3">
                     <span className="font-mono text-xs bg-gray-100 px-2 py-0.5 rounded text-gray-600">{c.childId}</span>
@@ -382,8 +425,17 @@ export function Children() {
             </tbody>
           </table>
         </div>
-        <div className="px-4 py-3 border-t border-gray-100 text-xs text-gray-400">
-          Showing {filtered.length} of {children.length} children
+        <div className="px-4 py-3 border-t border-gray-100 flex items-center justify-between">
+          <div className="text-xs text-gray-400">
+            Showing {filtered.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} children
+          </div>
+          {totalPages > 1 && (
+            <div className="flex gap-1">
+              <Btn variant="secondary" size="sm" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>Previous</Btn>
+              <div className="flex items-center px-2 text-sm text-gray-600">Page {currentPage} of {totalPages}</div>
+              <Btn variant="secondary" size="sm" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>Next</Btn>
+            </div>
+          )}
         </div>
       </Card>
 

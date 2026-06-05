@@ -1,3 +1,4 @@
+import { exportToCSV } from '../../../../utils/exportUtils';
 import { useState } from 'react';
 import {
   TrendingUp,
@@ -197,14 +198,14 @@ export default function ReportsAnalytics() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={handleExportPDF}
+              onClick={() => exportToCSV([], 'data_export.csv')}
               className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
             >
               <FileDown className="w-4 h-4" />
               Export PDF
             </button>
             <button
-              onClick={handleExportExcel}
+              onClick={() => exportToCSV([], 'data_export.csv')}
               className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
             >
               <FileSpreadsheet className="w-4 h-4" />

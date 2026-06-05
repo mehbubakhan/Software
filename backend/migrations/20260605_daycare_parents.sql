@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS daycare_parents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    daycare_id INT NOT NULL,
+    parent_id_code VARCHAR(50) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255),
+    phone VARCHAR(50),
+    alternate_phone VARCHAR(50),
+    occupation VARCHAR(255),
+    relationship VARCHAR(100),
+    address TEXT,
+    emergency_contact VARCHAR(255),
+    status VARCHAR(50) DEFAULT 'Active',
+    payment_status VARCHAR(50) DEFAULT 'Pending',
+    blocked BOOLEAN DEFAULT false,
+    last_seen VARCHAR(100) DEFAULT 'Just now',
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (daycare_id) REFERENCES daycares(id) ON DELETE CASCADE
+);

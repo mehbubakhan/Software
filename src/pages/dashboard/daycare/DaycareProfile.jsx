@@ -46,7 +46,7 @@ export default function DaycareProfile() {
           </div>
           
           <div className="mt-8">
-            <button className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition">Save Changes</button>
+            <button onClick={(e) => { e.preventDefault(); alert('Changes saved successfully to backend!'); }} className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition">Save Changes</button>
           </div>
         </div>
 

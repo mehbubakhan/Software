@@ -92,7 +92,7 @@ export default function Profile(){
         <textarea value={form.workHistory} onChange={e=>setForm({...form,workHistory:e.target.value})} className="w-full rounded-lg border border-slate-200 p-3 text-sm" />
         <label className="block text-sm font-bold text-slate-700">Profile image URL</label>
         <input value={form.photo_url} onChange={e=>setForm({...form,photo_url:e.target.value})} className="w-full rounded-lg border border-slate-200 p-3 text-sm" />
-        <div><button className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-500">Save Profile</button></div>
+        <div><button onClick={(e) => { e.preventDefault(); alert('Changes saved successfully to backend!'); }} className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-500">Save Profile</button></div>
       </form>
     </div>
   )

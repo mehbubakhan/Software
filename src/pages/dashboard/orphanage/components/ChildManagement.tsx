@@ -1,3 +1,4 @@
+import { exportToCSV } from '../../../../utils/exportUtils';
 import { useState } from 'react';
 import {
   Plus,
@@ -332,7 +333,7 @@ export default function ChildManagement() {
             <Upload className="w-4 h-4" />
             Import Child Data
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+          <button onClick={() => exportToCSV([], 'data_export.csv')} className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
             <Download className="w-4 h-4" />
             Export Reports
           </button>

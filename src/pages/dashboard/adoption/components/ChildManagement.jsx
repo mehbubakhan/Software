@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Plus,
   Download,
@@ -19,10 +19,11 @@ import {
 import ChildProfile from './ChildProfile';
 import AddChildModal from './AddChildModal';
 import { toast } from 'sonner';
-
-
+import { exportToCSV } from '../../../../../utils/exportUtils';
+import { importFromCSV } from '../../../../../utils/importUtils';
 
 export default function ChildManagement({ children: propChildren, onAddChild, onUpdateChild, onRemoveChild }) {
+  const fileInputRef = useRef(null);
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedChild, setSelectedChild] = useState(null);
@@ -230,6 +231,34 @@ export default function ChildManagement({ children: propChildren, onAddChild, on
     }
   };
 
+  const handleFileUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    try {
+      toast.info('Importing child data...');
+      const parsedData = await importFromCSV(file);
+      
+      // Ensure each parsed row has an ID
+      const newChildren = parsedData.map((child, index) => {
+        return {
+          id: child.id || `CH-IMP-${Date.now().toString().slice(-4)}-${index}`,
+          ...child
+        };
+      });
+      
+      setChildren([...newChildren, ...children]);
+      toast.success(`Successfully imported ${newChildren.length} child records!`);
+      
+      // Reset input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } catch (error) {
+      toast.error(error.message || 'Failed to import CSV');
+    }
+  };
+
   const filteredChildren = children.filter(child => {
     const matchesSearch = child.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          child.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -314,6 +343,13 @@ export default function ChildManagement({ children: propChildren, onAddChild, on
       {/* Top Action Buttons */}
       <div className="bg-white rounded-lg shadow-md p-4 mb-6">
         <div className="flex flex-wrap gap-3">
+          <input 
+            type="file" 
+            accept=".csv" 
+            ref={fileInputRef} 
+            onChange={handleFileUpload} 
+            className="hidden" 
+          />
           <button
             onClick={() => setShowAddModal(true)}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -321,11 +357,15 @@ export default function ChildManagement({ children: propChildren, onAddChild, on
             <Plus className="w-4 h-4" />
             Add Child
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+          <button 
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
             <Upload className="w-4 h-4" />
             Import Child Data
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+          <button 
+            onClick={() => exportToCSV(filteredChildren, 'child_reports.csv')}
+            className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
             <Download className="w-4 h-4" />
             Export Reports
           </button>

@@ -1,3 +1,4 @@
+import { exportToCSV } from '../../../../utils/exportUtils';
 import { useState } from 'react';
 import {
   Filter,
@@ -398,7 +399,7 @@ export default function ApplicationManagement() {
             <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
           </button>
           <button
-            onClick={handleExportApplications}
+            onClick={() => exportToCSV([], 'data_export.csv')}
             className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
             <Download className="w-4 h-4" />

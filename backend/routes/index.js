@@ -20,4 +20,5 @@ router.use('/families', require('./families'))
 router.use('/messages', require('./messages'))
 router.use('/admin', require('./admin'))
 router.use('/child', require('./childModeRoutes'))
+router.use('/upload', require('./upload'))
 module.exports = router

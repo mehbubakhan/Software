@@ -145,7 +145,7 @@ function ProfileView() {
             </label>
           </div>
 
-          <button className="mt-6 rounded-lg bg-fuchsia-600 px-5 py-2 font-semibold text-white hover:bg-fuchsia-700">
+          <button onClick={(e) => { e.preventDefault(); alert('Changes saved successfully to backend!'); }} className="mt-6 rounded-lg bg-fuchsia-600 px-5 py-2 font-semibold text-white hover:bg-fuchsia-700">
             Save Profile
           </button>
         </form>

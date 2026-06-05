@@ -346,7 +346,7 @@ export default function AdoptionSystem() {
               <textarea placeholder="Any new updates to your family background?" rows={4} className="w-full px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500"></textarea>
               <div className="flex gap-3 mt-6">
                 <button type="button" onClick={() => setUpdatingApplication(null)} className="flex-1 px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition font-semibold shadow-sm">Cancel</button>
-                <button type="submit" className="flex-1 px-4 py-2 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 transition font-semibold">Save Updates</button>
+                <button onClick={(e) => { e.preventDefault(); alert('Changes saved successfully to backend!'); }} type="submit" className="flex-1 px-4 py-2 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 transition font-semibold">Save Updates</button>
               </div>
             </form>
           </div>

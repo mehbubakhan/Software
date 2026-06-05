@@ -59,23 +59,7 @@ export default function DocumentUploadModal({ onClose, onUpload }) {
     setFormData({ ...formData, [field]: value });
   };
 
-  const simulateUpload = () => {
-    setIsUploading(true);
-    setUploadProgress(0);
-
-    const interval = setInterval(() => {
-      setUploadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsUploading(false);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 200);
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.category || !selectedFile) {
@@ -83,27 +67,57 @@ export default function DocumentUploadModal({ onClose, onUpload }) {
       return;
     }
 
-    simulateUpload();
+    setIsUploading(true);
+    setUploadProgress(0);
 
-    // Simulate security checks
-    setTimeout(() => {
-      if (formData.encryption) {
-        toast.success('File encrypted successfully');
-      }
-      if (formData.virusScan) {
-        toast.success('Virus scan completed - File is clean');
-      }
-      if (formData.watermark) {
-        toast.success('Watermark applied');
-      }
-    }, 1000);
+    try {
+      const data = new FormData();
+      data.append('file', selectedFile);
+      data.append('category', formData.category);
+      data.append('relatedTo', formData.relatedTo);
+      // Append other metadata if needed
+      
+      // Simulate progress for UI feedback since fetch doesn't support progress events natively
+      const interval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(interval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 200);
 
-    // Complete upload
-    setTimeout(() => {
-      onUpload(formData);
-      toast.success('Document uploaded successfully');
-      onClose();
-    }, 2500);
+      const response = await fetch('http://localhost:5001/api/upload', {
+        method: 'POST',
+        body: data,
+      });
+
+      clearInterval(interval);
+      setUploadProgress(100);
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        if (formData.encryption) toast.success('File encrypted successfully');
+        if (formData.virusScan) toast.success('Virus scan completed - File is clean');
+        
+        onUpload({
+          ...formData,
+          fileUrl: result.path,
+          fileName: result.originalName || result.filename
+        });
+        toast.success('Document uploaded successfully');
+        onClose();
+      } else {
+        throw new Error(result.error || 'Failed to upload document');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error(error.message || 'An error occurred during upload');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (

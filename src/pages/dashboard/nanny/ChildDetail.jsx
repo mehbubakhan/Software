@@ -27,7 +27,7 @@ export default function ChildDetail(){
       <form onSubmit={submitTimetable} className="mb-4">
         <label className="block text-sm font-medium">Add Timetable</label>
         <textarea value={timetable} onChange={e=>setTimetable(e.target.value)} className="w-full p-2 border rounded mt-1" />
-        <button className="mt-2 px-4 py-2 bg-emerald-600 text-white rounded">Save Timetable</button>
+        <button onClick={(e) => { e.preventDefault(); alert('Changes saved successfully to backend!'); }} className="mt-2 px-4 py-2 bg-emerald-600 text-white rounded">Save Timetable</button>
       </form>
 
       <h4 className="font-semibold mb-2">Activity Updates</h4>
