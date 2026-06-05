@@ -6,6 +6,7 @@ import {
   Radio, Zap, Navigation, Users, Baby, Car
 } from "lucide-react";
 import { Card, PageHeader, Btn, Modal, Badge } from "./ui";
+import { LiveCameraFeed } from "../../../../../components/LiveCameraFeed";
 
 // ── Types ──────────────────────────────────────────────────────
 interface CameraFeed {
@@ -593,18 +594,24 @@ export function LiveMonitoring() {
       {modal === "fullscreen" && selectedCam && (
         <Modal title={`${selectedCam.name} — Live Feed`} onClose={() => setModal(null)} size="xl">
           <div className={`bg-gradient-to-br ${FEED_GRADIENTS[selectedCam.id % FEED_GRADIENTS.length]} rounded-xl overflow-hidden`} style={{ height: 400 }}>
-            <div className="relative h-full flex items-center justify-center">
-              <Camera size={48} className="text-white/20" />
-              <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "repeating-linear-gradient(0deg, #fff 0px, #fff 1px, transparent 1px, transparent 4px)" }} />
-              <div className="absolute top-3 left-3 flex gap-2">
+            <div className="relative h-full w-full flex items-center justify-center bg-black">
+              {selectedCam.status === "Live" ? (
+                <LiveCameraFeed className="absolute inset-0 z-0" />
+              ) : (
+                <>
+                  <Camera size={48} className="text-white/20" />
+                  <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "repeating-linear-gradient(0deg, #fff 0px, #fff 1px, transparent 1px, transparent 4px)" }} />
+                </>
+              )}
+              <div className="absolute top-3 left-3 flex gap-2 z-10">
                 <span className="flex items-center gap-1 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
                   <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" /> LIVE
                 </span>
                 <span className="bg-black/40 text-white text-xs px-2 py-1 rounded-full">{selectedCam.resolution}</span>
               </div>
-              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-                <span className="text-white/70 text-xs">{selectedCam.name} · {selectedCam.category}</span>
-                <span className="text-white/70 text-xs">{selectedCam.children} children · {selectedCam.staff} staff</span>
+              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between z-10">
+                <span className="text-white/70 text-xs bg-black/40 px-2 py-1 rounded">{selectedCam.name} · {selectedCam.category}</span>
+                <span className="text-white/70 text-xs bg-black/40 px-2 py-1 rounded">{selectedCam.children} children · {selectedCam.staff} staff</span>
               </div>
             </div>
           </div>

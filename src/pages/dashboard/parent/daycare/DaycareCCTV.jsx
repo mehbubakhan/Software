@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { LiveCameraFeed } from '../../../../components/LiveCameraFeed';
 
 export default function DaycareCCTV() {
   const navigate = useNavigate();
@@ -83,11 +84,16 @@ export default function DaycareCCTV() {
                 3:45:01 PM
               </div>
 
-              {/* MOCK VIDEO PLAYER */}
-              <div className="w-full aspect-video bg-black flex flex-col items-center justify-center relative group">
-                <div className="text-white opacity-20 text-8xl mb-4">📷</div>
-                <div className="text-white font-bold text-xl">{activeRoom}</div>
-                <div className="text-slate-400 text-sm">Live Stream Active</div>
+              {/* MOCK VIDEO PLAYER -> NOW LIVE */}
+              <div className="w-full aspect-video bg-black flex flex-col items-center justify-center relative group overflow-hidden">
+                <LiveCameraFeed className="absolute inset-0 z-0" />
+                <div className="z-10 absolute bottom-4 left-4 bg-black/60 px-3 py-2 rounded-lg">
+                  <div className="text-white font-bold text-xl">{activeRoom}</div>
+                  <div className="text-slate-300 text-sm flex items-center gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    Live Stream Active
+                  </div>
+                </div>
               </div>
 
               {/* PLAYER CONTROLS */}
