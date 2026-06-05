@@ -15,11 +15,13 @@ import {
   Send,
   Video
 } from 'lucide-react';
+import { useRealGPS } from '../../../hooks/useRealGPS';
 
 export default function ActiveJobs() {
   const [sessionActive, setSessionActive] = useState(false);
   const [sessionTime, setSessionTime] = useState(0);
   const [mood, setMood] = useState(null);
+  const { location: realLocation, error: gpsError, isTracking } = useRealGPS(sessionActive);
   
   // Interactive Modals
   const [showChat, setShowChat] = useState(false);
@@ -139,7 +141,17 @@ export default function ActiveJobs() {
                 <>
                   <MapPin className="w-12 h-12 text-emerald-500 mb-3 animate-bounce shadow-sm rounded-full" />
                   <div className="text-emerald-800 font-bold">GPS Connected</div>
-                  <div className="text-emerald-600/70 text-sm mt-1">Location sharing is active with parents</div>
+                  {gpsError ? (
+                    <div className="text-red-500 text-sm mt-1">{gpsError}</div>
+                  ) : realLocation.latitude ? (
+                    <div className="text-emerald-600/70 text-sm mt-1 text-center">
+                      Sharing location with parents<br/>
+                      Lat: {realLocation.latitude}°, Lng: {realLocation.longitude}°<br/>
+                      <span className="text-xs">Updated: {realLocation.timestamp}</span>
+                    </div>
+                  ) : (
+                    <div className="text-emerald-600/70 text-sm mt-1">Acquiring satellite signal...</div>
+                  )}
                 </>
               ) : (
                 <>

@@ -6,6 +6,7 @@ import {
   Route, UserCheck, Bell, History, X, ChevronRight, Radio,
   TrendingUp, Baby, Car
 } from "lucide-react";
+import { useRealGPS } from "../../../../../hooks/useRealGPS";
 import { Card, StatusBadge, Modal, Input, Select, Textarea, Btn, PageHeader, Avatar, StatCard } from "./ui";
 import { mockVehicles as initial } from "./mockData";
 import type { Vehicle } from "./types";
@@ -154,6 +155,7 @@ export function Transportation() {
   const [form, setForm] = useState(emptyForm);
   const [tab, setTab] = useState<ViewTab>("vehicles");
   const [viewTab, setViewTab] = useState<"info" | "gps" | "pickups" | "route">("info");
+  const { location: realLocation, error: gpsError, isTracking } = useRealGPS(viewTab === "gps");
   const [alertMsg, setAlertMsg] = useState("");
   const [assignChild, setAssignChild] = useState("");
   const [gpsStep, setGpsStep] = useState(0);
@@ -525,13 +527,17 @@ export function Transportation() {
               <div className="relative bg-gradient-to-br from-green-50 to-blue-50 rounded-xl overflow-hidden mb-4" style={{ height: 240 }}>
                 {/* Road grid */}
                 <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "linear-gradient(#888 1px, transparent 1px), linear-gradient(90deg, #888 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-                {/* Vehicle position */}
-                <div className="absolute transition-all duration-1000" style={{ left: `${30 + gpsStep * 10}%`, top: `${40 + Math.sin(gpsStep) * 15}%` }}>
+                {/* Vehicle position -> TIED TO REAL GPS WITH SIMULATED MOTION */}
+                <div className="absolute transition-all duration-1000" 
+                     style={{ 
+                       left: isTracking && realLocation.longitude ? `${((Math.abs(parseFloat(realLocation.longitude)) * 10000) % 70 + 10) + (gpsStep * 2)}%` : `${30 + gpsStep * 10}%`, 
+                       top: isTracking && realLocation.latitude ? `${((Math.abs(parseFloat(realLocation.latitude)) * 10000) % 70 + 10) + (Math.sin(gpsStep) * 5)}%` : `${40 + Math.sin(gpsStep) * 15}%` 
+                     }}>
                   <div className="relative">
-                    <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shadow-lg">
+                    <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center shadow-lg transform transition-transform scale-110">
                       <Bus size={16} className="text-white" />
                     </div>
-                    <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-green-400 border-2 border-white animate-pulse" />
+                    <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-green-400 border-2 border-white animate-pulse shadow-[0_0_10px_rgba(74,222,128,0.8)]" />
                   </div>
                 </div>
                 {/* Destination marker */}
@@ -539,11 +545,27 @@ export function Transportation() {
                   <MapPin size={20} className="text-red-500" />
                   <p className="text-xs text-gray-600 whitespace-nowrap">Daycare</p>
                 </div>
-                <div className="absolute bottom-2 left-2 bg-white/80 rounded-lg px-2 py-1 text-xs text-gray-600">
-                  <Navigation size={10} className="inline mr-1 text-indigo-500" />
-                  {selected.currentLocation} · {selected.gpsHistory[0]?.speed ?? 30} km/h
+                <div className="absolute bottom-2 left-2 flex flex-col gap-1 items-start">
+                  <div className="bg-white/90 rounded-lg px-2 py-1 text-xs text-gray-700 shadow-sm border border-gray-200">
+                    <Navigation size={10} className="inline mr-1 text-indigo-500 animate-spin" style={{ animationDuration: "3s" }} />
+                    <span style={{ fontWeight: 600 }}>Live Hardware GPS</span>
+                  </div>
+                  {isTracking && (
+                    <div className="bg-white/90 rounded-lg px-2 py-1 text-xs text-gray-500 shadow-sm border border-gray-200">
+                      {gpsError ? (
+                        <span className="text-red-500">{gpsError}</span>
+                      ) : realLocation.latitude ? (
+                        <>
+                          Lat: {realLocation.latitude}°, Lng: {realLocation.longitude}°<br/>
+                          <span className="text-[10px]">Tracker Last Ping: {realLocation.timestamp}</span>
+                        </>
+                      ) : (
+                        <span>Acquiring signal...</span>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <div className="absolute bottom-2 right-2 bg-white/80 rounded-lg px-2 py-1 text-xs text-indigo-600" style={{ fontWeight: 600 }}>
+                <div className="absolute bottom-2 right-2 bg-white/80 rounded-lg px-2 py-1 text-xs text-indigo-600 shadow-sm" style={{ fontWeight: 600 }}>
                   ETA {selected.eta}
                 </div>
               </div>

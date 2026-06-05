@@ -5,6 +5,7 @@ import {
   MapPin, AlertTriangle, Shield, Eye, Lock, Unlock, X, ChevronRight,
   Radio, Zap, Navigation, Users, Baby, Car
 } from "lucide-react";
+import { useRealGPS } from "../../../../../hooks/useRealGPS";
 import { Card, PageHeader, Btn, Modal, Badge } from "./ui";
 import { LiveCameraFeed } from "../../../../../components/LiveCameraFeed";
 
@@ -132,6 +133,7 @@ export function LiveMonitoring() {
   const [modal, setModal] = useState<ModalType>(null);
   const [filterCat, setFilterCat] = useState<CameraCategory | "All">("All");
   const [activeTab, setActiveTab] = useState<"grid" | "alerts" | "gps" | "parent">("grid");
+  const { location: realLocation, error: gpsError, isTracking } = useRealGPS(activeTab === "gps");
   const [refreshed, setRefreshed] = useState(false);
   const [playbackTime, setPlaybackTime] = useState("08:00");
   const [playbackPlaying, setPlaybackPlaying] = useState(false);
@@ -465,9 +467,26 @@ export function LiveMonitoring() {
                 })}
 
                 {/* GPS trail animation */}
-                <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-white/80 rounded-full px-2 py-1 text-xs text-gray-500">
-                  <Navigation size={10} className="text-indigo-500 animate-spin" style={{ animationDuration: "3s" }} />
-                  GPS Live
+                <div className="absolute bottom-2 right-2 flex flex-col items-end gap-1">
+                  <div className="flex items-center gap-1 bg-white/90 rounded-full px-3 py-1 text-xs text-gray-700 shadow-sm border border-gray-200">
+                    <Navigation size={10} className="text-indigo-500 animate-spin" style={{ animationDuration: "3s" }} />
+                    <span style={{ fontWeight: 600 }}>Your Live Admin Location</span>
+                  </div>
+                  {isTracking && (
+                    <div className="bg-white/90 rounded-lg px-2 py-1 text-xs text-gray-500 shadow-sm border border-gray-200 text-right">
+                      {gpsError ? (
+                        <span className="text-red-500">{gpsError}</span>
+                      ) : realLocation.latitude ? (
+                        <>
+                          Lat: {realLocation.latitude}°<br/>
+                          Lng: {realLocation.longitude}°<br/>
+                          <span className="text-[10px]">Updated: {realLocation.timestamp}</span>
+                        </>
+                      ) : (
+                        <span>Acquiring satellite signal...</span>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 

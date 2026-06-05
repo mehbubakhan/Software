@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../../services/api'
+import { useRealGPS } from '../../../hooks/useRealGPS'
 
 export default function SafetyMonitoring() {
   const [activeTab, setActiveTab] = useState('gps')
+  const { location: realLocation, error: gpsError, isTracking } = useRealGPS(activeTab === 'gps')
+
   const [childLocation, setChildLocation] = useState({
     name: 'Emma',
     latitude: 40.7128,
@@ -11,6 +14,11 @@ export default function SafetyMonitoring() {
     status: 'At Daycare',
     safeZones: ['Home', 'Daycare', 'School']
   })
+
+  // Override static coordinates with real GPS if tracking is active
+  const displayLat = realLocation.latitude || childLocation.latitude;
+  const displayLng = realLocation.longitude || childLocation.longitude;
+  const displayTime = realLocation.timestamp || childLocation.lastUpdate;
   const [alerts, setAlerts] = useState([
     { id: 1, type: 'info', message: 'Child arrived at daycare', time: '09:15 AM' },
     { id: 2, type: 'warning', message: 'Child left geofence zone', time: '02:30 PM' },
@@ -79,10 +87,17 @@ export default function SafetyMonitoring() {
           {/* Map Simulation */}
           <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-lg p-8 h-80 flex items-center justify-center relative">
             <div className="text-center">
-              <div className="text-6xl mb-4">📍</div>
+              <div className="text-6xl mb-4">{isTracking ? '📡' : '📍'}</div>
               <p className="text-xl font-semibold text-slate-900">Live GPS Map</p>
-              <p className="text-slate-600">Location: 40.7128°N, 74.0060°W</p>
-              <p className="text-slate-600 text-sm">Last updated: {childLocation.lastUpdate}</p>
+              {gpsError ? (
+                <p className="text-red-500 font-semibold">{gpsError}</p>
+              ) : (
+                <>
+                  <p className="text-slate-600">Location: {displayLat}°N, {displayLng}°W</p>
+                  <p className="text-slate-600 text-sm">Last updated: {displayTime}</p>
+                  {isTracking && <span className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> GPS Active</span>}
+                </>
+              )}
             </div>
           </div>
 
@@ -96,15 +111,15 @@ export default function SafetyMonitoring() {
               </div>
               <div>
                 <p className="text-sm text-slate-600">Latitude</p>
-                <p className="text-lg font-semibold text-slate-900">{childLocation.latitude}°</p>
+                <p className="text-lg font-semibold text-slate-900">{displayLat}°</p>
               </div>
               <div>
                 <p className="text-sm text-slate-600">Longitude</p>
-                <p className="text-lg font-semibold text-slate-900">{childLocation.longitude}°</p>
+                <p className="text-lg font-semibold text-slate-900">{displayLng}°</p>
               </div>
               <div>
                 <p className="text-sm text-slate-600">Last Update</p>
-                <p className="text-lg font-semibold text-slate-900">{childLocation.lastUpdate}</p>
+                <p className="text-lg font-semibold text-slate-900">{displayTime}</p>
               </div>
               <div className="col-span-2 md:col-span-1">
                 <p className="text-sm text-slate-600">Signal Strength</p>
