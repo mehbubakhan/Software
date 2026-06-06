@@ -36,7 +36,7 @@ const getConversations = async (req, res) => {
     
     return res.json({ ok: true, data: formatted })
   } catch(err) {
-    return res.json({ ok: true, data: [], mock: true })
+    return res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 
@@ -46,7 +46,7 @@ const getMessages = async (req, res) => {
     const [messages] = await pool.query('SELECT * FROM messages WHERE conversation_id = ? ORDER BY sent_at ASC', [id])
     return res.json({ ok: true, data: messages })
   } catch(err) {
-    return res.json({ ok: true, data: [], mock: true })
+    return res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 

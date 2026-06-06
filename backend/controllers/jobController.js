@@ -67,7 +67,7 @@ const listOpenJobs = async (req, res) => {
     ];
     return res.json({ ok:true, data: jobs })
   }catch(err){ 
-    return res.json({ ok:true, data: [], mock: true }) 
+    return res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) }) 
   }
 }
 
@@ -88,7 +88,7 @@ const listApplications = async (req, res) => {
     const rows = await listByJob(job_id)
     return res.json({ ok:true, data: rows })
   }catch(err){ 
-    return res.json({ ok:true, data: [], mock: true }) 
+    return res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) }) 
   }
 }
 

@@ -28,7 +28,7 @@ const approve = async (req, res) => {
 
 const pending = async (req, res) => {
   try{ const rows = await listPending(); return res.json({ ok:true, data: rows }) }catch(err){ 
-    return res.json({ ok:true, data: [], mock: true }) 
+    return res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) }) 
   }
 }
 

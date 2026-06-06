@@ -10,7 +10,7 @@ const adoptionController = {
       res.status(201).json({ ok: true, id });
     } catch (err) {
       console.warn('createOrphanage failed, using fallback', err.message);
-      res.json({ ok: true, id: 999, mock: true });
+      res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) });
     }
   },
   updateOrphanage: async (req, res) => {
@@ -19,7 +19,7 @@ const adoptionController = {
       res.json({ ok: true });
     } catch (err) {
       console.warn('updateOrphanage failed, using fallback', err.message);
-      res.json({ ok: true, mock: true });
+      res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) });
     }
   },
   getOrphanages: async (req, res) => {
@@ -81,7 +81,7 @@ const adoptionController = {
       res.json({ ok: true });
     } catch (err) {
       console.warn('updateOrphanageStatus failed, using fallback', err.message);
-      res.json({ ok: true, mock: true });
+      res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) });
     }
   },
 
@@ -120,7 +120,7 @@ const adoptionController = {
       res.status(201).json({ ok: true, id });
     } catch (err) {
       console.warn('createChild failed, using fallback', err.message);
-      res.json({ ok: true, id: 999, mock: true });
+      res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) });
     }
   },
   getChildren: async (req, res) => {
@@ -159,7 +159,7 @@ const adoptionController = {
       res.json({ ok: true });
     } catch (err) {
       console.warn('updateChild failed, using fallback', err.message);
-      res.json({ ok: true, mock: true });
+      res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) });
     }
   },
   deleteChild: async (req, res) => {
@@ -168,7 +168,7 @@ const adoptionController = {
       res.json({ ok: true });
     } catch (err) {
       console.warn('deleteChild failed, using fallback', err.message);
-      res.json({ ok: true, mock: true });
+      res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) });
     }
   },
 
@@ -189,7 +189,7 @@ const adoptionController = {
       res.status(201).json({ ok: true, id });
     } catch (err) {
       console.warn('createApplication failed, using fallback', err.message);
-      res.json({ ok: true, id: 999, mock: true });
+      res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) });
     }
   },
   getApplications: async (req, res) => {
@@ -223,7 +223,7 @@ const adoptionController = {
       res.json({ ok: true });
     } catch (err) {
       console.warn('updateApplicationStatus failed, using fallback', err.message);
-      res.json({ ok: true, mock: true });
+      res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) });
     }
   },
 
@@ -235,7 +235,7 @@ const adoptionController = {
       res.status(201).json({ ok: true, id });
     } catch (err) {
       console.warn('createMeetup failed, using fallback', err.message);
-      res.json({ ok: true, id: 999, mock: true });
+      res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) });
     }
   },
   getApplicationMeetups: async (req, res) => {

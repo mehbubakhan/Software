@@ -100,7 +100,7 @@ const getParentOverview = async (req, res) => {
 
     return res.json({ ok: true, data });
   } catch (err) {
-    return res.json({ ok: false, error: err.message, mock: true });
+    return res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) });
   }
 }
 

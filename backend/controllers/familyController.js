@@ -97,7 +97,7 @@ const updateProfile = async (req, res) => {
     const user_id = req.user.id;
     const { name, phone, address, emergencyContact, childModePin, childName, childAge, childNotes } = req.body;
     mockProfiles[user_id] = { name, phone, address, emergencyContact, childModePin, childName, childAge, childNotes, email: 'parent@smartnanny.com' };
-    return res.json({ ok: true, mock: true });
+    return res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) });
   }
 }
 

@@ -233,7 +233,7 @@ const getDashboardStats = async (req, res) => {
     const stats = await DaycareModel.getDashboardStats(req.daycare.id)
     res.json(stats)
   } catch (err) {
-    res.json({ mock: true, data: [] })
+    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 
@@ -246,7 +246,7 @@ const updateProfile = async (req, res) => {
     await DaycareModel.updateDaycare(req.daycare.id, req.body)
     res.json({ message: 'Profile updated successfully' })
   } catch (err) {
-    res.json({ mock: true, data: [] })
+    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 
@@ -257,7 +257,7 @@ const createProfile = async (req, res) => {
     const id = await DaycareModel.createDaycare(req.user.id, req.body)
     res.json({ success: true, message: 'Profile created successfully', id })
   } catch (err) {
-    res.json({ success: true, message: 'Profile created successfully (mock)', id: 999 })
+    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 
@@ -277,7 +277,7 @@ const createPackage = async (req, res) => {
     const id = await DaycareModel.createPackage(req.daycare.id, req.body)
     res.json({ success: true, message: 'Package created successfully', id })
   } catch (err) {
-    res.json({ success: true, message: 'Package created (mock)', id: 999 })
+    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 
@@ -301,7 +301,7 @@ const updateApplication = async (req, res) => {
     await DaycareModel.updateApplicationStatus(req.params.id, req.body.status)
     res.json({ success: true, message: 'Application updated' })
   } catch (err) {
-    res.json({ success: true, message: 'Application updated (mock)' })
+    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 
@@ -351,7 +351,7 @@ const addParent = async (req, res) => {
     res.json({ success: true, message: 'Parent added successfully', id })
   } catch (err) {
     console.error("ADD PARENT ERROR:", err);
-    res.json({ success: true, message: 'Parent added successfully (mock)', id: 999 })
+    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 
@@ -372,7 +372,7 @@ const addStaff = async (req, res) => {
     const id = await DaycareModel.addStaff(req.daycare.id, req.body)
     res.json({ success: true, message: 'Staff added successfully', id })
   } catch (err) {
-    res.json({ success: true, message: 'Staff added successfully (mock)', id: 999 })
+    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 
@@ -381,7 +381,7 @@ const updateStaff = async (req, res) => {
     await DaycareModel.updateStaff(req.daycare.id, req.params.staffId, req.body)
     res.json({ success: true, message: 'Staff updated' })
   } catch (err) {
-    res.json({ success: true, message: 'Staff updated (mock)' })
+    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 
@@ -390,7 +390,7 @@ const deleteStaff = async (req, res) => {
     await DaycareModel.deleteStaff(req.daycare.id, req.params.staffId)
     res.json({ success: true, message: 'Staff deleted' })
   } catch (err) {
-    res.json({ success: true, message: 'Staff deleted (mock)' })
+    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 
@@ -411,7 +411,7 @@ const addTransport = async (req, res) => {
     const id = await DaycareModel.addTransport(req.daycare.id, req.body)
     res.json({ success: true, message: 'Transport added successfully', id })
   } catch (err) {
-    res.json({ success: true, message: 'Transport added successfully (mock)', id: 999 })
+    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 
@@ -432,7 +432,7 @@ const addDailyReport = async (req, res) => {
     const id = await DaycareModel.addDailyReport(req.daycare.id, req.body)
     res.json({ success: true, message: 'Daily report added successfully', id })
   } catch (err) {
-    res.json({ success: true, message: 'Daily report added successfully (mock)', id: 999 })
+    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 
@@ -453,7 +453,7 @@ const addInvoice = async (req, res) => {
     const id = await DaycareModel.addInvoice(req.daycare.id, req.body)
     res.json({ success: true, message: 'Invoice created successfully', id })
   } catch (err) {
-    res.json({ success: true, message: 'Invoice created successfully (mock)', id: "INV-2024-" + Math.floor(Math.random() * 1000) })
+    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 
@@ -462,7 +462,7 @@ const updateInvoice = async (req, res) => {
     await DaycareModel.updateInvoice(req.daycare.id, req.params.id, req.body)
     res.json({ success: true, message: 'Invoice updated' })
   } catch (err) {
-    res.json({ success: true, message: 'Invoice updated (mock)' })
+    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 
@@ -482,7 +482,7 @@ const addComplaint = async (req, res) => {
     const id = await DaycareModel.addComplaint(req.daycare.id, req.body)
     res.json({ success: true, message: 'Complaint added successfully', id })
   } catch (err) {
-    res.json({ success: true, message: 'Complaint added successfully (mock)', id: "CMP-00" + Math.floor(Math.random() * 1000) })
+    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 
@@ -491,7 +491,7 @@ const updateComplaint = async (req, res) => {
     await DaycareModel.updateComplaint(req.daycare.id, req.params.id, req.body)
     res.json({ success: true, message: 'Complaint updated' })
   } catch (err) {
-    res.json({ success: true, message: 'Complaint updated (mock)' })
+    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 
@@ -511,7 +511,7 @@ const addMessage = async (req, res) => {
     const id = await DaycareModel.addMessage(req.daycare.id, req.body)
     res.json({ success: true, message: 'Message sent successfully', id })
   } catch (err) {
-    res.json({ success: true, message: 'Message sent successfully (mock)', id: Math.floor(Math.random() * 1000).toString() })
+    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
   }
 }
 

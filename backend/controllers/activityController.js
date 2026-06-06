@@ -17,7 +17,7 @@ const byChild = async (req, res) => {
     const rows = await listByChild(child_id)
     return res.json({ ok:true, data: rows })
   }catch(err){ 
-    return res.json({ ok:true, data: [], mock: true }) 
+    return res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) }) 
   }
 }
 
@@ -30,7 +30,7 @@ const byNanny = async (req, res) => {
     const filtered = status ? data.filter(d => d.details && d.details.status === status) : data
     return res.json({ ok:true, data: filtered })
   }catch(err){ 
-    return res.json({ ok:true, data: [], mock: true }) 
+    return res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) }) 
   }
 }
 

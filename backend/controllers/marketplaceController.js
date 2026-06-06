@@ -14,18 +14,18 @@ const marketplaceController = {
       res.json(filteredProducts);
     } catch (error) {
       console.error(error);
-      res.json({ mock: true, data: [] });
+      res.status(500).json({ success: false, error: error.message });
     }
   },
 
   getProduct: async (req, res) => {
     try {
       const product = await MarketplaceModel.getProductById(req.params.id);
-      if (!product) return res.json({ mock: true, data: [] });
+      if (!product) return res.status(500).json({ success: false, error: error.message });
       res.json(product);
     } catch (error) {
       console.error(error);
-      res.json({ mock: true, data: [] });
+      res.status(500).json({ success: false, error: error.message });
     }
   },
 
@@ -37,7 +37,7 @@ const marketplaceController = {
       res.json(cart);
     } catch (error) {
       console.error(error);
-      res.json({ mock: true, data: [] });
+      res.status(500).json({ success: false, error: error.message });
     }
   },
 
@@ -49,7 +49,7 @@ const marketplaceController = {
       res.json({ message: 'Added to cart successfully' });
     } catch (error) {
       console.error(error);
-      res.json({ mock: true, data: [] });
+      res.status(500).json({ success: false, error: error.message });
     }
   },
 
@@ -61,7 +61,7 @@ const marketplaceController = {
       res.json({ message: 'Removed from cart' });
     } catch (error) {
       console.error(error);
-      res.json({ mock: true, data: [] });
+      res.status(500).json({ success: false, error: error.message });
     }
   },
 
@@ -73,7 +73,7 @@ const marketplaceController = {
       res.json(wishlist);
     } catch (error) {
       console.error(error);
-      res.json({ mock: true, data: [] });
+      res.status(500).json({ success: false, error: error.message });
     }
   },
 
@@ -85,11 +85,11 @@ const marketplaceController = {
       if (added) {
         res.json({ message: 'Added to wishlist' });
       } else {
-        res.json({ mock: true, data: [] });
+        res.status(500).json({ success: false, error: error.message });
       }
     } catch (error) {
       console.error(error);
-      res.json({ mock: true, data: [] });
+      res.status(500).json({ success: false, error: error.message });
     }
   },
 
@@ -101,7 +101,7 @@ const marketplaceController = {
       res.json({ message: 'Removed from wishlist' });
     } catch (error) {
       console.error(error);
-      res.json({ mock: true, data: [] });
+      res.status(500).json({ success: false, error: error.message });
     }
   },
 
@@ -114,7 +114,7 @@ const marketplaceController = {
       // Get user cart
       const cartItems = await MarketplaceModel.getCartByUserId(userId);
       if (cartItems.length === 0) {
-        return res.json({ mock: true, data: [] });
+        return res.status(500).json({ success: false, error: error.message });
       }
 
       let total_amount = 0;
@@ -134,7 +134,7 @@ const marketplaceController = {
       res.json({ message: 'Order placed successfully', orderId, tracking_number });
     } catch (error) {
       console.error(error);
-      res.json({ mock: true, data: [] });
+      res.status(500).json({ success: false, error: error.message });
     }
   },
 
@@ -142,11 +142,11 @@ const marketplaceController = {
     try {
       const { tracking_number } = req.params;
       const order = await MarketplaceModel.getOrderByTracking(tracking_number);
-      if (!order) return res.json({ mock: true, data: [] });
+      if (!order) return res.status(500).json({ success: false, error: error.message });
       res.json(order);
     } catch (error) {
       console.error(error);
-      res.json({ mock: true, data: [] });
+      res.status(500).json({ success: false, error: error.message });
     }
   },
 
@@ -169,7 +169,7 @@ const marketplaceController = {
       res.json({ success: true, message: 'Product added successfully', id });
     } catch (error) {
       console.error(error);
-      res.json({ success: true, message: 'Product added successfully (mock)', id: 999 });
+      res.status(500).json({ success: false, error: error.message });
     }
   },
 
@@ -180,7 +180,7 @@ const marketplaceController = {
       res.json({ success: true, message: 'Product updated' });
     } catch (error) {
       console.error(error);
-      res.json({ success: true, message: 'Product updated (mock)' });
+      res.status(500).json({ success: false, error: error.message });
     }
   },
 
@@ -191,7 +191,7 @@ const marketplaceController = {
       res.json({ success: true, message: 'Product deleted' });
     } catch (error) {
       console.error(error);
-      res.json({ success: true, message: 'Product deleted (mock)' });
+      res.status(500).json({ success: false, error: error.message });
     }
   },
 
@@ -214,7 +214,7 @@ const marketplaceController = {
       res.json({ success: true, message: 'Order status updated' });
     } catch (error) {
       console.error(error);
-      res.json({ success: true, message: 'Order status updated (mock)' });
+      res.status(500).json({ success: false, error: error.message });
     }
   },
 

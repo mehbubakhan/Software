@@ -54,10 +54,33 @@ export function ProductManagement() {
   const [editPrice, setEditPrice] = useState("");
 
   useEffect(() => {
-    api.get("/marketplace/seller/products").then(res => {
-      setProducts(res.data.data || res.data || []);
-    }).catch(console.error);
+    fetchProducts();
   }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const res = await api.get("/marketplace/seller/products");
+      const data = res.data.data || res.data || [];
+      const mapped = data.map((p: any) => ({
+        id: p.id ? p.id.toString() : "0",
+        name: p.name || "",
+        category: p.category_name || "General",
+        seller: p.seller_name || "You",
+        price: "৳" + (p.price || 0),
+        stock: p.stock || 0,
+        sold: 0,
+        remaining: p.stock || 0,
+        status: p.is_verified ? "Approved" : "Pending Review",
+        ageGroup: "All Ages",
+        safetyStatus: "Safe",
+        featured: false,
+        description: p.description || ""
+      }));
+      setProducts(mapped);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const [addModal, setAddModal] = useState(false);
   const [newProduct, setNewProduct] = useState({
@@ -145,40 +168,25 @@ export function ProductManagement() {
     }));
   }
 
-  function saveNewProduct() {
-    if (!newProduct.name || !newProduct.price || !newProduct.stock || !newProduct.seller) {
+  async function saveNewProduct() {
+    if (!newProduct.name || !newProduct.price || !newProduct.stock) {
       alert("Please fill in all required fields");
       return;
     }
 
-    const productId = `P-${String(products.length + 1).padStart(3, "0")}`;
-    const stockNum = parseInt(newProduct.stock) || 0;
-
-    const product: Product = {
-      id: productId,
-      name: newProduct.name,
-      category: newProduct.category,
-      seller: newProduct.seller,
-      price: newProduct.price.startsWith("৳") ? newProduct.price : `৳${newProduct.price}`,
-      stock: stockNum,
-      sold: 0,
-      remaining: stockNum,
-      status: "Pending Review",
-      ageGroup: newProduct.ageGroup,
-      safetyStatus: "Under Review",
-      featured: false,
-      description: newProduct.description,
-      images: newProduct.images,
-      weight: newProduct.weight,
-      dimensions: newProduct.dimensions,
-      material: newProduct.material,
-      brand: newProduct.brand,
-      sku: newProduct.sku,
-      certifications: newProduct.certifications,
-    };
-
-    setProducts(p => [product, ...p]);
-    resetAddModal();
+    try {
+      await api.post("/marketplace/seller/products", {
+        name: newProduct.name,
+        description: newProduct.description,
+        price: parseFloat(newProduct.price),
+        stock: parseInt(newProduct.stock),
+      });
+      await fetchProducts();
+      resetAddModal();
+    } catch (err) {
+      console.error(err);
+      alert("Error adding product");
+    }
   }
 
   function resetAddModal() {

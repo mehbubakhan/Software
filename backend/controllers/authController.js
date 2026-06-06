@@ -32,6 +32,10 @@ const signup = async (req, res) => {
     if (role === 'parent' && childName) {
       await createChild({ name: childName, parent_id: user.id, dob: dob || null })
     }
+    if (role === 'marketplace_seller') {
+      const db = require('../config/db');
+      await db.query(`INSERT INTO seller_profiles (user_id, business_name, status) VALUES (?, ?, 'Active')`, [user.id, name + ' Store']);
+    }
     console.log('User created:', user.id)
     return res.json({ ok:true, user })
   }catch(err){ 
