@@ -119,13 +119,34 @@ type DetailTab = "parent" | "child" | "package" | "visit";
 
 // ═════════════════════════════════════════════════════════════════════════
 export function Admissions() {
-  const [admissions, setAdmissions] = useState<AdmissionExt[]>(INITIAL);
+  const [admissions, setAdmissions] = useState<AdmissionExt[]>([]);
 
   useEffect(() => {
-    api.get('/daycare/portal/applications')
-      .then((res: any) => setAdmissions(res.data.map(enrich)))
-      .catch((err: any) => console.error(err));
+    fetchAdmissions();
   }, []);
+
+  const fetchAdmissions = async () => {
+    try {
+      const res = await api.get('/daycare/portal/applications');
+      const mapped = res.data.map((p: any, i: number) => ({
+        ...EMPTY,
+        id: p.id ? p.id.toString() : `ADM-${i}`,
+        admissionId: `ADM-${p.id || 2024 + i}`,
+        childName: p.child_name || "Unknown Child",
+        childAge: p.child_age || 0,
+        parentName: p.parent_name || "Unknown Parent",
+        parentPhone: p.parent_phone || "+1 555-0000",
+        parentEmail: p.parent_email || "",
+        status: (p.status ? p.status.charAt(0).toUpperCase() + p.status.slice(1) : "Pending") as any,
+        package: p.package_type || "1 Month",
+        requestDate: p.created_at ? new Date(p.created_at).toISOString().split('T')[0] : "2026-06-04",
+      }));
+      setAdmissions(mapped);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const [search, setSearch] = useState("");
   const [showFilter, setShowFilter] = useState(false);
   const [filters, setFilters] = useState({ status: "All", package: "All", trial: "All", classroom: "All" });
@@ -174,14 +195,27 @@ export function Admissions() {
     setSelectedIds(new Set());
   }
 
-  function save() {
-    if (modal === "add") {
-      const id = `ADM-${Date.now()}`;
-      setAdmissions(prev => [{ ...form, id: `a${Date.now()}`, admissionId: id }, ...prev]);
-    } else if (modal === "edit" && selected) {
-      setAdmissions(prev => prev.map(a => a.id === selected.id ? { ...a, ...form } : a));
+  async function save() {
+    try {
+      if (modal === "add") {
+        await api.post('/daycare/portal/applications', {
+          childName: form.childName,
+          childAge: form.childAge,
+          parentName: form.parentName,
+          parentEmail: form.parentEmail,
+          parentPhone: form.parentPhone,
+          status: form.status,
+          package: form.package,
+        });
+      } else if (modal === "edit" && selected) {
+        await api.put(`/daycare/portal/applications/${selected.id}`, { status: form.status });
+      }
+      await fetchAdmissions();
+      setModal(null);
+    } catch (err) {
+      console.error("Error saving admission:", err);
+      alert("Error saving admission");
     }
-    setModal(null);
   }
 
   function confirmVisit() {

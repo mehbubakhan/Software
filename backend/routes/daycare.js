@@ -3,7 +3,7 @@ const router = express.Router();
 const { 
   getDaycares, getDaycareById, getChildReport, submitApplication, processPayment,
   ensureDaycare, getDashboardStats, getProfile, updateProfile, createProfile,
-  getPackages, createPackage, getApplications, updateApplication, getChildren,
+  getPackages, createPackage, getApplications, addApplication, updateApplication, getChildren,
   getStaff, addStaff, updateStaff, deleteStaff, getTransport, addTransport, getDailyReports, addDailyReport,
   getInvoices, addInvoice, updateInvoice, getComplaints, addComplaint, updateComplaint, getMessages, addMessage,
   getParents, addParent, addChild
@@ -30,6 +30,7 @@ router.get('/portal/packages', ensureDaycare, getPackages);
 router.post('/portal/packages', ensureDaycare, createPackage);
 
 router.get('/portal/applications', ensureDaycare, getApplications);
+router.post('/portal/applications', ensureDaycare, addApplication);
 router.put('/portal/applications/:id', ensureDaycare, updateApplication);
 
 router.get('/portal/children', ensureDaycare, getChildren);

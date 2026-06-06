@@ -515,6 +515,15 @@ const addMessage = async (req, res) => {
   }
 }
 
+const addApplication = async (req, res) => {
+  try {
+    const id = await DaycareModel.addApplicationAdmin(req.daycare.id, req.body)
+    res.json({ success: true, message: 'Application added successfully', id })
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message })
+  }
+}
+
 module.exports = {
   getDaycares,
   getDaycareById,
@@ -529,6 +538,7 @@ module.exports = {
   getPackages,
   createPackage,
   getApplications,
+  addApplication,
   updateApplication,
   getChildren,
   addChild,

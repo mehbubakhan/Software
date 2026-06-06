@@ -58,6 +58,14 @@ class DaycareModel {
     return rows
   }
 
+  static async addApplicationAdmin(daycareId, data) {
+    const [result] = await db.query(
+      'INSERT INTO daycare_applications (daycare_id, parent_id, child_name, child_age, package_id, status) VALUES (?, ?, ?, ?, ?, ?)',
+      [daycareId, 1, data.childName || 'Unknown', data.childAge || 0, 1, data.status ? data.status.toLowerCase() : 'pending']
+    )
+    return result.insertId
+  }
+
   static async updateApplicationStatus(id, status) {
     await db.query('UPDATE daycare_applications SET status = ? WHERE id = ?', [status, id])
     if (status === 'approved') {
