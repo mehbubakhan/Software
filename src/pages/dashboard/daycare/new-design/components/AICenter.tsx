@@ -10,7 +10,7 @@ import { Card, PageHeader, Btn, Modal } from "./ui";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type AITab = "ai-monitoring" | "smart-attendance" | "security" | "automation";
+type AITab = "ai-monitoring" | "smart-attendance" | "security" | "automation" | "ai-assistant";
 type EmotionType = "Happy" | "Sad" | "Crying" | "Aggressive" | "Isolated" | "Neutral";
 
 interface BehaviorAlert {
@@ -856,6 +856,140 @@ function AutomationTab() {
   );
 }
 
+interface AIMessage {
+  id: string;
+  sender: "user" | "assistant";
+  text: string;
+  time: string;
+}
+
+const AI_PROMPTS = [
+  "Help me improve our daily activity schedule.",
+  "What should I include in a parent update?",
+  "How can I optimize staff rotation?",
+  "Explain the best way to handle pickup safety.",
+  "Give me ideas for a learning theme this week.",
+];
+
+function getAIReply(text: string) {
+  const lower = text.toLowerCase();
+  if (lower.includes("schedule") || lower.includes("activity")) {
+    return "Try grouping activities by age and energy level: quiet learning after lunch, outdoor play mid-morning, and story time before pickup. Use visual cues and short transitions to keep children engaged.";
+  }
+  if (lower.includes("parent") || lower.includes("update")) {
+    return "Send a concise daily summary with behavior highlights, meal/snack notes, and any important reminders. Parents appreciate warm, positive language and clear next-step actions.";
+  }
+  if (lower.includes("staff") || lower.includes("rotation")) {
+    return "Rotate staff by balancing experience and energy across classrooms. Keep one senior teacher per group, and assign support staff for handoff and activity transitions.";
+  }
+  if (lower.includes("pickup") || lower.includes("safety")) {
+    return "Use a secure verification process, log matched IDs, and communicate real-time pickup alerts to both parents and staff. A second staff pair should monitor the pickup zone.";
+  }
+  if (lower.includes("theme") || lower.includes("ideas")) {
+    return "A nature week works well: crafts with leaves, storytime about animals, planting seeds, and movement games based on weather. Tie lessons to sensory and social skills.";
+  }
+  return "That sounds great. Can you tell me a bit more about the problem or the goal you want help with?";
+}
+
+function AssistantTab() {
+  const [messages, setMessages] = useState<AIMessage[]>([{
+    id: "welcome",
+    sender: "assistant",
+    text: "Hi there! I'm your AI assistant. Ask me about planning, operations, communications, or anything daycare-related.",
+    time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+  }]);
+  const [input, setInput] = useState("");
+  const [isThinking, setIsThinking] = useState(false);
+  const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  function addMessage(sender: "user" | "assistant", text: string) {
+    const message: AIMessage = {
+      id: `${sender}-${Date.now()}-${Math.random()}`,
+      sender,
+      text,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+    setMessages(prev => [...prev, message]);
+    return message;
+  }
+
+  function handleSend(text?: string) {
+    const nextText = text ?? input.trim();
+    if (!nextText) return;
+    addMessage("user", nextText);
+    setInput("");
+    setIsThinking(true);
+
+    setTimeout(() => {
+      const reply = getAIReply(nextText);
+      addMessage("assistant", reply);
+      setIsThinking(false);
+    }, 1100 + Math.random() * 600);
+  }
+
+  return (
+    <div className="space-y-4">
+      <Card className="p-5">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div>
+            <h3 className="text-gray-900 text-xl font-semibold">AI Assistant</h3>
+            <p className="text-sm text-gray-500 mt-1">Get ideas, clear confusion, and discuss daycare operations with an AI-powered helper.</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {AI_PROMPTS.slice(0, 3).map(prompt => (
+              <button key={prompt} onClick={() => handleSend(prompt)}
+                className="px-3 py-2 bg-gray-100 text-sm text-gray-700 rounded-full hover:bg-gray-200 transition-colors">
+                {prompt}
+              </button>
+            ))}
+          </div>
+        </div>
+      </Card>
+
+      <Card className="p-5">
+        <div className="space-y-4">
+          <div className="space-y-3 max-h-[440px] overflow-y-auto pr-2">
+            {messages.map(msg => (
+              <div key={msg.id} className={`flex ${msg.sender === "assistant" ? "justify-start" : "justify-end"}`}>
+                <div className={`max-w-[85%] rounded-2xl p-4 shadow-sm ${msg.sender === "assistant" ? "bg-gray-100 text-gray-900" : "bg-indigo-600 text-white"}`}>
+                  <p className="text-sm leading-6">{msg.text}</p>
+                  <div className="text-[11px] text-gray-500 mt-2 text-right">{msg.time}</div>
+                </div>
+              </div>
+            ))}
+            {isThinking && (
+              <div className="flex justify-start">
+                <div className="max-w-[75%] rounded-2xl p-4 bg-gray-100 text-gray-700 shadow-sm">
+                  <p className="text-sm leading-6">Thinking...</p>
+                </div>
+              </div>
+            )}
+            <div ref={endRef} />
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <textarea
+              rows={3}
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              placeholder="Ask the AI assistant a question..."
+              className="w-full resize-none rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs text-gray-500">Use the prompt buttons above for quick ideas.</p>
+              <Btn variant="primary" size="sm" onClick={() => handleSend()} disabled={!input.trim() && isThinking}>Send</Btn>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 const TABS: { id: AITab; label: string }[] = [
@@ -863,6 +997,7 @@ const TABS: { id: AITab; label: string }[] = [
   { id: "smart-attendance", label: "Smart Attendance" },
   { id: "security", label: "Security & Audit" },
   { id: "automation", label: "Automation" },
+  { id: "ai-assistant", label: "AI Assistant" },
 ];
 
 export function AICenter() {
@@ -890,6 +1025,7 @@ export function AICenter() {
       {tab === "smart-attendance" && <SmartAttendanceTab />}
       {tab === "security" && <SecurityTab />}
       {tab === "automation" && <AutomationTab />}
+      {tab === "ai-assistant" && <AssistantTab />}
     </div>
   );
 }
