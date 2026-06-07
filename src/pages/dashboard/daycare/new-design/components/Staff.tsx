@@ -12,6 +12,25 @@ import {
 import { mockStaff as initial } from "./mockData";
 import type { Staff } from "./types";
 
+const STORAGE_KEY = "daycare_staff_data";
+
+function loadStoredStaff() {
+  if (typeof window === "undefined") return null;
+  const raw = window.localStorage.getItem(STORAGE_KEY);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as StaffExt[];
+  } catch (err) {
+    console.error("Failed to parse stored staff data", err);
+    return null;
+  }
+}
+
+function saveStaff(staff: StaffExt[]) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(staff));
+}
+
 // ── Extended types ──────────────────────────────────────────────
 interface AttendanceLog {
   id: string;
@@ -172,13 +191,33 @@ const emptyForm = {
 };
 
 export function StaffNannies() {
-  const [staff, setStaff] = useState<StaffExt[]>(() => initial.map(enrichStaff));
+  const [staff, setStaff] = useState<StaffExt[]>(() => {
+    const stored = loadStoredStaff();
+    if (stored && stored.length) return stored;
+    return initial.map(enrichStaff);
+  });
 
   useEffect(() => {
+    const stored = loadStoredStaff();
+    if (stored && stored.length) {
+      return;
+    }
+
     api.get('/daycare/portal/staff')
-      .then((res: any) => setStaff(res.data.map(enrichStaff)))
+      .then((res: any) => {
+        const remote = res.data?.map((item: Staff, index: number) => enrichStaff(item, index)) ?? [];
+        if (remote.length) {
+          setStaff(remote);
+          saveStaff(remote);
+        }
+      })
       .catch((err: any) => console.error(err));
   }, []);
+
+  useEffect(() => {
+    saveStaff(staff);
+  }, [staff]);
+
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState("All");
   const [filterShift, setFilterShift] = useState("All");
