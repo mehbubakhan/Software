@@ -98,10 +98,6 @@ export default function ChildDashboard() {
               ⬅️ Back
             </button>
           )}
-
-          <Link to="/dashboard/child" className="flex items-center gap-2 rounded-full hover:bg-slate-50 px-3 py-1 transition ml-2">
-            <span className="text-xl font-black tracking-tight text-fuchsia-600">MiniMate</span>
-          </Link>
         </div>
 
         <div className="flex items-center gap-6">
