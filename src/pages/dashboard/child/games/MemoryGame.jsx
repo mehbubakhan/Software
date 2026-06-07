@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { recordGameSession } from '../progressUtils'
 
 const CARDS = ['🍎','🐱','🐶','🐸','🦋','🐞','🚗','🚀']
 
@@ -27,12 +28,14 @@ export default function MemoryGame({ playClick, addCoins }) {
       setDisabled(true)
       const [first, second] = newFlipped
       if (cards[first].icon === cards[second].icon) {
-        setSolved([...solved, first, second])
+        const nextSolved = [...solved, first, second]
+        setSolved(nextSolved)
         setFlipped([])
         setDisabled(false)
-        if (solved.length + 2 === cards.length) {
+        if (nextSolved.length === cards.length) {
           setTimeout(() => {
             addCoins(25)
+            recordGameSession({ gameId: 'memory', won: true, points: 25 })
             alert("You won the Memory Game! Earned 25 coins!")
           }, 500)
         }

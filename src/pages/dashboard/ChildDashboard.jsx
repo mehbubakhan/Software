@@ -8,6 +8,7 @@ import BanglaFormatMenu from './child/BanglaFormatMenu'
 import TracingWrapper from './child/components/TracingWrapper'
 import EnglishRhymePlayer from './child/components/EnglishRhymePlayer'
 import ChildOverview from './child/ChildOverview'
+import ProgressDashboard from './child/ProgressDashboard'
 import AlphabetLearning from './child/AlphabetLearning'
 import NumbersLearning from './child/NumbersLearning'
 import ShapesLearning from './child/ShapesLearning'
@@ -147,7 +148,7 @@ export default function ChildDashboard() {
           <Route path="rewards" element={<RewardsShop {...props} />} />
           <Route path="draw" element={<DrawingCanvas {...props} />} />
           <Route path="collaboration" element={<LearnTogether {...props} />} />
-          <Route path="progress" element={<div className="p-8 text-center"><h1 className="text-4xl font-black text-fuchsia-600">Progress Tracking Coming Soon!</h1></div>} />
+          <Route path="progress" element={<ProgressDashboard playClick={playClick} />} />
           <Route path="settings" element={<div className="p-8 text-center"><h1 className="text-4xl font-black text-fuchsia-600">Child Settings Coming Soon!</h1></div>} />
 
           {/* Legacy sub-routes for games and learning */}

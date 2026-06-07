@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { recordQuizResult } from '../progressUtils'
 
 // Helper to shuffle an array
 const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5)
@@ -121,6 +122,7 @@ export default function QuizRunner({
       if (addCoins) {
         addCoins(score * 5)
       }
+      recordQuizResult(subject || title, score, TOTAL_QUESTIONS)
       return
     }
     setIdx(nextIdx)
