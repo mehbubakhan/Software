@@ -1,7 +1,7 @@
 const pool = require('../config/db')
 
 // ── In-memory fallback users (used when Railway DB is unreachable) ──────────
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const saltRounds = 10
 
 // Pre-seeded admin user for testing (password: admin123)

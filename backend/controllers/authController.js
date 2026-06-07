@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { createUser, findByEmail } = require('../models/User')
 const { createChild } = require('../models/Child')
