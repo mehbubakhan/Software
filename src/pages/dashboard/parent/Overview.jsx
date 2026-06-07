@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../../../services/api'
 import { useAuth } from '../../../context/AuthContext'
-import ChildAuth from '../../../components/ChildAuth'
 
 export default function Overview() {
   const { user } = useAuth()
@@ -10,7 +9,6 @@ export default function Overview() {
   const [loading, setLoading] = useState(true)
   const [expandedWishlist, setExpandedWishlist] = useState(null)
   const [showMessageModal, setShowMessageModal] = useState(false)
-  const [showChildAuth, setShowChildAuth] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -76,7 +74,7 @@ export default function Overview() {
           <p className="text-slate-400 mt-2">Here's what's happening with your children today</p>
         </div>
         <button 
-          onClick={() => setShowChildAuth(true)}
+          onClick={() => navigate('/dashboard/child')}
           className="relative z-10 shrink-0 rounded-2xl bg-gradient-to-r from-fuchsia-600 to-pink-500 px-8 py-4 font-bold text-white shadow-[0_0_20px_rgba(192,38,211,0.5)] transition hover:scale-105 hover:shadow-[0_0_30px_rgba(192,38,211,0.7)] flex flex-col items-center gap-1"
         >
           <span className="text-2xl">🎮</span>
@@ -348,8 +346,6 @@ export default function Overview() {
         </div>
       )}
 
-      {/* Child Auth Modal */}
-      <ChildAuth isOpen={showChildAuth} onClose={() => setShowChildAuth(false)} onSuccess={() => navigate('/dashboard/child')} />
     </div>
   )
 }
