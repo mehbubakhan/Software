@@ -2,21 +2,19 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import FormInput from '../components/FormInput'
 import api from '../services/api'
-import { useAuth } from '../context/AuthContext'
 
 export default function DaycareSignup(){
   const [form, setForm] = useState({ name: '', email: '', password: '', daycareName: '' })
   const [submitting, setSubmitting] = useState(false)
   const navigate = useNavigate()
-  const { login } = useAuth()
 
   const submit = async e => {
     e.preventDefault()
     setSubmitting(true)
     try{
       await api.post('/auth/signup', { ...form, role: 'daycare' })
-      await login({ role: 'daycare', email: form.email, password: form.password })
-      navigate('/dashboard/admin')
+      alert('Registered - please login')
+      navigate('/login')
     }catch(err){
       const msg = err.response?.data?.message || err.response?.data?.error || err.message || 'Signup failed'
       alert(msg)
