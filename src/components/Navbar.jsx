@@ -28,16 +28,6 @@ export default function Navbar(){
         <div className="flex items-center gap-6">
           {user ? (
             <div className="flex items-center gap-5">
-              <button className="bg-[#e11d48] hover:bg-[#be123c] text-white px-4 py-1.5 sm:py-2 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 transition-all shadow-md hover:shadow-lg active:scale-95 mr-1">
-                <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">SOS Emergency</span>
-              </button>
-              <button className="text-slate-500 hover:text-fuchsia-600 transition relative">
-                <MessageCircle className="h-6 w-6" />
-              </button>
-              <button className="text-slate-500 hover:text-fuchsia-600 transition relative">
-                <Bell className="h-6 w-6" />
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">3</span>
-              </button>
               <div className="group relative">
                 <div className="flex items-center gap-3 cursor-pointer">
                   <img 
