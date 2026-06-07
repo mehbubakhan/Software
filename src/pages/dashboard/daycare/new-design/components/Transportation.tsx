@@ -11,6 +11,25 @@ import { Card, StatusBadge, Modal, Input, Select, Textarea, Btn, PageHeader, Ava
 import { mockVehicles as initial } from "./mockData";
 import type { Vehicle } from "./types";
 
+const VEHICLE_STORAGE_KEY = "daycare_transport_vehicles";
+
+function loadStoredVehicles() {
+  if (typeof window === "undefined") return null;
+  const raw = window.localStorage.getItem(VEHICLE_STORAGE_KEY);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as VehicleExt[];
+  } catch (err) {
+    console.error("Failed to parse stored vehicles", err);
+    return null;
+  }
+}
+
+function saveVehicles(vehicles: VehicleExt[]) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(VEHICLE_STORAGE_KEY, JSON.stringify(vehicles));
+}
+
 // ── Types ──────────────────────────────────────────────────────
 interface PickupRecord {
   id: string;
@@ -143,13 +162,32 @@ type ViewTab = "vehicles" | "schedule" | "pickups" | "drivers";
 const emptyForm = { name: "", plate: "", driver: "", driverPhone: "", route: "North Route", capacity: 10, children: [] as string[], status: "Active", driverLicense: "", vehicleType: "Bus", year: "2024", color: "Yellow", insurance: "" };
 
 export function Transportation() {
-  const [vehicles, setVehicles] = useState<VehicleExt[]>(() => initial.map(enrichVehicle));
+  const [vehicles, setVehicles] = useState<VehicleExt[]>(() => {
+    const stored = loadStoredVehicles();
+    return stored ? stored : initial.map(enrichVehicle);
+  });
 
   useEffect(() => {
+    const stored = loadStoredVehicles();
+    if (stored) {
+      setVehicles(stored);
+      return;
+    }
+
     api.get('/daycare/portal/transport')
-      .then((res: any) => setVehicles(res.data.map(enrichVehicle)))
-      .catch((err: any) => console.error(err));
+      .then((res: any) => {
+        const loaded = res.data?.map(enrichVehicle) ?? initial.map(enrichVehicle);
+        setVehicles(loaded);
+      })
+      .catch((err: any) => {
+        console.error(err);
+        setVehicles(initial.map(enrichVehicle));
+      });
   }, []);
+
+  useEffect(() => {
+    saveVehicles(vehicles);
+  }, [vehicles]);
   const [modal, setModal] = useState<ModalType>(null);
   const [selected, setSelected] = useState<VehicleExt | null>(null);
   const [form, setForm] = useState(emptyForm);

@@ -81,8 +81,108 @@ const TABS: { id: ReportTab; label: string }[] = [
   { id: "transport", label: "Transport" },
 ];
 
-function exportToast(type: string) {
-  alert(`Exporting ${type} report... In production this would download a file.`);
+function downloadFile(filename: string, content: string, mimeType: string) {
+  if (typeof window === "undefined") return;
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function formatCsv(rows: string[][]) {
+  return rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\r\n");
+}
+
+function getTabLabel(tab: ReportTab) {
+  return TABS.find(t => t.id === tab)?.label ?? "Report";
+}
+
+function buildExportRows(tab: ReportTab, period: string) {
+  const rows: string[][] = [["Report", getTabLabel(tab)], ["Period", period], []];
+
+  if (tab === "overview") {
+    rows.push(["KPI", "Value", "Change"]);
+    rows.push(["Total Children", "32", "+4 this month"]);
+    rows.push(["Attendance Rate", "94%", "+3% vs last month"]);
+    rows.push(["Monthly Revenue", "$30.6K", "+4% vs May"]);
+    rows.push(["Transport Usage", "72%", "23 of 32 children"]);
+    rows.push(["Parent Satisfaction", "4.7/5", "Based on 28 reviews"]);
+    rows.push(["Staff Performance", "91%", "Avg. score this month"]);
+  } else if (tab === "attendance") {
+    rows.push(["Metric", "Value", "Note"]);
+    rows.push(["Avg. Daily Attendance", "94%", "30 of 32 children daily"]);
+    rows.push(["Perfect Attendance", "12", "Children this month"]);
+    rows.push(["Chronic Absenteeism", "2", "Below 80% attendance"]);
+    rows.push([]);
+    rows.push(["Month", "Rate"]);
+    attendanceTrend.forEach(row => rows.push([row.month, `${row.rate}%`]));
+  } else if (tab === "financial") {
+    rows.push(["Metric", "Value", "Note"]);
+    rows.push(["Total Revenue", "$30.6K", "June 2026"]);
+    rows.push(["Outstanding", "$4.4K", "14% of total"]);
+    rows.push(["Collection Rate", "87%", "+2% vs last month"]);
+    rows.push(["Avg. Invoice", "$822", "Per family/month"]);
+    rows.push([]);
+    rows.push(["Month", "Collected", "Pending", "Total", "Rate"]);
+    monthlyBilling.forEach(row => {
+      const total = row.collected + row.pending;
+      const rate = Math.round((row.collected / total) * 100);
+      rows.push([row.month, `$${row.collected}`, `$${row.pending}`, `$${total}`, `${rate}%`]);
+    });
+  } else if (tab === "health") {
+    rows.push(["Metric", "Value", "Note"]);
+    rows.push(["Healthy Children", "28", "87.5% of total"]);
+    rows.push(["Under Watch", "5", "Temperature/Allergy"]);
+    rows.push(["On Medication", "4", "Active prescriptions"]);
+    rows.push(["Vaccinations Due", "3", "Due this month"]);
+    rows.push([]);
+    rows.push(["Status", "Count"]);
+    healthStats.forEach(row => rows.push([row.name, `${row.value}`]));
+  } else if (tab === "activities") {
+    rows.push(["Metric", "Value", "Note"]);
+    rows.push(["Activities Completed", "238", "This month"]);
+    rows.push(["Avg. Per Child", "7.4", "Activities/day"]);
+    rows.push(["Most Popular", "Outdoor Play", "55 completions"]);
+    rows.push([]);
+    rows.push(["Activity", "Completions"]);
+    activityPatterns.forEach(row => rows.push([row.activity, `${row.completions}`]));
+  } else if (tab === "transport") {
+    rows.push(["Metric", "Value", "Note"]);
+    rows.push(["Bus Users", "23", "72% of children"]);
+    rows.push(["Routes Active", "3", "Morning & Evening"]);
+    rows.push(["On-Time Rate", "94%", "This month"]);
+    rows.push(["Avg. Delay", "4 min", "When delayed"]);
+    rows.push([]);
+    rows.push(["Month", "Bus", "Self Pickup"]);
+    transportUsage.forEach(row => rows.push([row.month, `${row.bus}`, `${row.selfPickup}`]));
+  }
+
+  return rows;
+}
+
+function exportReport(format: "PDF" | "Excel" | "Print", tab: ReportTab, period: string) {
+  if (typeof window === "undefined") return;
+
+  if (format === "Print") {
+    window.print();
+    return;
+  }
+
+  if (format === "PDF") {
+    const rows = buildExportRows(tab, period);
+    const html = rows.map(row => row.join(" | ")).join("\n");
+    downloadFile(`${getTabLabel(tab).replace(/\s+/g, "_").toLowerCase()}_${period.replace(/\s+/g, "_").toLowerCase()}.pdf`, html, "application/pdf");
+    return;
+  }
+
+  const rows = buildExportRows(tab, period);
+  const csv = formatCsv(rows);
+  downloadFile(`${getTabLabel(tab).replace(/\s+/g, "_").toLowerCase()}_${period.replace(/\s+/g, "_").toLowerCase()}.csv`, csv, "text/csv;charset=utf-8;");
 }
 
 export function Analytics() {
@@ -123,13 +223,13 @@ export function Analytics() {
                 </div>
               )}
             </div>
-            <Btn variant="secondary" size="sm" onClick={() => exportToast("PDF")}>
+            <Btn variant="secondary" size="sm" onClick={() => exportReport("PDF", activeTab, period)}>
               <FileText size={14} /> PDF
             </Btn>
-            <Btn variant="secondary" size="sm" onClick={() => exportToast("Excel")}>
+            <Btn variant="secondary" size="sm" onClick={() => exportReport("Excel", activeTab, period)}>
               <Download size={14} /> Excel
             </Btn>
-            <Btn variant="secondary" size="sm" onClick={() => exportToast("Print")}>
+            <Btn variant="secondary" size="sm" onClick={() => exportReport("Print", activeTab, period)}>
               <Printer size={14} /> Print
             </Btn>
           </div>
@@ -333,7 +433,7 @@ export function Analytics() {
           <Card className="p-5">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-gray-700">Revenue Summary</h3>
-              <Btn variant="secondary" size="sm" onClick={() => exportToast("Financial Summary")}>
+              <Btn variant="secondary" size="sm" onClick={() => exportReport("Excel", activeTab, period)}>
                 <Download size={14} /> Export
               </Btn>
             </div>
