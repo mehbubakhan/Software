@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../../../context/AuthContext";
 import {
   LayoutDashboard, Users, UserPlus, UserCheck, UserCog,
   Monitor, Bus, Calendar, HeartPulse, CreditCard,
@@ -35,10 +37,17 @@ interface SidebarProps {
 
 export function Sidebar({ active, onSelect }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
+  const { logout } = useAuth() || {};
+
+  function handleLogout() {
+    logout?.();
+    navigate('/login');
+  }
 
   return (
     <aside
-      className={`flex flex-col h-screen bg-[#1e1b4b] text-white transition-all duration-300 shrink-0 ${collapsed ? "w-16" : "w-60"}`}
+      className={`flex flex-col h-screen bg-[#19163f] text-white transition-all duration-300 shrink-0 ${collapsed ? "w-16" : "w-60"}`}
     >
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 py-4 border-b border-white/10">
@@ -65,10 +74,10 @@ export function Sidebar({ active, onSelect }: SidebarProps) {
           <button
             key={item.id}
             onClick={() => onSelect(item.id)}
-            className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all relative group ${
+            className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all relative group rounded-lg ${
               active === item.id
-                ? "bg-[#6366f1] text-white"
-                : "text-white/60 hover:bg-white/10 hover:text-white"
+                ? "bg-[#4f46e5] text-white shadow-sm"
+                : "text-white/70 hover:bg-white/10 hover:text-white"
             }`}
           >
             <span className="shrink-0">{item.icon}</span>
@@ -96,7 +105,11 @@ export function Sidebar({ active, onSelect }: SidebarProps) {
 
       {/* Logout */}
       <div className="border-t border-white/10 p-3">
-        <button className="w-full flex items-center gap-3 px-1 py-2 text-white/50 hover:text-red-400 transition-colors">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+          aria-label="Logout"
+        >
           <LogOut size={18} className="shrink-0" />
           {!collapsed && <span className="text-sm">Logout</span>}
         </button>
