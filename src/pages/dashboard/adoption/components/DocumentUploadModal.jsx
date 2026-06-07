@@ -88,7 +88,7 @@ export default function DocumentUploadModal({ onClose, onUpload }) {
         });
       }, 200);
 
-      const response = await fetch('http://localhost:5001/api/upload', {
+      const response = await fetch('https://backend-pi-topaz-21.vercel.app/api/upload', {
         method: 'POST',
         body: data,
       });

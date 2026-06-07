@@ -13,7 +13,7 @@ export default function Schedule() {
 
   const fetchAvail = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/nanny/availability', {
+      const response = await fetch('https://backend-pi-topaz-21.vercel.app/api/nanny/availability', {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       const data = await response.json();
@@ -29,7 +29,7 @@ export default function Schedule() {
     const nextState = { ...availability, [day]: !availability[day] };
     setAvailability(nextState);
     try {
-      await fetch('http://localhost:5000/api/nanny/availability', {
+      await fetch('https://backend-pi-topaz-21.vercel.app/api/nanny/availability', {
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

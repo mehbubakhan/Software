@@ -87,7 +87,7 @@ export default function ApplyForWork() {
   const fetchJobs = async () => {
     try {
       // In a real app we'd fetch from api.get('/jobs/open')
-      const response = await fetch('http://localhost:5000/api/jobs/open', {
+      const response = await fetch('https://backend-pi-topaz-21.vercel.app/api/jobs/open', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
