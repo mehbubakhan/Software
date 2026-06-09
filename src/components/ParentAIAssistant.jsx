@@ -115,7 +115,7 @@ export default function ParentAIAssistant() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Ask me anything..."
-                className="w-full bg-[#f8fafc] border border-slate-200 rounded-full pl-4 pr-12 py-3 text-[14px] focus:outline-none focus:ring-2 focus:ring-[#a855f7]/50"
+                className="w-full bg-[#f8fafc] border border-slate-200 rounded-full pl-4 pr-12 py-3 text-[14px] text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#a855f7]/50"
                 disabled={isLoading}
               />
               <button 
