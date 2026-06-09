@@ -36,6 +36,9 @@ import ActiveJobs from '../pages/dashboard/nanny/ActiveJobs'
 import Verification from '../pages/dashboard/nanny/Verification'
 import Wellness from '../pages/dashboard/nanny/Wellness'
 import Settings from '../pages/dashboard/nanny/Settings'
+import PostJob from '../pages/dashboard/nanny/PostJob'
+import Compatibility from '../pages/dashboard/nanny/Compatibility'
+import SOS from '../pages/dashboard/nanny/SOS'
 import ProtectedRoute from '../components/ProtectedRoute'
 import RoleRedirect from '../components/RoleRedirect'
 import ChildDashboard from '../pages/dashboard/ChildDashboard'
@@ -84,10 +87,12 @@ export default function AppRoutes(){
         <Route path="update" element={<Update/>} />
         <Route path="applications" element={<Applications/>} />
         <Route path="apply" element={<ApplyForWork/>} />
+        <Route path="post-job" element={<PostJob/>} />
         <Route path="profile" element={<Profile/>} />
         <Route path="availability" element={<Availability/>} />
+        <Route path="compatibility" element={<Compatibility/>} />
         <Route path="safety" element={<Safety/>} />
-        <Route path="sos" element={<Safety/>} />
+        <Route path="sos" element={<SOS/>} />
         <Route path="communication" element={<Communication/>} />
         <Route path="reviews" element={<Reviews/>} />
         <Route path="payments" element={<Payments/>} />

@@ -142,4 +142,97 @@ const getPayments = async (req, res) => {
   return res.json({ ok: true, data: paymentsData });
 }
 
-module.exports = { saveProfile, getProfile, saveAvailability, getAvail, getAgencies, getIndividualNannies, getFeaturedNannies, getNannyDetails, getPayments }
+// --- NEW FEATURE CONTROLLERS ---
+
+const { createJob, findAllOpen } = require('../models/NannyJob')
+const { startShift, endShift, getActiveShift } = require('../models/Shift')
+const { logSafetyCheckin } = require('../models/Safety')
+const { sendSos } = require('../models/Sos')
+
+const postNannyJob = async (req, res) => {
+  try {
+    const nanny_id = req.user.id
+    const { title, description, availability_date } = req.body
+    const job = await createJob({ nanny_id, title, description, availability_date })
+    return res.json({ ok: true, data: job })
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: err.message })
+  }
+}
+
+const getNannyJobs = async (req, res) => {
+  try {
+    const jobs = await findAllOpen()
+    return res.json({ ok: true, data: jobs })
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: err.message })
+  }
+}
+
+const startNannyShift = async (req, res) => {
+  try {
+    const nanny_id = req.user.id
+    const { job_id } = req.body
+    const shift = await startShift({ nanny_id, job_id })
+    return res.json({ ok: true, data: shift })
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: err.message })
+  }
+}
+
+const endNannyShift = async (req, res) => {
+  try {
+    const nanny_id = req.user.id
+    const { shift_id } = req.body
+    const shift = await endShift(shift_id, nanny_id)
+    return res.json({ ok: true, data: shift })
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: err.message })
+  }
+}
+
+const safetyCheckin = async (req, res) => {
+  try {
+    const nanny_id = req.user.id
+    const { status, location } = req.body
+    const log = await logSafetyCheckin({ nanny_id, status, location })
+    return res.json({ ok: true, data: log })
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: err.message })
+  }
+}
+
+const triggerSos = async (req, res) => {
+  try {
+    const nanny_id = req.user.id
+    const { lat, lng, message } = req.body
+    const sos = await sendSos({ nanny_id, lat, lng, message })
+    return res.json({ ok: true, data: sos })
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: err.message })
+  }
+}
+
+const getWellnessTools = async (req, res) => {
+  const wellnessData = {
+    stressLevel: 'Low',
+    tips: [
+      'Take deep breaths for 5 minutes',
+      'Listen to relaxing music',
+      'Stay hydrated'
+    ],
+    sessions: [
+      { id: 1, title: 'Breathing Exercises', duration: '10 mins' },
+      { id: 2, title: 'Mindful Meditation', duration: '15 mins' }
+    ]
+  };
+  return res.json({ ok: true, data: wellnessData });
+}
+
+module.exports = { 
+  saveProfile, getProfile, saveAvailability, getAvail, 
+  getAgencies, getIndividualNannies, getFeaturedNannies, 
+  getNannyDetails, getPayments,
+  postNannyJob, getNannyJobs, startNannyShift, endNannyShift,
+  safetyCheckin, triggerSos, getWellnessTools
+}

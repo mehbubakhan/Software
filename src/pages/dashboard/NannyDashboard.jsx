@@ -15,7 +15,9 @@ import {
   ClipboardList,
   CheckCircle,
   Heart,
-  Settings
+  Settings,
+  PlusCircle,
+  HeartHandshake
 } from 'lucide-react';
 
 const navGroups = [
@@ -24,9 +26,11 @@ const navGroups = [
     items: [
       { label: 'Dashboard Overview', path: '/dashboard/nanny', icon: Home },
       { label: 'Job Feed', path: '/dashboard/nanny/apply', icon: Briefcase, badge: 12 },
+      { label: 'Post Job', path: '/dashboard/nanny/post-job', icon: PlusCircle },
       { label: 'Applications', path: '/dashboard/nanny/applications', icon: ClipboardList },
       { label: 'Active Jobs', path: '/dashboard/nanny/active-jobs', icon: MapPin, dot: true },
-      { label: 'Schedule', path: '/dashboard/nanny/availability', icon: Calendar }
+      { label: 'Schedule', path: '/dashboard/nanny/availability', icon: Calendar },
+      { label: 'Child Compatibility', path: '/dashboard/nanny/compatibility', icon: HeartHandshake }
     ]
   },
   {
