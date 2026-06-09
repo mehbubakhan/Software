@@ -11,6 +11,29 @@ import OrphanageManagerSignup from '../pages/OrphanageManagerSignup'
 import RoleSignup from '../pages/RoleSignup'
 import ParentDashboard from '../pages/dashboard/ParentDashboard'
 import AdminDashboard from '../pages/dashboard/AdminDashboard'
+import AdminOverview from '../pages/dashboard/admin/Overview'
+import UserManagement from '../pages/dashboard/admin/UserManagement'
+import AdminVerification from '../pages/dashboard/admin/VerificationCenter'
+import AdminComplaints from '../pages/dashboard/admin/Complaints'
+import AdminPayments from '../pages/dashboard/admin/Payments'
+import EmergencyCenter from '../pages/dashboard/admin/EmergencyCenter'
+import DaycareManagement from '../pages/dashboard/admin/DaycareManagement'
+import NannyManagement from '../pages/dashboard/admin/NannyManagement'
+import ParentManagement from '../pages/dashboard/admin/ParentManagement'
+import Analytics from '../pages/dashboard/admin/Analytics'
+import Notifications from '../pages/dashboard/admin/Notifications'
+import AdminSettings from '../pages/dashboard/admin/Settings'
+import AdoptionManagement from '../pages/dashboard/admin/AdoptionManagement'
+import MarketplaceManagement from '../pages/dashboard/admin/MarketplaceManagement'
+
+import ParentApproval from '../pages/dashboard/admin/ParentApproval'
+import NannyApproval from '../pages/dashboard/admin/NannyApproval'
+import DaycareApproval from '../pages/dashboard/admin/DaycareApproval'
+import MarketplaceApproval from '../pages/dashboard/admin/MarketplaceApproval'
+import AdoptionApproval from '../pages/dashboard/admin/AdoptionApproval'
+import ChildMonitoring from '../pages/dashboard/admin/ChildMonitoring'
+import TransportMonitoring from '../pages/dashboard/admin/TransportMonitoring'
+import AdminReviews from '../pages/dashboard/admin/AdminReviews'
 import NannyDashboard from '../pages/dashboard/NannyDashboard'
 import Overview from '../pages/dashboard/nanny/Overview'
 import OrphanageApp from '../pages/dashboard/orphanage/components/OrphanageApp'
@@ -69,7 +92,32 @@ export default function AppRoutes(){
       <Route path="/dashboard/daycare/*" element={<ProtectedRoute roles={["daycare", "admin"]}><DaycareApp/></ProtectedRoute>} />
       
       <Route path="/adoption" element={<AdoptionLanding/>} />
-      <Route path="/dashboard/admin/*" element={<ProtectedRoute roles={["admin"]}><AdminDashboard/></ProtectedRoute>} />
+      <Route path="/dashboard/admin/*" element={<ProtectedRoute roles={["admin"]}><AdminDashboard/></ProtectedRoute>}>
+        <Route index element={<AdminOverview />} />
+        <Route path="users" element={<UserManagement />} />
+        <Route path="verifications" element={<AdminVerification />} />
+        <Route path="complaints" element={<AdminComplaints />} />
+        <Route path="payments" element={<AdminPayments />} />
+        <Route path="sos" element={<EmergencyCenter />} />
+        <Route path="daycares" element={<DaycareManagement />} />
+        <Route path="nannies" element={<NannyManagement />} />
+        <Route path="parents" element={<ParentManagement />} />
+        <Route path="analytics" element={<Analytics />} />
+        <Route path="notifications" element={<Notifications />} />
+        <Route path="settings" element={<AdminSettings />} />
+        <Route path="adoption" element={<AdoptionManagement />} />
+        <Route path="marketplace" element={<MarketplaceManagement />} />
+
+        {/* New Approval & Monitoring Routes */}
+        <Route path="parent-approval" element={<ParentApproval />} />
+        <Route path="nanny-approval" element={<NannyApproval />} />
+        <Route path="daycare-approval" element={<DaycareApproval />} />
+        <Route path="marketplace-approval" element={<MarketplaceApproval />} />
+        <Route path="adoption-approval" element={<AdoptionApproval />} />
+        <Route path="child-monitoring" element={<ChildMonitoring />} />
+        <Route path="transport-monitoring" element={<TransportMonitoring />} />
+        <Route path="reviews" element={<AdminReviews />} />
+      </Route>
       
       {/* Orphanage Dashboard Routes */}
       <Route path="/dashboard/adoption/*" element={<ProtectedRoute roles={["orphanage_manager", "counsellor", "verification_officer", "legal_officer", "super_admin"]}><OrphanageApp/></ProtectedRoute>} />

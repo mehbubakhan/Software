@@ -346,11 +346,13 @@ function SettingsView() {
   )
 }
 
+import ParentAIAssistant from '../../components/ParentAIAssistant'
+
 export default function ParentDashboard() {
   return (
     <div className="min-h-[calc(100vh-68px)] bg-[#0B0E14] text-white md:flex">
       <Sidebar items={items} variant="parent-workspace" />
-      <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
+      <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8 relative">
         <Routes>
           <Route index element={<Overview />} />
           <Route path="profile" element={<ProfileView />} />
@@ -371,6 +373,7 @@ export default function ParentDashboard() {
           <Route path="schedule" element={<FamilySchedule />} />
           <Route path="settings" element={<SettingsView />} />
         </Routes>
+        <ParentAIAssistant />
       </main>
     </div>
   )
