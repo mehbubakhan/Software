@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react'
 import Sidebar from '../../components/Sidebar'
 import { useAuth } from '../../context/AuthContext'
 import api from '../../services/api'
+import AIAssistant from '../../components/AIAssistant'
 
 const items = [
   { label: 'Marketplace Overview', path: '/dashboard/marketplace-seller' },
@@ -414,6 +415,7 @@ export default function MarketplaceSellerDashboard() {
             ))}
           </div>
         </Section>
+        <AIAssistant role="seller" />
       </main>
     </div>
   )

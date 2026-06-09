@@ -346,7 +346,7 @@ function SettingsView() {
   )
 }
 
-import ParentAIAssistant from '../../components/ParentAIAssistant'
+import AIAssistant from '../../components/AIAssistant';
 
 export default function ParentDashboard() {
   return (
@@ -373,7 +373,7 @@ export default function ParentDashboard() {
           <Route path="schedule" element={<FamilySchedule />} />
           <Route path="settings" element={<SettingsView />} />
         </Routes>
-        <ParentAIAssistant />
+        <AIAssistant role="parent" />
       </main>
     </div>
   )

@@ -2,10 +2,23 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, X, Send, Bot, User, Loader2 } from 'lucide-react';
 import api from '../services/api';
 
-export default function ParentAIAssistant() {
+export default function AIAssistant({ role = 'parent' }) {
+  const getRoleDetails = (role) => {
+    switch (role) {
+      case 'nanny': return { title: 'Nanny Assistant', greeting: 'Hi there! I am your AI Nanny Assistant. How can I help you manage your career or find the perfect job today?' };
+      case 'daycare': return { title: 'Daycare Assistant', greeting: 'Hello! I am your AI Daycare Assistant. How can I assist you with facility management or licensing today?' };
+      case 'adoption': return { title: 'Adoption Assistant', greeting: 'Welcome! I am your AI Adoption Assistant. Do you have any questions about the adoption process or requirements?' };
+      case 'seller': return { title: 'Seller Assistant', greeting: 'Hi! I am your AI Seller Assistant. How can I help you optimize your marketplace listings today?' };
+      case 'admin': return { title: 'Admin Assistant', greeting: 'Greetings Admin. I am your AI Assistant. How can I assist you with platform moderation today?' };
+      default: return { title: 'Parent Assistant', greeting: 'Hi there! I am your AI Childcare Assistant. How can I help you with your little ones today?' };
+    }
+  };
+
+  const { title, greeting } = getRoleDetails(role);
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Hi there! I am your AI Childcare Assistant. How can I help you with your little ones today?' }
+    { role: 'assistant', content: greeting }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +42,7 @@ export default function ParentAIAssistant() {
     setIsLoading(true);
 
     try {
-      const response = await api.post('/ai/chat', { messages: updatedMessages });
+      const response = await api.post('/ai/chat', { messages: updatedMessages, role });
       if (response.data.ok) {
         setMessages(prev => [...prev, { role: 'assistant', content: response.data.reply }]);
       } else {
@@ -39,7 +52,7 @@ export default function ParentAIAssistant() {
       console.error(error);
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: 'I am so sorry, but I am having trouble connecting to my brain right now. Please make sure the GEMINI_API_KEY is configured in the backend!' 
+        content: 'I am so sorry, but I am having trouble connecting to my brain right now.' 
       }]);
     } finally {
       setIsLoading(false);
@@ -69,7 +82,7 @@ export default function ParentAIAssistant() {
                 <Bot className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-[15px]">Parent Assistant</h3>
+                <h3 className="font-bold text-[15px]">{title}</h3>
                 <p className="text-[11px] font-medium text-white/80">Always here to help</p>
               </div>
             </div>
@@ -127,7 +140,7 @@ export default function ParentAIAssistant() {
               </button>
             </div>
             <p className="text-center text-[10px] text-slate-400 font-medium mt-2">
-              AI responses can be inaccurate. Please consult a doctor for medical issues.
+              AI responses can be inaccurate. Please verify important information.
             </p>
           </div>
         </div>
