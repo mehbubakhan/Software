@@ -81,12 +81,22 @@ export default function Applications() {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       const data = await response.json();
-      if(data.ok && data.data) {
+      if(data.ok && data.data && data.data.length > 0) {
         setApplications(data.data);
       } else {
-        setApplications(initialApplications);
+        loadLocalApplications();
       }
     } catch (err) {
+      loadLocalApplications();
+    }
+  };
+
+  const loadLocalApplications = () => {
+    const local = localStorage.getItem('nanny_applications');
+    if (local) {
+      setApplications(JSON.parse(local));
+    } else {
+      localStorage.setItem('nanny_applications', JSON.stringify(initialApplications));
       setApplications(initialApplications);
     }
   };
@@ -119,7 +129,9 @@ export default function Applications() {
 
   const handleWithdraw = (id) => {
     if(window.confirm('Are you sure you want to withdraw this application?')) {
-      setApplications(applications.filter(app => app.id !== id));
+      const updated = applications.filter(app => app.id !== id);
+      setApplications(updated);
+      localStorage.setItem('nanny_applications', JSON.stringify(updated));
     }
   };
 

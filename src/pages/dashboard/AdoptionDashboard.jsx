@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { toast, Toaster } from 'sonner';
-import AIAssistant from '../../components/AIAssistant';
 
 // Import services
 import {
@@ -295,7 +294,6 @@ export default function AdoptionDashboard() {
         {activeModal && (
           <QuickActionModal action={activeModal} onClose={() => setActiveModal(null)} />
         )}
-        <AIAssistant role="adoption" />
       </div>
     </>
   );

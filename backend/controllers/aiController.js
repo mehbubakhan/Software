@@ -40,19 +40,35 @@ const chatWithParent = async (req, res) => {
 
     const conversation = [systemPrompt, ...messages];
 
-    // Use Groq's extremely fast model
-    const response = await groq.chat.completions.create({
+    // Use Groq's extremely fast model with streaming enabled
+    const stream = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       messages: conversation,
+      stream: true,
     });
 
-    res.json({
-      ok: true,
-      reply: response.choices[0].message.content
-    });
+    // Set headers for Server-Sent Events (SSE)
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    // Stream the response
+    for await (const chunk of stream) {
+      const content = chunk.choices[0]?.delta?.content || "";
+      if (content) {
+        res.write(`data: ${JSON.stringify({ content })}\n\n`);
+      }
+    }
+
+    res.write('data: [DONE]\n\n');
+    res.end();
   } catch (error) {
     console.error("Groq Chat Error:", error.message);
-    res.status(500).json({ ok: false, error: error.message });
+    if (!res.headersSent) {
+      res.status(500).json({ ok: false, error: error.message });
+    } else {
+      res.end();
+    }
   }
 };
 

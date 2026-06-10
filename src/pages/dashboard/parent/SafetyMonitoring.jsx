@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react'
 import api from '../../../services/api'
 import { useRealGPS } from '../../../hooks/useRealGPS'
 
+import LiveMap from './LiveMap'
+
 export default function SafetyMonitoring() {
   const [activeTab, setActiveTab] = useState('gps')
-  const { location: realLocation, error: gpsError, isTracking } = useRealGPS(activeTab === 'gps')
+  const { location: realLocation, pathHistory, error: gpsError, isTracking } = useRealGPS(activeTab === 'gps', 'receiver')
 
   const [childLocation, setChildLocation] = useState({
     name: 'Emma',
@@ -120,20 +122,26 @@ export default function SafetyMonitoring() {
             </button>
           </div>
 
-          {/* Map Simulation */}
-          <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-lg p-8 h-80 flex items-center justify-center relative overflow-hidden">
-            <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-400 to-transparent"></div>
-            <div className="text-center relative z-10">
-              <div className="text-6xl mb-4">{isTracking ? '📡' : trackingTarget === 'child' ? '📍' : '🚙'}</div>
-              <p className="text-xl font-semibold text-slate-900">Live GPS Map</p>
+          {/* Smooth Leaflet Map */}
+          <div className="border-2 border-slate-200 rounded-lg h-80 relative overflow-hidden bg-slate-100 z-0">
+            <LiveMap 
+              currentLat={displayLat} 
+              currentLng={displayLng} 
+              pathHistory={pathHistory || []} 
+            />
+            
+            {/* Overlay Status Bubble */}
+            <div className="absolute top-4 right-4 z-[400] bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-lg border border-slate-200">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Status</p>
               {gpsError ? (
-                <p className="text-red-500 font-semibold">{gpsError}</p>
+                <p className="text-red-500 font-bold text-sm">{gpsError}</p>
               ) : (
-                <>
-                  <p className="text-slate-600 font-mono mt-2">Lat: {displayLat}°N<br/>Lng: {displayLng}°W</p>
-                  <p className="text-slate-500 text-sm mt-1">Last updated: {displayTime}</p>
-                  {isTracking && <span className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> ACTIVE CONNECTION</span>}
-                </>
+                <div className="flex items-center gap-2">
+                  {isTracking ? <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> : <span className="w-2.5 h-2.5 rounded-full bg-slate-400"></span>}
+                  <span className="text-sm font-bold text-slate-700">
+                    {isTracking ? 'Active Connection' : 'Offline / Static'}
+                  </span>
+                </div>
               )}
             </div>
           </div>

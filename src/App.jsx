@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext'
 import { ToastProvider } from './context/ToastContext'
 import Navbar from './components/Navbar'
 import AppRoutes from './routes/Routes'
+import AIAssistant from './components/AIAssistant'
 import { useAuth } from './context/AuthContext'
 
 function Shell(){
@@ -18,6 +19,7 @@ function Shell(){
     <div className="min-h-screen bg-auth-splash text-slate-900">
       {showNavbar ? <Navbar /> : null}
       <AppRoutes />
+      {user && <AIAssistant />}
     </div>
   )
 }

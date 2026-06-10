@@ -22,4 +22,5 @@ router.use('/admin', require('./admin'))
 router.use('/child', require('./childModeRoutes'))
 router.use('/upload', require('./upload'))
 router.use('/ai', require('./ai'))
+router.use('/gps', require('./gps'))
 module.exports = router

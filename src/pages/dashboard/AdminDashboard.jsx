@@ -6,7 +6,6 @@ import {
   ClipboardList, Video, LifeBuoy, CreditCard, Bell, 
   BarChart2, Settings, LogOut, FileText, Baby, ShoppingCart, Star
 } from 'lucide-react'
-import AIAssistant from '../../components/AIAssistant'
 
 const navGroups = [
   {
@@ -107,7 +106,6 @@ export default function AdminDashboard() {
         {/* Content Area */}
         <main className="flex-1 overflow-y-auto p-6 md:p-8 lg:p-10 relative">
           <Outlet />
-          <AIAssistant role="admin" />
         </main>
       </div>
     </div>

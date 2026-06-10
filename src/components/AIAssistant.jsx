@@ -1,8 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, X, Send, Bot, User, Loader2, Volume2, Mic, MicOff } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import api from '../services/api';
 
-export default function AIAssistant({ role = 'parent' }) {
+export default function AIAssistant({ role: propRole }) {
+  const location = useLocation();
+  const role = propRole || (() => {
+    const path = location.pathname;
+    if (path.includes('/dashboard/nanny')) return 'nanny';
+    if (path.includes('/dashboard/daycare')) return 'daycare';
+    if (path.includes('/dashboard/adoption')) return 'adoption';
+    if (path.includes('/dashboard/marketplace') || path.includes('/seller')) return 'seller';
+    if (path.includes('/dashboard/admin')) return 'admin';
+    return 'parent';
+  })();
   const getRoleDetails = (role) => {
     switch (role) {
       case 'nanny': return { title: 'Nanny Assistant', greeting: 'Hi there! I am your AI Nanny Assistant. How can I help you manage your career or find the perfect job today?' };
@@ -91,18 +102,59 @@ export default function AIAssistant({ role = 'parent' }) {
     setIsLoading(true);
 
     try {
-      const response = await api.post('/ai/chat', { messages: updatedMessages, role });
-      if (response.data.ok) {
-        setMessages(prev => [...prev, { role: 'assistant', content: response.data.reply }]);
-      } else {
-        throw new Error(response.data.error || 'Failed to get response');
+      // Add a placeholder message for the AI's streaming response
+      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+      
+      const response = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        body: JSON.stringify({ messages: updatedMessages, role })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let done = false;
+      let aiReply = '';
+
+      while (!done) {
+        const { value, done: readerDone } = await reader.read();
+        done = readerDone;
+        if (value) {
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split('\n').filter(line => line.trim() !== '');
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const dataStr = line.substring(6);
+              if (dataStr === '[DONE]') break;
+              try {
+                const data = JSON.parse(dataStr);
+                aiReply += data.content;
+                setMessages(prev => {
+                  const newMsg = [...prev];
+                  newMsg[newMsg.length - 1].content = aiReply;
+                  return newMsg;
+                });
+              } catch (e) {
+                // Ignore parse errors on incomplete chunks
+              }
+            }
+          }
+        }
       }
     } catch (error) {
       console.error(error);
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: 'I am so sorry, but I am having trouble connecting to my brain right now.' 
-      }]);
+      setMessages(prev => {
+        const newMsg = [...prev];
+        newMsg[newMsg.length - 1].content = 'I am so sorry, but I am having trouble connecting to my brain right now.';
+        return newMsg;
+      });
     } finally {
       setIsLoading(false);
     }

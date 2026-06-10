@@ -1,6 +1,5 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import AIAssistant from '../../components/AIAssistant';
 import { 
   Home, 
   Briefcase, 
@@ -117,7 +116,6 @@ export default function NannyDashboard() {
         {/* Content Area */}
         <main className="flex-1 overflow-y-auto p-6 md:p-8 lg:p-10 relative">
           <Outlet />
-          <AIAssistant role="nanny" />
         </main>
       </div>
     </div>

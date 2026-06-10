@@ -105,9 +105,37 @@ export default function ApplyForWork() {
 
   const handleApply = async (id) => {
     try {
-      // In a real app we'd call api.post('/jobs/apply', { job_id: id })
-      setJobs(jobs.map(job => 
-        job.id === id ? { ...job, applied: true } : job
+      // Find the job to apply for
+      const job = jobs.find(j => j.id === id);
+      
+      if (job) {
+        // Save to localStorage so it syncs with Applications tab
+        const local = localStorage.getItem('nanny_applications');
+        let currentApps = [];
+        if (local) {
+          try {
+            currentApps = JSON.parse(local);
+          } catch(e) {}
+        }
+        
+        // Prevent duplicate applies locally
+        if (!currentApps.some(app => app.family === job.family && app.role === job.salary.type)) {
+          const newApp = {
+            id: Date.now(),
+            family: job.family,
+            location: job.location,
+            role: job.salary.type,
+            salary: job.salary.amount,
+            appliedDate: 'Just now',
+            status: 'Pending'
+          };
+          
+          localStorage.setItem('nanny_applications', JSON.stringify([newApp, ...currentApps]));
+        }
+      }
+
+      setJobs(jobs.map(j => 
+        j.id === id ? { ...j, applied: true } : j
       ));
       alert('Applied successfully!');
     } catch(err) {
