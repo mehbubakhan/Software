@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../../../services/api'
 import { useAuth } from '../../../context/AuthContext'
+import AddChildModal from './components/AddChildModal'
 
 export default function Overview() {
   const { user } = useAuth()
@@ -9,21 +10,24 @@ export default function Overview() {
   const [loading, setLoading] = useState(true)
   const [expandedWishlist, setExpandedWishlist] = useState(null)
   const [showMessageModal, setShowMessageModal] = useState(false)
+  const [showAddChild, setShowAddChild] = useState(false)
+  const [editingChild, setEditingChild] = useState(null)
   const navigate = useNavigate()
 
-  useEffect(() => {
-    const fetchOverview = async () => {
-      try {
-        const res = await api.get('/dashboard/parent/overview')
-        if (res.data && res.data.ok) {
-          setData(res.data.data)
-        }
-      } catch (error) {
-        console.error('Failed to fetch parent overview:', error)
-      } finally {
-        setLoading(false)
+  const fetchOverview = async () => {
+    try {
+      const res = await api.get('/dashboard/parent/overview')
+      if (res.data && res.data.ok) {
+        setData(res.data.data)
       }
+    } catch (error) {
+      console.error('Failed to fetch parent overview:', error)
+    } finally {
+      setLoading(false)
     }
+  }
+
+  useEffect(() => {
     fetchOverview()
   }, [])
 
@@ -96,7 +100,19 @@ export default function Overview() {
                   <p className="text-sm text-slate-400">{child.age}</p>
                 </div>
               </div>
-              <button className="text-slate-400 hover:text-white">♡</button>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => {
+                    setEditingChild(child)
+                    setShowAddChild(true)
+                  }}
+                  className="w-8 h-8 rounded-full bg-slate-800/50 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition"
+                  title="Edit Profile"
+                >
+                  ✏️
+                </button>
+                <button className="text-slate-400 hover:text-white">♡</button>
+              </div>
             </div>
 
             <div className="space-y-4 mb-5">
@@ -128,6 +144,23 @@ export default function Overview() {
             </Link>
           </div>
         ))}
+        
+        {/* Add Child Card */}
+        <div 
+          onClick={() => {
+            setEditingChild(null)
+            setShowAddChild(true)
+          }}
+          className="bg-[#1A1D27] border-2 border-dashed border-[#2A2E3D] rounded-3xl p-5 hover:border-fuchsia-500/50 hover:bg-fuchsia-500/5 transition cursor-pointer flex flex-col items-center justify-center min-h-[250px]"
+        >
+          <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center text-3xl mb-4 text-slate-400">
+            +
+          </div>
+          <h3 className="font-bold text-white text-lg">Add Another Child</h3>
+          <p className="text-slate-400 text-sm text-center mt-2 max-w-[200px]">
+            Add a child to track their activities and connect with nannies.
+          </p>
+        </div>
       </div>
 
       {/* Stats Grid */}
@@ -345,6 +378,17 @@ export default function Overview() {
           </div>
         </div>
       )}
+
+      {/* Add/Edit Child Modal */}
+      <AddChildModal 
+        isOpen={showAddChild} 
+        initialData={editingChild}
+        onClose={() => {
+          setShowAddChild(false)
+          setEditingChild(null)
+        }} 
+        onSuccess={fetchOverview} 
+      />
 
     </div>
   )

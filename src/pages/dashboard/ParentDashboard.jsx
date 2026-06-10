@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, Link, useNavigate } from 'react-router-dom'
 import api from '../../services/api'
 import Sidebar from '../../components/Sidebar'
 import { useAuth } from '../../context/AuthContext'
+import AddChildModal from './parent/components/AddChildModal'
+import PaymentMethodsModal from './parent/components/PaymentMethodsModal'
+import DeactivateAccountModal from './parent/components/DeactivateAccountModal'
 import Overview from './parent/Overview'
 import HireNanny from './parent/HireNanny'
 import DaycareLayout from './parent/DaycareLayout'
@@ -242,9 +245,10 @@ function MessagesView() {
 }
 
 
-
-
 function SettingsView() {
+  const [showAddChild, setShowAddChild] = useState(false)
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false)
   const [settings, setSettings] = useState({
     emailAlerts: true,
     smsAlerts: false,
@@ -331,17 +335,44 @@ function SettingsView() {
       <div className="pt-6 border-t border-[#2A2E3D]">
         <h2 className="text-xl font-bold text-white mb-4">Account Actions</h2>
         <div className="flex flex-wrap gap-4">
+          <button 
+            onClick={() => setShowAddChild(true)}
+            className="px-5 py-2.5 bg-fuchsia-600 border border-fuchsia-500 text-white rounded-xl hover:bg-fuchsia-500 transition font-semibold"
+          >
+            Add Child
+          </button>
           <button className="px-5 py-2.5 bg-[#151821] border border-[#2A2E3D] text-white rounded-xl hover:bg-slate-800 transition font-semibold">
             Change Password
           </button>
-          <button className="px-5 py-2.5 bg-[#151821] border border-[#2A2E3D] text-white rounded-xl hover:bg-slate-800 transition font-semibold">
+          <button 
+            onClick={() => setShowPaymentModal(true)}
+            className="px-5 py-2.5 bg-[#151821] border border-[#2A2E3D] text-white rounded-xl hover:bg-slate-800 transition font-semibold"
+          >
             Manage Payment Methods
           </button>
-          <button className="px-5 py-2.5 bg-red-950/30 border border-red-900/50 text-red-400 rounded-xl hover:bg-red-900/40 transition font-semibold ml-auto">
+          <button 
+            onClick={() => setShowDeactivateModal(true)}
+            className="px-5 py-2.5 bg-red-950/30 border border-red-900/50 text-red-400 rounded-xl hover:bg-red-900/40 transition font-semibold ml-auto"
+          >
             Deactivate Account
           </button>
         </div>
       </div>
+
+      {/* Modals */}
+      <AddChildModal 
+        isOpen={showAddChild} 
+        onClose={() => setShowAddChild(false)} 
+        onSuccess={() => alert("Child added successfully! Please refresh or go to Overview to see changes.")} 
+      />
+      <PaymentMethodsModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+      />
+      <DeactivateAccountModal
+        isOpen={showDeactivateModal}
+        onClose={() => setShowDeactivateModal(false)}
+      />
     </div>
   )
 }
