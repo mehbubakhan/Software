@@ -16,36 +16,111 @@ export default function AdoptionDashboard() {
             </div>
           </div>
           <h1 className="text-4xl font-bold text-white mb-4">Baby Adoption Center</h1>
-          <p className="text-slate-400 max-w-2xl mx-auto">Open your heart and home to a child in need. Our adoption program connects loving families with children from licensed orphanages.</p>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-8">Open your heart and home to a child in need. Our adoption program connects loving families with children from licensed orphanages.</p>
+          
+          <div className="flex flex-wrap justify-center gap-4">
+            <button onClick={() => navigate('children')} className="bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold py-4 px-10 rounded-2xl transition shadow-lg shadow-fuchsia-600/30 flex items-center gap-3 text-lg">
+              <span className="text-2xl">👥</span> Browse Children
+            </button>
+            <button onClick={() => navigate('orphanages')} className="bg-[#1a1c2d] hover:bg-slate-800 border border-slate-700 text-white font-bold py-4 px-10 rounded-2xl transition flex items-center gap-3 text-lg">
+              <span className="text-2xl">🏢</span> Licensed Orphanages
+            </button>
+          </div>
         </div>
 
-        {/* Action Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div 
-            onClick={() => navigate('children')}
-            className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-6 cursor-pointer hover:border-fuchsia-500 transition group"
-          >
-            <div className="text-3xl mb-4 group-hover:scale-110 transition-transform">👥</div>
-            <h3 className="text-xl font-bold text-white mb-2">Browse Children</h3>
-            <p className="text-sm text-slate-400">Explore profiles of children available for adoption.</p>
+        {/* Dashboard Overview Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          {/* Card 1 — Saved Children */}
+          <div className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-6 flex flex-col hover:border-fuchsia-500 transition">
+            <div className="flex justify-between items-start mb-4">
+              <div className="text-3xl">❤️</div>
+              <span className="bg-fuchsia-500/20 text-fuchsia-400 text-xs px-2 py-1 rounded-full font-bold border border-fuchsia-500/30">4 Saved</span>
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Saved Children</h3>
+            <p className="text-sm text-slate-400 mb-6 flex-1">You recently viewed Emma and Liam. Keep track of your favorite profiles here.</p>
+            <button onClick={() => navigate('children')} className="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2.5 rounded-xl transition text-sm">
+              View Saved Profiles
+            </button>
           </div>
 
-          <div 
-            onClick={() => navigate('orphanages')}
-            className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-6 cursor-pointer hover:border-fuchsia-500 transition group"
-          >
-            <div className="text-3xl mb-4 group-hover:scale-110 transition-transform">🏢</div>
-            <h3 className="text-xl font-bold text-white mb-2">Licensed Orphanages</h3>
-            <p className="text-sm text-slate-400">Explore verified and licensed care facilities.</p>
+          {/* Card 2 — Active Applications */}
+          <div className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-6 flex flex-col hover:border-fuchsia-500 transition">
+            <div className="flex justify-between items-start mb-4">
+              <div className="text-3xl">📋</div>
+              <span className="bg-blue-500/20 text-blue-400 text-xs px-2 py-1 rounded-full font-bold border border-blue-500/30">1 Active</span>
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Active Applications</h3>
+            <p className="text-sm text-slate-400 mb-6 flex-1">Your application for Emma Stone is currently <strong className="text-slate-300">Under Review</strong>.</p>
+            <button onClick={() => navigate('applications')} className="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2.5 rounded-xl transition text-sm">
+              Track Application
+            </button>
           </div>
 
-          <div 
-            onClick={() => navigate('applications')}
-            className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-6 cursor-pointer hover:border-fuchsia-500 transition group"
-          >
-            <div className="text-3xl mb-4 group-hover:scale-110 transition-transform">📋</div>
-            <h3 className="text-xl font-bold text-white mb-2">My Applications</h3>
-            <p className="text-sm text-slate-400">Track your adoption application status.</p>
+          {/* Card 3 — Upcoming Meetings */}
+          <div className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-6 flex flex-col hover:border-fuchsia-500 transition">
+            <div className="flex justify-between items-start mb-4">
+              <div className="text-3xl">📅</div>
+              <span className="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded-full font-bold border border-green-500/30">Next: Jun 05</span>
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Upcoming Meetings</h3>
+            <p className="text-sm text-slate-400 mb-6 flex-1">Counselling session scheduled with Greenfields Orphanage.</p>
+            <button onClick={() => navigate('applications')} className="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2.5 rounded-xl transition text-sm">
+              Open Schedule
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          {/* Card 4 — Adoption Status */}
+          <div className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-6 hover:border-fuchsia-500 transition">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="text-3xl">📈</div>
+              <h3 className="text-xl font-bold text-white">Adoption Status</h3>
+            </div>
+            <p className="text-sm text-slate-400 mb-4">Current Progress: <strong className="text-fuchsia-400">Documents Verified</strong></p>
+            
+            <div className="relative pt-2">
+              <div className="overflow-hidden h-2.5 mb-4 text-xs flex rounded-full bg-slate-800">
+                <div style={{ width: "40%" }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-fuchsia-500 rounded-full"></div>
+              </div>
+              <div className="flex justify-between text-xs text-slate-500 font-semibold px-1">
+                <span className="text-fuchsia-400">Profile</span>
+                <span className="text-fuchsia-400">Documents</span>
+                <span>Counselling</span>
+                <span>Trial</span>
+                <span>Approval</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 5 — Notifications */}
+          <div className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-6 hover:border-fuchsia-500 transition flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="text-3xl">🔔</div>
+                <h3 className="text-xl font-bold text-white">Recent Notifications</h3>
+              </div>
+              <span className="bg-red-500/20 text-red-400 text-xs px-2 py-1 rounded-full font-bold">2 New</span>
+            </div>
+            <div className="flex-1 space-y-3 mb-6">
+              <div className="bg-slate-800/50 rounded-lg p-3 border-l-2 border-fuchsia-500 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-white">Document Approved</p>
+                  <p className="text-xs text-slate-400">Your background check was verified.</p>
+                </div>
+                <span className="text-xs text-slate-500">2h ago</span>
+              </div>
+              <div className="bg-slate-800/50 rounded-lg p-3 border-l-2 border-blue-500 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-white">New Message</p>
+                  <p className="text-xs text-slate-400">Greenfields Orphanage sent a message.</p>
+                </div>
+                <span className="text-xs text-slate-500">1d ago</span>
+              </div>
+            </div>
+            <button onClick={() => navigate('/dashboard/parent/notifications')} className="w-full bg-transparent hover:bg-slate-800 text-fuchsia-400 border border-slate-700 font-semibold py-2.5 rounded-xl transition text-sm">
+              View All Notifications
+            </button>
           </div>
         </div>
 

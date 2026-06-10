@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageSquare, X, Send, Bot, User, Loader2 } from 'lucide-react';
+import { MessageSquare, X, Send, Bot, User, Loader2, Volume2, Mic, MicOff } from 'lucide-react';
 import api from '../services/api';
 
 export default function AIAssistant({ role = 'parent' }) {
@@ -22,7 +22,9 @@ export default function AIAssistant({ role = 'parent' }) {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -31,6 +33,53 @@ export default function AIAssistant({ role = 'parent' }) {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+
+      recognitionRef.current.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setInput((prev) => prev + (prev ? ' ' : '') + transcript);
+        setIsRecording(false);
+      };
+
+      recognitionRef.current.onerror = (event) => {
+        console.error('Speech recognition error', event.error);
+        setIsRecording(false);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsRecording(false);
+      };
+    }
+  }, []);
+
+  const toggleRecording = () => {
+    if (!recognitionRef.current) {
+      alert("Speech recognition is not supported in this browser.");
+      return;
+    }
+    
+    if (isRecording) {
+      recognitionRef.current.stop();
+      setIsRecording(false);
+    } else {
+      recognitionRef.current.start();
+      setIsRecording(true);
+    }
+  };
+
+  const speakText = (text) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utterance);
+    }
+  };
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -101,8 +150,17 @@ export default function AIAssistant({ role = 'parent' }) {
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm ${msg.role === 'user' ? 'bg-[#1e7b2b] text-white' : 'bg-white border border-slate-200 text-[#a855f7]'}`}>
                   {msg.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
                 </div>
-                <div className={`p-3 rounded-2xl text-[14px] leading-relaxed shadow-sm ${msg.role === 'user' ? 'bg-[#1e7b2b] text-white rounded-tr-none' : 'bg-white border border-slate-200 text-slate-700 rounded-tl-none'}`}>
+                <div className={`p-3 rounded-2xl text-[14px] leading-relaxed shadow-sm relative group ${msg.role === 'user' ? 'bg-[#1e7b2b] text-white rounded-tr-none' : 'bg-white border border-slate-200 text-slate-700 rounded-tl-none pr-8'}`}>
                   {msg.content}
+                  {msg.role === 'assistant' && (
+                    <button 
+                      onClick={() => speakText(msg.content)}
+                      className="absolute right-2 top-2 p-1 text-slate-400 hover:text-[#a855f7] opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Read aloud"
+                    >
+                      <Volume2 className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -121,23 +179,32 @@ export default function AIAssistant({ role = 'parent' }) {
 
           {/* Input Area */}
           <div className="p-4 bg-white border-t border-slate-100 shrink-0">
-            <div className="relative flex items-center">
-              <input 
-                type="text" 
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Ask me anything..."
-                className="w-full bg-[#f8fafc] border border-slate-200 rounded-full pl-4 pr-12 py-3 text-[14px] text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#a855f7]/50"
-                disabled={isLoading}
-              />
-              <button 
-                onClick={handleSend}
-                disabled={!input.trim() || isLoading}
-                className="absolute right-2 p-2 bg-[#a855f7] hover:bg-[#9333ea] disabled:bg-slate-300 text-white rounded-full transition"
+            <div className="relative flex items-center gap-2">
+              <button
+                onClick={toggleRecording}
+                className={`p-3 rounded-full transition shadow-sm border shrink-0 ${isRecording ? 'bg-red-50 text-red-500 border-red-200 animate-pulse' : 'bg-[#f8fafc] text-slate-500 border-slate-200 hover:text-[#a855f7]'}`}
+                title={isRecording ? "Stop recording" : "Start recording"}
               >
-                <Send className="w-4 h-4" />
+                {isRecording ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
               </button>
+              <div className="relative flex-1">
+                <input 
+                  type="text" 
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                  placeholder={isRecording ? "Listening..." : "Ask me anything..."}
+                  className="w-full bg-[#f8fafc] border border-slate-200 rounded-full pl-4 pr-12 py-3 text-[14px] text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#a855f7]/50"
+                  disabled={isLoading}
+                />
+                <button 
+                  onClick={handleSend}
+                  disabled={!input.trim() || isLoading}
+                  className="absolute right-1.5 top-1.5 p-2 bg-[#a855f7] hover:bg-[#9333ea] disabled:bg-slate-300 text-white rounded-full transition"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
             </div>
             <p className="text-center text-[10px] text-slate-400 font-medium mt-2">
               AI responses can be inaccurate. Please verify important information.
