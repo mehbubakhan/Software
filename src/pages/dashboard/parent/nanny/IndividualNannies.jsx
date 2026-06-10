@@ -5,6 +5,9 @@ import api from '../../../../services/api'
 export default function IndividualNannies() {
   const [nannies, setNannies] = useState([])
   const [loading, setLoading] = useState(true)
+  const [activeFilter, setActiveFilter] = useState('All')
+  const [searchQuery, setSearchQuery] = useState('')
+  const filters = ['All', 'Full-time', 'Part-time', 'Live-in']
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -29,30 +32,54 @@ export default function IndividualNannies() {
           <p className="text-slate-400">Find the perfect nanny for your family</p>
         </div>
 
-        {/* Search Bar section */}
-        <div className="mb-10 flex gap-4">
-          <div className="relative flex-1">
+        {/* Search Bar & Filters section */}
+        <div className="mb-10 flex flex-col md:flex-row gap-4 items-center">
+          <div className="relative flex-1 w-full">
             <span className="absolute left-4 top-3.5 text-slate-400">🔍</span>
             <input 
               type="text" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by name or location..." 
               className="w-full bg-[#1a1c2d] border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-indigo-500"
             />
           </div>
-          <button className="bg-[#1a1c2d] border border-slate-700 px-6 py-3 rounded-xl flex items-center gap-2 hover:bg-slate-800 transition">
-            <span>⚡</span> Filter
-          </button>
+          <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+            {filters.map(filter => (
+              <button
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+                className={`px-6 py-3 rounded-xl font-bold whitespace-nowrap transition-colors ${
+                  activeFilter === filter
+                    ? 'bg-indigo-600 text-white border border-indigo-500'
+                    : 'bg-[#1a1c2d] border border-slate-700 text-slate-300 hover:bg-slate-800'
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div>
           <h2 className="text-xl font-bold text-white mb-1">Individual Nannies</h2>
-          <p className="text-slate-400 text-sm mb-6">{nannies.length} nannies available</p>
+          <p className="text-slate-400 text-sm mb-6">{
+            nannies.filter(nanny => {
+              const matchesSearch = nanny.name.toLowerCase().includes(searchQuery.toLowerCase()) || nanny.location.toLowerCase().includes(searchQuery.toLowerCase());
+              const matchesFilter = activeFilter === 'All' || (nanny.type && nanny.type.toLowerCase().includes(activeFilter.toLowerCase()));
+              return matchesSearch && matchesFilter;
+            }).length
+          } nannies available</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {loading ? (
               <div className="col-span-3 text-center text-slate-400 py-12">Loading nannies...</div>
             ) : (
-              nannies.map(nanny => (
+              nannies.filter(nanny => {
+                const matchesSearch = nanny.name.toLowerCase().includes(searchQuery.toLowerCase()) || nanny.location.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchesFilter = activeFilter === 'All' || (nanny.type && nanny.type.toLowerCase().includes(activeFilter.toLowerCase()));
+                return matchesSearch && matchesFilter;
+              }).map(nanny => (
                 <div key={nanny.id} className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-5 hover:border-indigo-500 transition flex flex-col">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center text-3xl">
@@ -95,7 +122,6 @@ export default function IndividualNannies() {
             )}
           </div>
         </div>
-
       </div>
     </div>
   )

@@ -9,6 +9,7 @@ import DeactivateAccountModal from './parent/components/DeactivateAccountModal'
 import Overview from './parent/Overview'
 import HireNanny from './parent/HireNanny'
 import DaycareLayout from './parent/DaycareLayout'
+import DaycareCCTV from './parent/daycare/DaycareCCTV'
 import SafetyMonitoring from './parent/SafetyMonitoring'
 import LearningPlatform from './parent/LearningPlatform'
 import Marketplace from './parent/Marketplace'
@@ -28,6 +29,8 @@ const items = [
   { label: 'Job Requests', path: '/dashboard/parent/job-requests', icon: 'svg-job-requests' },
   { label: 'Interviews', path: '/dashboard/parent/interviews', icon: 'svg-interviews' },
   { label: 'Schedule', path: '/dashboard/parent/schedule', icon: 'svg-schedule' },
+  { label: 'CCTV Monitoring', path: '/dashboard/parent/cctv', icon: 'svg-cctv' },
+  { label: 'GPS Tracking', path: '/dashboard/parent/gps', icon: 'svg-gps' },
   { label: 'Messages', path: '/dashboard/parent/messages', icon: 'svg-messages' },
   { label: 'Notifications', path: '/dashboard/parent/notifications', icon: 'svg-notifications' },
   { label: 'Settings', path: '/dashboard/parent/settings', icon: 'svg-settings' },
@@ -389,6 +392,7 @@ export default function ParentDashboard() {
           <Route path="profile" element={<ProfileView />} />
           <Route path="hire-nanny/*" element={<HireNanny />} />
           <Route path="daycare/*" element={<DaycareLayout />} />
+          <Route path="cctv" element={<DaycareCCTV />} />
           <Route path="safety" element={<SafetyMonitoring />} />
           <Route path="gps" element={<SafetyMonitoring />} />
           <Route path="sos" element={<SafetyMonitoring />} />

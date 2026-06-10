@@ -5,6 +5,9 @@ import api from '../../../../services/api'
 export default function AgencyNannies() {
   const [agencies, setAgencies] = useState([])
   const [loading, setLoading] = useState(true)
+  const [activeFilter, setActiveFilter] = useState('All')
+  const [searchQuery, setSearchQuery] = useState('')
+  const filters = ['All', 'Top Rated', 'Large Agency']
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -36,25 +39,45 @@ export default function AgencyNannies() {
         </div>
 
         {/* Search Bar section */}
-        <div className="mb-10 flex gap-4">
-          <div className="relative flex-1">
+        <div className="mb-10 flex flex-col md:flex-row gap-4 items-center">
+          <div className="relative flex-1 w-full">
             <span className="absolute left-4 top-3.5 text-slate-400">🔍</span>
             <input 
               type="text" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by name or location..." 
               className="w-full bg-[#1a1c2d] border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-indigo-500"
             />
           </div>
-          <button className="bg-[#1a1c2d] border border-slate-700 px-6 py-3 rounded-xl flex items-center gap-2 hover:bg-slate-800 transition">
-            <span>⚡</span> Filter
-          </button>
+          <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+            {filters.map(filter => (
+              <button
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+                className={`px-6 py-3 rounded-xl font-bold whitespace-nowrap transition-colors ${
+                  activeFilter === filter
+                    ? 'bg-indigo-600 text-white border border-indigo-500'
+                    : 'bg-[#1a1c2d] border border-slate-700 text-slate-300 hover:bg-slate-800'
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
             <div className="col-span-3 text-center text-slate-400 py-12">Loading agencies...</div>
           ) : (
-            agencies.map(agency => (
+            agencies.filter(agency => {
+              const matchesSearch = agency.name.toLowerCase().includes(searchQuery.toLowerCase()) || agency.location.toLowerCase().includes(searchQuery.toLowerCase());
+              let matchesFilter = true;
+              if (activeFilter === 'Top Rated') matchesFilter = parseFloat(agency.rating) >= 4.8;
+              if (activeFilter === 'Large Agency') matchesFilter = parseInt(agency.numNannies) > 20;
+              return matchesSearch && matchesFilter;
+            }).map(agency => (
               <div key={agency.id} className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-6 hover:border-indigo-500 transition flex flex-col">
                 <div className="flex items-start gap-4 mb-4">
                   <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center text-2xl shrink-0">

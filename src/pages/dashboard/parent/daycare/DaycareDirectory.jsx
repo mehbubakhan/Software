@@ -6,6 +6,10 @@ export default function DaycareDirectory() {
   const [daycares, setDaycares] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [transportFilter, setTransportFilter] = useState('All');
+  const [cctvFilter, setCctvFilter] = useState('All');
+  const [activityFilter, setActivityFilter] = useState('All');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,6 +49,8 @@ export default function DaycareDirectory() {
               <span className="absolute left-4 top-3.5 text-slate-400">🔍</span>
               <input 
                 type="text" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by name or location..." 
                 className="w-full bg-[#1a1c2d] border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-fuchsia-500 transition"
               />
@@ -62,19 +68,33 @@ export default function DaycareDirectory() {
             <div className="bg-[#1a1c2d] border border-slate-700 rounded-xl p-6 transition-all duration-300">
               <h3 className="text-sm font-semibold text-slate-400 mb-4 text-center">Filter Options</h3>
               <div className="flex flex-col md:flex-row gap-4 justify-center">
-                <select className="bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2 outline-none focus:border-fuchsia-500 w-full md:w-auto min-w-[150px]">
-                  <option>Transport Available</option>
-                  <option>Self Drop-off</option>
+                <select 
+                  value={transportFilter}
+                  onChange={(e) => setTransportFilter(e.target.value)}
+                  className="bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2 outline-none focus:border-fuchsia-500 w-full md:w-auto min-w-[150px]"
+                >
+                  <option value="All">Any Transport</option>
+                  <option value="Transport Available">Transport Available</option>
+                  <option value="Self Drop-off">Self Drop-off</option>
                 </select>
-                <select className="bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2 outline-none focus:border-fuchsia-500 w-full md:w-auto min-w-[150px]">
-                  <option>Live CCTV</option>
-                  <option>No CCTV</option>
+                <select 
+                  value={cctvFilter}
+                  onChange={(e) => setCctvFilter(e.target.value)}
+                  className="bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2 outline-none focus:border-fuchsia-500 w-full md:w-auto min-w-[150px]"
+                >
+                  <option value="All">Any CCTV Option</option>
+                  <option value="Live CCTV">Live CCTV</option>
+                  <option value="No CCTV">No CCTV</option>
                 </select>
-                <select className="bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2 outline-none focus:border-fuchsia-500 w-full md:w-auto min-w-[150px]">
-                  <option>Select Activity</option>
-                  <option>Music & Arts</option>
-                  <option>STEM Learning</option>
-                  <option>Physical Ed</option>
+                <select 
+                  value={activityFilter}
+                  onChange={(e) => setActivityFilter(e.target.value)}
+                  className="bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2 outline-none focus:border-fuchsia-500 w-full md:w-auto min-w-[150px]"
+                >
+                  <option value="All">Any Activity</option>
+                  <option value="Music & Arts">Music & Arts</option>
+                  <option value="STEM Learning">STEM Learning</option>
+                  <option value="Physical Ed">Physical Ed</option>
                 </select>
               </div>
             </div>
@@ -86,7 +106,30 @@ export default function DaycareDirectory() {
           {loading ? (
             <div className="col-span-3 text-center text-slate-400 py-12">Loading daycares...</div>
           ) : (
-            daycares.map(daycare => (
+            daycares.filter(daycare => {
+              const query = searchQuery.toLowerCase().trim();
+              const matchesSearch = !query || 
+                                    (daycare.name && daycare.name.toLowerCase().includes(query)) || 
+                                    (daycare.location && daycare.location.toLowerCase().includes(query));
+              
+              let matchesTransport = true;
+              if (transportFilter === 'Transport Available') matchesTransport = !!daycare.transportAvailable;
+              if (transportFilter === 'Self Drop-off') matchesTransport = !daycare.transportAvailable;
+
+              let matchesCctv = true;
+              if (cctvFilter === 'Live CCTV') matchesCctv = !!daycare.tags?.includes('Live CCTV');
+              if (cctvFilter === 'No CCTV') matchesCctv = !daycare.tags?.includes('Live CCTV');
+
+              let matchesActivity = true;
+              if (activityFilter !== 'All') {
+                // Simulate activity matches for the mockup data since backend doesn't provide them
+                if (activityFilter === 'Music & Arts') matchesActivity = [1, 2].includes(daycare.id);
+                else if (activityFilter === 'STEM Learning') matchesActivity = [2, 4].includes(daycare.id);
+                else if (activityFilter === 'Physical Ed') matchesActivity = [1, 3, 4].includes(daycare.id);
+              }
+
+              return matchesSearch && matchesTransport && matchesCctv && matchesActivity;
+            }).map(daycare => (
               <div key={daycare.id} className="bg-[#1a1c2d] border border-slate-700 rounded-2xl overflow-hidden hover:border-fuchsia-500 transition group flex flex-col">
                 {/* Card Header (Image/Banner Placeholder) */}
                 <div className="h-48 bg-gradient-to-r from-fuchsia-600/20 to-purple-600/20 flex items-center justify-center text-6xl relative">

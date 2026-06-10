@@ -67,13 +67,60 @@ const getAgencies = async (req, res) => {
 }
 
 const getIndividualNannies = async (req, res) => {
+  try {
+    const pool = require('../config/db');
+    const [rows] = await pool.query(`
+      SELECT np.*, u.name 
+      FROM nanny_profiles np 
+      JOIN users u ON np.nanny_id = u.id
+    `);
+    
+    let dbNannies = rows.map(r => {
+      let skills = [];
+      try { skills = JSON.parse(r.skills) } catch(e) {}
+      return {
+        id: r.nanny_id,
+        name: r.name || 'Nanny',
+        photo: r.photo_url || '👩',
+        experience: r.experience || 'New',
+        rating: 5.0,
+        reviews: 0,
+        location: 'Remote/Local',
+        type: 'Flexible',
+        rate: 'Negotiable',
+        skills: skills
+      }
+    });
+
+    if (dbNannies.length > 0) {
+      return res.json({ ok: true, data: dbNannies });
+    }
+  } catch(e) {
+    // Database not available or table doesn't exist, ignore and use mock
+  }
+
+  // Combine mock profiles created in memory
+  let mockProfilesList = Object.values(mockNannyProfiles).map((p, idx) => ({
+    id: p.nanny_id,
+    name: 'Nanny User ' + p.nanny_id, // We don't have the real name in mockNannyProfiles
+    photo: p.photo_url || '👩',
+    experience: p.experience || 'New',
+    rating: 5.0,
+    reviews: 0,
+    location: 'Remote/Local',
+    type: 'Flexible',
+    rate: 'Negotiable',
+    skills: p.skills || []
+  }));
+
   const nannies = [
-    { id: 1, name: 'Kamrun Nahar', photo: '👩', experience: '4+ years', rating: 4.8, reviews: 42, location: 'Kuril, Dhaka', type: 'Full-time', rate: '$25/hour', skills: ['Newborn Care', 'Teaching'] },
-    { id: 2, name: 'Deedhity Dhara', photo: '👩‍🦰', experience: '7+ years', rating: 4.9, reviews: 78, location: 'Notun Bazar, Dhaka', type: 'Part-time', rate: '$40/hour', skills: ['Toddler Care', 'Cooking'] },
-    { id: 3, name: 'Nusrat Parvin', photo: '👩‍🦱', experience: '3+ years', rating: 4.7, reviews: 35, location: 'Mirpur, Dhaka', type: 'Hourly', rate: '$22/hour', skills: ['Newborn Care', 'Teaching'] },
-    { id: 4, name: 'Sadia Afrin', photo: '👩‍🦱', experience: '5+ years', rating: 4.8, reviews: 56, location: 'Chittagong', type: 'Full-time', rate: '$28/hour', skills: ['Toddler Care', 'Special Needs'] },
-    { id: 5, name: 'Samanta Khan', photo: '👩', experience: '6+ years', rating: 5.0, reviews: 92, location: 'Tangail', type: 'Part-time', rate: '$32/hour', skills: ['Newborn Care', 'Cooking'] },
-    { id: 6, name: 'Maria Mim', photo: '👩‍🦰', experience: '4+ years', rating: 4.6, reviews: 48, location: 'Gulshan, Dhaka', type: 'Full-time', rate: '$26/hour', skills: ['Teaching', 'Activities'] },
+    ...mockProfilesList,
+    { id: 101, name: 'Kamrun Nahar', photo: '👩', experience: '4+ years', rating: 4.8, reviews: 42, location: 'Kuril, Dhaka', type: 'Full-time', rate: '$25/hour', skills: ['Newborn Care', 'Teaching'] },
+    { id: 102, name: 'Deedhity Dhara', photo: '👩‍🦰', experience: '7+ years', rating: 4.9, reviews: 78, location: 'Notun Bazar, Dhaka', type: 'Part-time', rate: '$40/hour', skills: ['Toddler Care', 'Cooking'] },
+    { id: 103, name: 'Nusrat Parvin', photo: '👩‍🦱', experience: '3+ years', rating: 4.7, reviews: 35, location: 'Mirpur, Dhaka', type: 'Hourly', rate: '$22/hour', skills: ['Newborn Care', 'Teaching'] },
+    { id: 104, name: 'Sadia Afrin', photo: '👩‍🦱', experience: '5+ years', rating: 4.8, reviews: 56, location: 'Chittagong', type: 'Full-time', rate: '$28/hour', skills: ['Toddler Care', 'Special Needs'] },
+    { id: 105, name: 'Samanta Khan', photo: '👩', experience: '6+ years', rating: 5.0, reviews: 92, location: 'Tangail', type: 'Part-time', rate: '$32/hour', skills: ['Newborn Care', 'Cooking'] },
+    { id: 106, name: 'Maria Mim', photo: '👩‍🦰', experience: '4+ years', rating: 4.6, reviews: 48, location: 'Gulshan, Dhaka', type: 'Full-time', rate: '$26/hour', skills: ['Teaching', 'Activities'] },
   ]
   return res.json({ ok: true, data: nannies })
 }

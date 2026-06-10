@@ -131,4 +131,34 @@ const listParentJobs = async (req, res) => {
   }
 }
 
-module.exports = { postJob, applyForJob, listApplications, decideApplication, listOpenJobs, postParentJob, listParentJobs }
+const updateParentJob = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, child_age, salary_offered, schedule, location, special_requirements } = req.body;
+    await require('../config/db').query(
+      'UPDATE parent_job_posts SET title=?, child_age=?, salary_offered=?, schedule=?, location=?, special_requirements=? WHERE id = ?',
+      [title, child_age, salary_offered, schedule, location, special_requirements, id]
+    );
+    return res.json({ ok: true });
+  } catch (err) {
+    const { id } = req.params;
+    const index = mockParentJobs.findIndex(j => j.id == id);
+    if(index > -1) {
+      mockParentJobs[index] = { ...mockParentJobs[index], ...req.body };
+    }
+    return res.json({ ok: true, mock: true });
+  }
+}
+
+const deleteParentJob = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await require('../config/db').query('DELETE FROM parent_job_posts WHERE id = ?', [id]);
+    return res.json({ ok: true });
+  } catch (err) {
+    mockParentJobs = mockParentJobs.filter(j => j.id != req.params.id);
+    return res.json({ ok: true, mock: true });
+  }
+}
+
+module.exports = { postJob, applyForJob, listApplications, decideApplication, listOpenJobs, postParentJob, listParentJobs, updateParentJob, deleteParentJob }

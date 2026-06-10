@@ -5,6 +5,9 @@ import api from '../../../../services/api'
 export default function NannyLanding() {
   const [featured, setFeatured] = useState([])
   const [loading, setLoading] = useState(true)
+  const [activeFilter, setActiveFilter] = useState('All')
+  const [searchQuery, setSearchQuery] = useState('')
+  const filters = ['All', 'Full-time', 'Part-time', 'Live-in']
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -28,7 +31,7 @@ export default function NannyLanding() {
       <div className="bg-[#241a4a] -m-6 p-12 text-center rounded-b-3xl shadow-lg mb-12">
         <h1 className="text-4xl font-bold mb-4 text-white">Find Your Perfect Nanny</h1>
         <p className="text-slate-300 max-w-2xl mx-auto mb-8">
-          Choose how you'd like to hire - Connect with quality, vetted nannies or trusted agencies
+          Connect directly with quality, independent caregivers and verified nannies.
         </p>
         <div className="flex justify-center gap-4">
           <button className="bg-indigo-500 hover:bg-indigo-600 px-6 py-2 rounded-lg font-semibold text-white transition">Get Started</button>
@@ -43,33 +46,14 @@ export default function NannyLanding() {
           <h2 className="text-2xl font-bold text-center mb-2">Nanny Services</h2>
           <p className="text-slate-400 text-center mb-8">Choose how you'd like to hire</p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Agency Card */}
-            <div className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-8 flex flex-col items-center text-center hover:border-indigo-500 transition">
-              <div className="bg-slate-800 p-4 rounded-full text-2xl mb-4">🏢</div>
-              <h3 className="text-xl font-bold mb-2">Hire from Organizations</h3>
-              <p className="text-slate-400 text-sm mb-6">Browse verified nannies from trusted agencies</p>
-              <ul className="text-sm text-slate-300 space-y-2 mb-8 text-left w-full">
-                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> Pre-verified professionals</li>
-                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> Background checks completed</li>
-                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> Agency support included</li>
-                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> Agency guarantee</li>
-                <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> Quick replacement if needed</li>
-              </ul>
-              <button 
-                onClick={() => navigate('agencies')}
-                className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 rounded-xl transition mt-auto"
-              >
-                Browse Agencies
-              </button>
-            </div>
+          <div className="flex justify-center w-full max-w-md mx-auto">
 
             {/* Individual Card */}
-            <div className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-8 flex flex-col items-center text-center hover:border-indigo-500 transition">
+            <div className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-8 flex flex-col items-center text-center hover:border-indigo-500 transition w-full">
               <div className="bg-slate-800 p-4 rounded-full text-2xl mb-4">👥</div>
               <h3 className="text-xl font-bold mb-2">Hire Individual Nannies</h3>
               <p className="text-slate-400 text-sm mb-6">Connect directly with independent caregivers</p>
-              <ul className="text-sm text-slate-300 space-y-2 mb-8 text-left w-full">
+              <ul className="text-sm text-slate-300 space-y-2 mb-8 text-left w-full px-8">
                 <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> Direct hiring</li>
                 <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> View detailed profiles</li>
                 <li className="flex items-center gap-2"><span className="text-indigo-400">✓</span> Read reviews & ratings</li>
@@ -89,18 +73,32 @@ export default function NannyLanding() {
         {/* Search Bar section (mockup visual only for landing page) */}
         <div className="max-w-3xl mx-auto mt-12 text-center">
           <p className="text-slate-400 mb-4">Connect with verified, experienced nannies for full-time, part-time, or hourly care</p>
-          <div className="flex gap-4">
-            <div className="relative flex-1">
-              <span className="absolute left-4 top-3 text-slate-400">🔍</span>
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
+            <div className="relative flex-1 w-full max-w-md">
+              <span className="absolute left-4 top-3.5 text-slate-400">🔍</span>
               <input 
                 type="text" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by name or location..." 
                 className="w-full bg-[#1a1c2d] border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-indigo-500"
               />
             </div>
-            <button className="bg-[#1a1c2d] border border-slate-700 px-6 py-3 rounded-xl flex items-center gap-2 hover:bg-slate-800 transition">
-              <span>⚡</span> Filter
-            </button>
+            <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 justify-center">
+              {filters.map(filter => (
+                <button
+                  key={filter}
+                  onClick={() => setActiveFilter(filter)}
+                  className={`px-6 py-3 rounded-xl font-bold whitespace-nowrap transition-colors ${
+                    activeFilter === filter
+                      ? 'bg-indigo-600 text-white border border-indigo-500'
+                      : 'bg-[#1a1c2d] border border-slate-700 text-slate-300 hover:bg-slate-800'
+                  }`}
+                >
+                  {filter}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -113,7 +111,11 @@ export default function NannyLanding() {
             {loading ? (
               <div className="col-span-4 text-center text-slate-400 py-12">Loading featured nannies...</div>
             ) : (
-              featured.map(nanny => (
+              featured.filter(nanny => {
+                const matchesSearch = nanny.name.toLowerCase().includes(searchQuery.toLowerCase()) || nanny.location.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchesFilter = activeFilter === 'All' || (nanny.type && nanny.type.toLowerCase().includes(activeFilter.toLowerCase()));
+                return matchesSearch && matchesFilter;
+              }).map(nanny => (
                 <div key={nanny.id} className="bg-[#1a1c2d] border border-slate-700 rounded-2xl overflow-hidden hover:border-indigo-500 transition group cursor-pointer" onClick={() => navigate(`${nanny.id}`)}>
                   <div className="h-48 bg-slate-800 flex items-center justify-center text-6xl relative">
                     {nanny.photo}
@@ -132,7 +134,7 @@ export default function NannyLanding() {
                       <span className="flex items-center gap-1">🕒 {nanny.experience}</span>
                     </div>
                     <button className="w-full bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500 hover:text-white border border-indigo-500/30 py-2 rounded-lg font-semibold transition text-sm">
-                      Book Interview
+                      View Details
                     </button>
                   </div>
                 </div>
@@ -149,7 +151,6 @@ export default function NannyLanding() {
             </button>
           </div>
         </div>
-
       </div>
     </div>
   )

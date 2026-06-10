@@ -56,26 +56,26 @@ export default function OrphanageDirectory() {
                 <div className="p-6 md:w-2/3 flex flex-col">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <h3 className="text-2xl font-bold text-white">{orphanage.name} <span className="text-yellow-400 text-lg">★ {orphanage.rating}</span></h3>
-                      <p className="text-slate-400 text-sm">📍 {orphanage.address}</p>
+                      <h3 className="text-2xl font-bold text-white">{orphanage.name || orphanage.orphanage_name || 'Unknown Orphanage'} <span className="text-yellow-400 text-lg">★ {orphanage.rating || '4.5'}</span></h3>
+                      <p className="text-slate-400 text-sm">📍 {orphanage.address || 'Address not provided'}</p>
                     </div>
                   </div>
 
                   <p className="text-sm text-slate-300 leading-relaxed mb-6">
-                    {orphanage.description}
+                    {orphanage.description || 'No description available for this orphanage.'}
                   </p>
 
                   <div className="grid grid-cols-3 gap-4 mb-6 pb-6 border-b border-slate-700">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-white">{orphanage.childrenAdopted}</div>
+                      <div className="text-2xl font-bold text-white">{orphanage.childrenAdopted || 0}</div>
                       <div className="text-xs text-slate-500">Children Adopted</div>
                     </div>
                     <div className="text-center border-x border-slate-700">
-                      <div className="text-2xl font-bold text-white">{orphanage.established}</div>
+                      <div className="text-2xl font-bold text-white">{orphanage.established || 'N/A'}</div>
                       <div className="text-xs text-slate-500">Established</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-bold text-white mt-1">{orphanage.license}</div>
+                      <div className="text-lg font-bold text-white mt-1">{orphanage.license || 'N/A'}</div>
                       <div className="text-xs text-slate-500">License</div>
                     </div>
                   </div>
@@ -83,7 +83,7 @@ export default function OrphanageDirectory() {
                   <div className="mb-6">
                     <div className="text-xs text-slate-400 mb-2 font-bold">Facilities:</div>
                     <div className="flex flex-wrap gap-2">
-                      {orphanage.facilities.map((facility, idx) => (
+                      {(orphanage.facilities || []).map((facility, idx) => (
                         <span key={idx} className="bg-fuchsia-900/30 text-fuchsia-300 border border-fuchsia-800/50 text-xs px-2 py-1 rounded-md">
                           {facility}
                         </span>
@@ -92,8 +92,8 @@ export default function OrphanageDirectory() {
                   </div>
 
                   <div className="text-sm text-slate-400 space-y-1 mb-6">
-                    <p>📞 {orphanage.contact.phone}</p>
-                    <p>✉️ {orphanage.contact.email}</p>
+                    <p>📞 {orphanage.contact?.phone || 'N/A'}</p>
+                    <p>✉️ {orphanage.contact?.email || 'N/A'}</p>
                   </div>
 
                   <div className="flex gap-4 mt-auto">

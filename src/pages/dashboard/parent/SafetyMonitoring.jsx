@@ -15,10 +15,22 @@ export default function SafetyMonitoring() {
     safeZones: ['Home', 'Daycare', 'School']
   })
 
+  const [nannyLocation, setNannyLocation] = useState({
+    name: 'Sarah (Nanny)',
+    latitude: 40.7150,
+    longitude: -74.0080,
+    lastUpdate: 'Just now',
+    status: 'On the way to park',
+    battery: '85%'
+  })
+
+  const [trackingTarget, setTrackingTarget] = useState('child')
+
   // Override static coordinates with real GPS if tracking is active
-  const displayLat = realLocation.latitude || childLocation.latitude;
-  const displayLng = realLocation.longitude || childLocation.longitude;
-  const displayTime = realLocation.timestamp || childLocation.lastUpdate;
+  const currentTarget = trackingTarget === 'child' ? childLocation : nannyLocation;
+  const displayLat = realLocation.latitude || currentTarget.latitude;
+  const displayLng = realLocation.longitude || currentTarget.longitude;
+  const displayTime = realLocation.timestamp || currentTarget.lastUpdate;
   const [alerts, setAlerts] = useState([
     { id: 1, type: 'info', message: 'Child arrived at daycare', time: '09:15 AM' },
     { id: 2, type: 'warning', message: 'Child left geofence zone', time: '02:30 PM' },
@@ -84,47 +96,85 @@ export default function SafetyMonitoring() {
       {/* GPS Tracking Tab */}
       {activeTab === 'gps' && (
         <div className="space-y-6">
+          {/* Target Selector */}
+          <div className="flex gap-4 mb-4">
+            <button
+              onClick={() => setTrackingTarget('child')}
+              className={`flex-1 py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 transition border-2 ${
+                trackingTarget === 'child' 
+                  ? 'bg-fuchsia-100 border-fuchsia-500 text-fuchsia-700' 
+                  : 'bg-white border-slate-200 text-slate-600 hover:border-fuchsia-300'
+              }`}
+            >
+              👧 Track Child
+            </button>
+            <button
+              onClick={() => setTrackingTarget('nanny')}
+              className={`flex-1 py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 transition border-2 ${
+                trackingTarget === 'nanny' 
+                  ? 'bg-blue-100 border-blue-500 text-blue-700' 
+                  : 'bg-white border-slate-200 text-slate-600 hover:border-blue-300'
+              }`}
+            >
+              👩‍🦰 Track Nanny
+            </button>
+          </div>
+
           {/* Map Simulation */}
-          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-lg p-8 h-80 flex items-center justify-center relative">
-            <div className="text-center">
-              <div className="text-6xl mb-4">{isTracking ? '📡' : '📍'}</div>
+          <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-lg p-8 h-80 flex items-center justify-center relative overflow-hidden">
+            <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-400 to-transparent"></div>
+            <div className="text-center relative z-10">
+              <div className="text-6xl mb-4">{isTracking ? '📡' : trackingTarget === 'child' ? '📍' : '🚙'}</div>
               <p className="text-xl font-semibold text-slate-900">Live GPS Map</p>
               {gpsError ? (
                 <p className="text-red-500 font-semibold">{gpsError}</p>
               ) : (
                 <>
-                  <p className="text-slate-600">Location: {displayLat}°N, {displayLng}°W</p>
-                  <p className="text-slate-600 text-sm">Last updated: {displayTime}</p>
-                  {isTracking && <span className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> GPS Active</span>}
+                  <p className="text-slate-600 font-mono mt-2">Lat: {displayLat}°N<br/>Lng: {displayLng}°W</p>
+                  <p className="text-slate-500 text-sm mt-1">Last updated: {displayTime}</p>
+                  {isTracking && <span className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> ACTIVE CONNECTION</span>}
                 </>
               )}
             </div>
           </div>
 
-          {/* Child Status Card */}
-          <div className="bg-white border border-slate-200 rounded-lg p-6">
-            <h3 className="text-lg font-bold text-slate-900 mb-4">👧 {childLocation.name}</h3>
+          {/* Status Card */}
+          <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                {trackingTarget === 'child' ? '👧' : '👩‍🦰'} {currentTarget.name}
+              </h3>
+              <span className={`px-3 py-1 rounded-full text-xs font-bold ${trackingTarget === 'child' ? 'bg-fuchsia-100 text-fuchsia-700' : 'bg-blue-100 text-blue-700'}`}>
+                {trackingTarget.toUpperCase()}
+              </span>
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div>
-                <p className="text-sm text-slate-600">Status</p>
-                <p className="text-lg font-semibold text-green-600">✓ {childLocation.status}</p>
+                <p className="text-sm text-slate-500 font-semibold">Status</p>
+                <p className="text-lg font-bold text-green-600">✓ {currentTarget.status}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-600">Latitude</p>
-                <p className="text-lg font-semibold text-slate-900">{displayLat}°</p>
+                <p className="text-sm text-slate-500 font-semibold">Latitude</p>
+                <p className="text-lg font-bold text-slate-900">{displayLat}°</p>
               </div>
               <div>
-                <p className="text-sm text-slate-600">Longitude</p>
-                <p className="text-lg font-semibold text-slate-900">{displayLng}°</p>
+                <p className="text-sm text-slate-500 font-semibold">Longitude</p>
+                <p className="text-lg font-bold text-slate-900">{displayLng}°</p>
               </div>
               <div>
-                <p className="text-sm text-slate-600">Last Update</p>
-                <p className="text-lg font-semibold text-slate-900">{displayTime}</p>
+                <p className="text-sm text-slate-500 font-semibold">Last Update</p>
+                <p className="text-lg font-bold text-slate-900">{displayTime}</p>
               </div>
               <div className="col-span-2 md:col-span-1">
-                <p className="text-sm text-slate-600">Signal Strength</p>
-                <p className="text-lg font-semibold text-blue-600">📶 Strong</p>
+                <p className="text-sm text-slate-500 font-semibold">Signal Strength</p>
+                <p className="text-lg font-bold text-blue-600">📶 Strong</p>
               </div>
+              {trackingTarget === 'nanny' && currentTarget.battery && (
+                <div className="col-span-2 md:col-span-1">
+                  <p className="text-sm text-slate-500 font-semibold">Nanny Device Battery</p>
+                  <p className="text-lg font-bold text-emerald-600">🔋 {currentTarget.battery}</p>
+                </div>
+              )}
             </div>
           </div>
 
