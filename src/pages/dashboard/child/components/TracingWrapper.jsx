@@ -8,7 +8,7 @@ import {
 } from '../data/learningData';
 
 // Wrapper component mapping props to data arrays
-export default function TracingWrapper({ moduleType, playClick }) {
+export default function TracingWrapper({ moduleType, playClick, addCoins }) {
   let items = [];
   let backRoute = '/dashboard/child/learn';
   let baseFontSize = 320;
@@ -92,6 +92,7 @@ export default function TracingWrapper({ moduleType, playClick }) {
       playClick={playClick}
       speak={speak}
       baseFontSize={baseFontSize}
+      addCoins={addCoins}
     />
   );
 }

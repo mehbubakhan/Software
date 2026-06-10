@@ -8,16 +8,19 @@ export default function GenericTracingCanvas({
   backRoute, 
   playClick, 
   speak, 
-  baseFontSize = 320 
+  baseFontSize = 320,
+  addCoins
 }) {
   const navigate = useNavigate();
   const canvasRef = useRef(null);
+  const overlayCanvasRef = useRef(null);
   
   const [currentIndex, setCurrentIndex] = useState(0);
   const [tool, setTool] = useState('pencil'); // 'pencil' | 'eraser'
   const [color, setColor] = useState('#3b82f6'); // dodgerblue
   const [progress, setProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   
   const currentItem = items[currentIndex];
 
@@ -116,7 +119,6 @@ export default function GenericTracingCanvas({
       default:
         ctx.arc(cx, cy, s / 2, 0, Math.PI * 2);
     }
-    ctx.fill();
   };
 
   const initCanvas = useCallback(() => {
@@ -130,17 +132,19 @@ export default function GenericTracingCanvas({
     // Draw Mask
     ctx.fillStyle = '#e2e8f0'; // Base mask color
 
+    let currentFontSize = baseFontSize;
+
     if (currentItem.type === 'shape') {
       // Draw geometric shape
       drawShapePath(ctx, currentItem.shapeType, canvas.width, canvas.height);
+      ctx.fill();
     } else {
       // Draw Text
-      ctx.font = `900 ${baseFontSize}px Arial`;
+      ctx.font = `900 ${currentFontSize}px Arial`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       
       // Auto-scale font if it's too wide
-      let currentFontSize = baseFontSize;
       while (ctx.measureText(currentItem.maskText).width > canvas.width - 40 && currentFontSize > 40) {
         currentFontSize -= 10;
         ctx.font = `900 ${currentFontSize}px Arial`;
@@ -148,6 +152,28 @@ export default function GenericTracingCanvas({
       
       ctx.fillText(currentItem.maskText, canvas.width / 2, canvas.height / 2);
     }
+
+    // --- Overlay Canvas for Black Border ---
+    const overlayCanvas = overlayCanvasRef.current;
+    if (overlayCanvas) {
+      const oCtx = overlayCanvas.getContext('2d');
+      oCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+      oCtx.strokeStyle = '#000000';
+      oCtx.lineWidth = 12;
+      oCtx.lineJoin = 'round';
+      
+      if (currentItem.type === 'shape') {
+        drawShapePath(oCtx, currentItem.shapeType, overlayCanvas.width, overlayCanvas.height);
+        oCtx.stroke();
+      } else {
+        oCtx.font = `900 ${currentFontSize}px Arial`;
+        oCtx.textAlign = 'center';
+        oCtx.textBaseline = 'middle';
+        oCtx.strokeText(currentItem.maskText, overlayCanvas.width / 2, overlayCanvas.height / 2);
+      }
+    }
+    // ----------------------------------------
+    
     
     maskData.current = ctx.getImageData(0, 0, canvas.width, canvas.height);
     
@@ -156,6 +182,8 @@ export default function GenericTracingCanvas({
     
     setProgress(0);
     setIsComplete(false);
+    setShowPopup(false);
+    if (hasFinished.current !== undefined) hasFinished.current = false;
   }, [currentItem, baseFontSize]);
 
   useEffect(() => {
@@ -186,29 +214,51 @@ export default function GenericTracingCanvas({
 
     if (totalMaskPixels > 0) {
       const percentage = Math.min(100, Math.round((coloredPixels / totalMaskPixels) * 100));
-      const adjustedPercentage = Math.min(100, Math.round(percentage * 1.15));
-      setProgress(adjustedPercentage);
       
-      if (adjustedPercentage >= 95 && !isComplete) {
-        handleCompletion();
+      if (hasFinished.current) {
+        setProgress(100);
+      } else {
+        setProgress(percentage);
+        
+        // 96% is a good threshold for "visually full"
+        if (percentage >= 96) {
+          hasFinished.current = true;
+          setProgress(100); // Snap to 100 for UI
+          handleCompletion();
+        }
       }
     }
   };
 
-  const handleCompletion = () => {
-    setIsComplete(true);
+  const hasFinished = useRef(false);
 
+  const handleCompletion = () => {
+    // 1. Tell the alphabet or word or shape name immediately
     if (currentItem.audioPath) {
       const audio = new Audio(currentItem.audioPath);
       audio.play().catch(e => console.error('Audio play failed:', e));
     } else if (speak && currentItem.speechText) {
-      speak(`Great Job! ${currentItem.speechText}`);
+      speak(`${currentItem.speechText}`);
     }
-    
-    api.post('/child/progress', {
-      module: moduleType,
-      current_level: currentItem.level
-    }).catch(e => console.error(e));
+
+    // 2. Wait 2 seconds for the first speech to finish, then say Congratulations
+    setTimeout(() => {
+      if (speak && currentItem.speechText) {
+        speak('Congratulations!');
+      }
+
+      // 3. Wait another 1.5 seconds for "Congratulations" to finish before showing the pop-up
+      setTimeout(() => {
+        setIsComplete(true);
+        setShowPopup(true);
+        if (addCoins) addCoins(20);
+
+        api.post('/child/progress', {
+          module: moduleType,
+          current_level: currentItem.level
+        }).catch(e => console.error(e));
+      }, 1500);
+    }, 2000);
   };
 
   const startDrawing = (e) => {
@@ -249,6 +299,15 @@ export default function GenericTracingCanvas({
     ctx.moveTo(x, y);
   };
 
+  const playVoice = () => {
+    if (currentItem.audioPath) {
+      const audio = new Audio(currentItem.audioPath);
+      audio.play().catch(e => console.error('Audio play failed:', e));
+    } else if (speak && currentItem.speechText) {
+      speak(`${currentItem.speechText}`);
+    }
+  };
+
   const handleNav = (path) => {
     if (playClick) playClick();
     navigate(path);
@@ -275,6 +334,22 @@ export default function GenericTracingCanvas({
               <option key={item.id} value={idx}>{item.display}</option>
             ))}
           </select>
+
+          <button 
+            onClick={playVoice}
+            className="w-12 h-12 flex items-center justify-center bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-xl border-2 border-blue-200 transition-colors shadow-sm"
+            title="Play Voice"
+          >
+            🔊
+          </button>
+          
+          <button 
+            onClick={() => { if(playClick) playClick(); initCanvas(); }}
+            className="w-12 h-12 flex items-center justify-center bg-green-100 hover:bg-green-200 text-green-600 rounded-xl border-2 border-green-200 transition-colors shadow-sm"
+            title="Replay / Color Again"
+          >
+            🔄
+          </button>
         </div>
 
         <div className="flex items-center gap-4">
@@ -321,30 +396,58 @@ export default function GenericTracingCanvas({
       >
         <div className="absolute inset-0 bg-white/50 backdrop-blur-[2px]"></div>
         
-        <canvas
-          ref={canvasRef}
-          width={600}
-          height={500}
-          onMouseDown={startDrawing}
-          onMouseUp={stopDrawing}
-          onMouseOut={stopDrawing}
-          onMouseMove={draw}
-          onTouchStart={startDrawing}
-          onTouchEnd={stopDrawing}
-          onTouchCancel={stopDrawing}
-          onTouchMove={draw}
-          className="relative z-10 cursor-crosshair touch-none shadow-lg bg-white/80 rounded-3xl"
-        />
+        <div className="relative shadow-lg rounded-3xl bg-white/80 overflow-hidden z-10">
+          <canvas
+            ref={canvasRef}
+            width={600}
+            height={500}
+            onMouseDown={startDrawing}
+            onMouseUp={stopDrawing}
+            onMouseOut={stopDrawing}
+            onMouseMove={draw}
+            onTouchStart={startDrawing}
+            onTouchEnd={stopDrawing}
+            onTouchCancel={stopDrawing}
+            onTouchMove={draw}
+            className="cursor-crosshair touch-none"
+          />
+          <canvas
+            ref={overlayCanvasRef}
+            width={600}
+            height={500}
+            className="absolute inset-0 pointer-events-none z-20"
+          />
+        </div>
 
-        {isComplete && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm animate-in fade-in zoom-in duration-500">
-            <h2 className="text-5xl md:text-6xl text-center font-black text-fuchsia-600 mb-6 drop-shadow-md animate-bounce p-4">Great Job! 🎉</h2>
-            <button 
-              onClick={() => { if(playClick) playClick(); initCanvas(); }}
-              className="bg-fuchsia-500 text-white px-8 py-4 rounded-full text-2xl font-bold shadow-xl hover:scale-105 transition"
-            >
-              Play Again 🔄
-            </button>
+        {showPopup && (
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[5px] p-4 font-[Comic_Sans_MS,Comic_Neue,sans-serif]">
+            <div className="bg-white border-[6px] border-[#FBBF24] rounded-3xl p-10 w-[90%] max-w-[450px] text-center shadow-[0_20px_0px_rgba(0,0,0,0.1)] animate-in zoom-in duration-500 flex flex-col items-center">
+              
+              <div className="text-4xl mb-4 animate-bounce">🎉 ✨ 🎈</div>
+              
+              <div className="text-6xl mb-4 drop-shadow-md">⭐</div>
+              
+              <h1 className="text-[#FF477E] text-3xl font-black mt-2 mb-4">Woohoo! You Did It!</h1>
+              
+              <p className="text-slate-600 text-lg leading-relaxed font-medium mb-6">
+                Great Job! You colored everything perfectly. You are officially a superstar! 🌟
+              </p>
+              
+              <div className="bg-[#FEF3C7] text-[#D97706] font-bold py-3 px-4 rounded-xl mb-8 inline-flex items-center gap-3">
+                <span>+20 Coins</span>
+                <span>•</span>
+                <span>🏆 Champion Badge</span>
+              </div>
+              
+              <div className="flex justify-center w-full">
+                <button 
+                  onClick={() => { if(playClick) playClick(); setShowPopup(false); }}
+                  className="bg-[#22C55E] text-white border-b-[5px] border-[#15803D] hover:translate-y-1 hover:border-b-2 active:translate-y-2 active:border-b-[1px] px-8 py-4 text-xl font-black rounded-2xl transition-all w-full md:w-auto cursor-pointer"
+                >
+                  Awesome! 🚀
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
