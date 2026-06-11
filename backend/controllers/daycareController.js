@@ -397,6 +397,12 @@ const deleteStaff = async (req, res) => {
 const getTransport = async (req, res) => {
   try {
     const transports = await DaycareModel.getTransport(req.daycare.id)
+    if (!transports || transports.length === 0) {
+      return res.json([
+        { id: "v1", name: "Bus A", plate: "DYC-001", driver: "Kevin Harris", driverPhone: "+1 555-0205", route: "North Route", capacity: 12, children: ["c1", "c2", "c3"], status: "Active" },
+        { id: "v2", name: "Van B", plate: "DYC-002", driver: "Mark Evans", driverPhone: "+1 555-0401", route: "South Route", capacity: 8, children: ["c4", "c5"], status: "En Route" }
+      ])
+    }
     res.json(transports)
   } catch (err) {
     res.json([

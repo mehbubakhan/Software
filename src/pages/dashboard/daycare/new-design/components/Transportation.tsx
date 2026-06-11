@@ -11,7 +11,7 @@ import { Card, StatusBadge, Modal, Input, Select, Textarea, Btn, PageHeader, Ava
 import { mockVehicles as initial } from "./mockData";
 import type { Vehicle } from "./types";
 
-const VEHICLE_STORAGE_KEY = "daycare_transport_vehicles";
+const VEHICLE_STORAGE_KEY = "daycare_transport_vehicles_v2";
 
 function loadStoredVehicles() {
   if (typeof window === "undefined") return null;
@@ -164,30 +164,24 @@ const emptyForm = { name: "", plate: "", driver: "", driverPhone: "", route: "No
 export function Transportation() {
   const [vehicles, setVehicles] = useState<VehicleExt[]>(() => {
     const stored = loadStoredVehicles();
-    return stored ? stored : initial.map(enrichVehicle);
+    return stored && stored.length > 0 ? stored : initial.map(enrichVehicle);
   });
 
   useEffect(() => {
     const stored = loadStoredVehicles();
-    if (stored) {
+    if (stored && stored.length > 0) {
       setVehicles(stored);
       return;
     }
-
-    api.get('/daycare/portal/transport')
-      .then((res: any) => {
-        const loaded = res.data?.map(enrichVehicle) ?? initial.map(enrichVehicle);
-        setVehicles(loaded);
-      })
-      .catch((err: any) => {
-        console.error(err);
-        setVehicles(initial.map(enrichVehicle));
-      });
+    
+    // Force mock data
+    setVehicles(initial.map(enrichVehicle));
   }, []);
 
   useEffect(() => {
     saveVehicles(vehicles);
   }, [vehicles]);
+
   const [modal, setModal] = useState<ModalType>(null);
   const [selected, setSelected] = useState<VehicleExt | null>(null);
   const [form, setForm] = useState(emptyForm);
