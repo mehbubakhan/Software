@@ -2,6 +2,10 @@ require('dotenv').config({ path: require('path').join(__dirname, '.env'), overri
 const express = require('express')
 const cors = require('cors')
 const app = express()
+const http = require('http')
+const { initSocket } = require('./socket')
+const server = http.createServer(app)
+initSocket(server)
 const port = process.env.PORT || 5001
 
 const routes = require('./routes')
@@ -17,7 +21,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
 app.get('/', (req, res) => res.json({ ok: true, msg: 'Daycare API running' }))
 
-app.listen(port, () => console.log(`Server listening on ${port}`))
+server.listen(port, () => console.log(`Server listening on ${port}`))
 
 module.exports = app;
  

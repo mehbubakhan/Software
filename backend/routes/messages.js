@@ -1,10 +1,11 @@
 const express = require('express')
 const router = express.Router()
 const auth = require('../middleware/auth')
-const { getConversations, getMessages, sendMessage } = require('../controllers/messagingController')
+const { getContacts, getConversations, getMessages, sendMessage } = require('../controllers/messagingController')
 
+router.get('/contacts', auth, getContacts)
 router.get('/', auth, getConversations)
-router.get('/:id', auth, getMessages)
-router.post('/:id', auth, sendMessage)
+router.get('/:userId', auth, getMessages)
+router.post('/:userId', auth, sendMessage)
 
 module.exports = router

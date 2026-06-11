@@ -2,6 +2,7 @@ import React from 'react'
 import { useLocation } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ToastProvider } from './context/ToastContext'
+import { SocketProvider } from './context/SocketContext'
 import Navbar from './components/Navbar'
 import AppRoutes from './routes/Routes'
 import AIAssistant from './components/AIAssistant'
@@ -28,7 +29,9 @@ function App(){
   return (
     <ToastProvider>
       <AuthProvider>
-        <Shell />
+        <SocketProvider>
+          <Shell />
+        </SocketProvider>
       </AuthProvider>
     </ToastProvider>
   )

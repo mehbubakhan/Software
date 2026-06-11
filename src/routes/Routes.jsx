@@ -65,6 +65,7 @@ import SOS from '../pages/dashboard/nanny/SOS'
 import ProtectedRoute from '../components/ProtectedRoute'
 import RoleRedirect from '../components/RoleRedirect'
 import ChildDashboard from '../pages/dashboard/ChildDashboard'
+import GlobalMessages from '../pages/dashboard/GlobalMessages'
 import LearningLanding from '../pages/LearningLanding'
 import AdoptionLanding from '../pages/adoption/AdoptionLanding'
 
@@ -84,6 +85,9 @@ export default function AppRoutes(){
       <Route path="/signup/transport" element={<TransportSignup/>} />
 
       <Route path="/role-redirect" element={<RoleRedirect/>} />
+
+      {/* Global Messaging Route for all authenticated users */}
+      <Route path="/dashboard/messages" element={<GlobalMessages />} />
 
       <Route path="/dashboard/child/*" element={<ProtectedRoute roles={["parent"]}><ChildDashboard/></ProtectedRoute>} />
       <Route path="/dashboard/parent/*" element={<ProtectedRoute roles={["parent"]}><ParentDashboard/></ProtectedRoute>} />

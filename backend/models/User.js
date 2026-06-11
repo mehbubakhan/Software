@@ -63,4 +63,27 @@ const findById = async (id) => {
   }
 }
 
-module.exports = { createUser, findByEmail, findById }
+const findAllUsers = async () => {
+  let dbUsers = []
+  try {
+    const [rows] = await pool.query('SELECT id, name, role FROM users')
+    dbUsers = rows
+  } catch (err) {
+    console.error('[User] Error fetching findAllUsers:', err.message)
+    console.warn('[User] DB unavailable, using in-memory store for findAllUsers')
+  }
+  
+  // Ensure we always have some users to chat with (combine DB users and mock users)
+  const mockFormatted = mockUsers.map(u => ({ id: u.id, name: u.name, role: u.role }))
+  const combined = [...dbUsers]
+  
+  mockFormatted.forEach(mockUser => {
+    if (!combined.find(u => u.id === mockUser.id)) {
+      combined.push(mockUser)
+    }
+  })
+  
+  return combined
+}
+
+module.exports = { createUser, findByEmail, findById, findAllUsers }
