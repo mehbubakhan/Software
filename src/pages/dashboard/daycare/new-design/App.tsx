@@ -5,7 +5,7 @@ import { Bell, Search } from "lucide-react";
 import { Sidebar } from "./components/Sidebar";
 import { Dashboard } from "./components/Dashboard";
 import { Children } from "./components/Children";
-import { Admissions } from "./components/Admissions";
+import { Applications } from "./components/Applications";
 import { Parents } from "./components/Parents";
 import { StaffNannies } from "./components/Staff";
 import { LiveMonitoring } from "./components/LiveMonitoring";
@@ -26,7 +26,7 @@ import type { Section } from "./components/types";
 const SECTION_TITLES: Record<Section, string> = {
   dashboard: "Dashboard",
   children: "Children",
-  admissions: "Admissions",
+  applications: "Applications",
   parents: "Parents",
   staff: "Staff & Nannies",
   "live-monitoring": "Live Monitoring",
@@ -52,7 +52,7 @@ export default function App() {
     switch (section) {
       case "dashboard": return <Dashboard onNavigate={s => setSection(s as Section)} />;
       case "children": return <Children />;
-      case "admissions": return <Admissions />;
+      case "applications": return <Applications />;
       case "parents": return <Parents />;
       case "staff": return <StaffNannies />;
       case "live-monitoring": return <LiveMonitoring />;

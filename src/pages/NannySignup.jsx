@@ -30,7 +30,7 @@ export default function NannySignup(){
     })
     const [submitting, setSubmitting] = useState(false)
     const navigate = useNavigate()
-    const { login } = useAuth()
+  const { authenticate } = useAuth() || {}
 
     const setField = (key, value) => {
       setForm(prev => ({ ...prev, [key]: value }))
@@ -60,7 +60,7 @@ export default function NannySignup(){
 
       setSubmitting(true)
       try {
-        await api.post('/auth/signup', {
+        const payload = {
           name: `${form.firstName} ${form.lastName}`.trim(),
           email: form.email,
           password: form.password,
@@ -76,9 +76,15 @@ export default function NannySignup(){
           gender: form.gender,
           workPreference: form.workPreference,
           languagesSpoken: form.languagesSpoken,
-        })
-        await login({ role: 'nanny', email: form.email, password: form.password })
-        navigate('/dashboard/nanny')
+        }
+        const res = await api.post('/auth/signup', payload)
+        if (authenticate && res.data.token && res.data.user) {
+          authenticate(res.data.token, res.data.user)
+          navigate('/dashboard/nanny')
+        } else {
+          alert('Registered - please login')
+          navigate('/login')
+        }
       } catch (err) {
         const msg = err.response?.data?.message || err.response?.data?.error || err.message || 'Signup failed'
         alert(msg)

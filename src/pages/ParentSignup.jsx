@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import FormInput from '../components/FormInput'
 import api from '../services/api'
+import { useAuth } from '../context/AuthContext'
 
 export default function ParentSignup(){
   const [form, setForm] = useState({
@@ -28,6 +29,7 @@ export default function ParentSignup(){
     privacyConsent: false,
   })
   const navigate = useNavigate()
+  const { authenticate } = useAuth() || {}
 
   const setField = (key, value) => {
     setForm(prev => ({ ...prev, [key]: value }))
@@ -46,7 +48,7 @@ export default function ParentSignup(){
     }
 
     try{
-      await api.post('/auth/signup', {
+      const res = await api.post('/auth/signup', {
         name: `${form.firstName} ${form.lastName}`.trim(),
         email: form.email,
         password: form.password,
@@ -55,8 +57,13 @@ export default function ParentSignup(){
         childName: form.childName || 'Child 1',
         childDob: form.childDob,
       })
-      alert('Registered - proceed to login')
-      navigate('/login')
+      if (authenticate && res.data.token && res.data.user) {
+        authenticate(res.data.token, res.data.user)
+        navigate('/dashboard')
+      } else {
+        alert('Registered - proceed to login')
+        navigate('/login')
+      }
     }catch(err){ 
       const msg = err.response?.data?.message || err.response?.data?.error || err.message || 'Signup failed'
       alert(msg)

@@ -203,8 +203,39 @@ const getChildReport = (req, res) => {
   res.json({ success: true, data: report });
 };
 
-const submitApplication = (req, res) => {
-  res.json({ success: true, message: "Application submitted successfully" });
+const { getIo } = require('../socket');
+
+const submitApplication = async (req, res) => {
+  try {
+    const daycareId = req.params.id;
+    const parentId = req.user ? req.user.id : 1; // Fallback to 1 if not logged in (for testing)
+    
+    // Create payload for DaycareModel.addApplicationAdmin
+    const payload = {
+      childName: req.body.childName,
+      childAge: req.body.childAge,
+      status: 'pending'
+    };
+    
+    const id = await DaycareModel.addApplicationAdmin(daycareId, payload);
+    
+    // Emit real-time socket event
+    try {
+      const io = getIo();
+      io.to(`user_${daycareId}`).emit('new_application', {
+        id: id,
+        child_name: req.body.childName,
+        parent_name: req.user ? req.user.name : req.body.parentName,
+        package_type: req.body.careType || 'Full-Time',
+        status: 'pending'
+      });
+    } catch(e) { console.error('Socket error emitting new_application', e) }
+
+    res.json({ success: true, message: "Application submitted successfully", id });
+  } catch (err) {
+    console.error("submitApplication error", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 };
 
 const processPayment = (req, res) => {

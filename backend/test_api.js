@@ -1,33 +1,29 @@
-require('dotenv').config({ path: require('path').join(__dirname, '.env') });
-const jwt = require('jsonwebtoken');
+require('dotenv').config({ path: require('path').join(__dirname, '.env') })
 const axios = require('axios');
+const jwt = require('jsonwebtoken');
+
+const token = jwt.sign({ id: 115, role: 'parent' }, process.env.JWT_SECRET || 'fallback_secret', { expiresIn: '1h' });
 
 async function testApi() {
   try {
-    const token = jwt.sign({ id: 902, role: 'parent' }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    const profile = {
-      name: "Demo Parent",
-      phone: "111-222-3333",
-      address: "456 Test Ave",
-      emergencyContact: "John Doe",
-      childModePin: "9999",
-      childName: "Tommy",
-      childAge: "5",
-      photo: ""
-    };
-    
-    const res = await axios.put('http://localhost:5001/api/families/my/profile', profile, {
+    console.log("Testing /messages/contacts...");
+    const resContacts = await axios.get('http://localhost:5001/api/messages/contacts', {
       headers: { Authorization: `Bearer ${token}` }
     });
-    console.log("API Response:", res.data);
-    
-    const resGet = await axios.get('http://localhost:5001/api/families/my/profile', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    console.log("GET Response:", resGet.data);
-    
+    console.log("Contacts count:", resContacts.data.data.length);
   } catch (err) {
-    console.error("API Error:", err.response ? err.response.data : err.message);
+    console.error("Contacts API Error:", err.response ? err.response.data : err.message);
+  }
+
+  try {
+    console.log("\nTesting /messages (conversations)...");
+    const resConv = await axios.get('http://localhost:5001/api/messages', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    console.log("Conversations count:", resConv.data.data.length);
+  } catch (err) {
+    console.error("Conversations API Error:", err.response ? err.response.data : err.message);
   }
 }
+
 testApi();

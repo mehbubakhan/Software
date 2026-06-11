@@ -21,11 +21,19 @@ const initSocket = (server) => {
   // Socket Authentication Middleware
   io.use(async (socket, next) => {
     try {
+      console.log('[Socket Debug] Attempting connection...');
       const token = socket.handshake.auth.token;
-      if (!token) return next(new Error('Authentication error: Missing token'));
+      if (!token) {
+        console.log('[Socket Debug] Missing token');
+        return next(new Error('Authentication error: Missing token'));
+      }
 
+      console.log('[Socket Debug] Token found, verifying...');
       const payload = jwt.verify(token, process.env.JWT_SECRET);
+      console.log('[Socket Debug] Verified payload:', payload);
+      
       const user = await findById(payload.id);
+      console.log('[Socket Debug] Found user:', user ? user.id : 'No user found');
       
       if (!user) return next(new Error('Authentication error: Invalid user'));
 
@@ -38,6 +46,7 @@ const initSocket = (server) => {
       
       next();
     } catch (err) {
+      console.error('[Socket Debug] Auth error:', err.message);
       next(new Error('Authentication error: ' + err.message));
     }
   });

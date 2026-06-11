@@ -11,7 +11,7 @@ export const useSocket = () => {
 
 export const SocketProvider = ({ children }) => {
   const { user } = useAuth() || {};
-  const { showToast } = useToast() || { showToast: () => {} };
+  const toastApi = useToast() || { info: () => {}, warning: () => {} };
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [notifications, setNotifications] = useState([]);
@@ -19,9 +19,10 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     let currentSocket = null;
+    const token = localStorage.getItem('token');
 
-    if (user && user.token) {
-      currentSocket = socketService.connect(user.token);
+    if (user && token) {
+      currentSocket = socketService.connect(token);
       setSocket(currentSocket);
 
       currentSocket.on('connect', () => {
@@ -47,11 +48,11 @@ export const SocketProvider = ({ children }) => {
       // Global Notification Handler
       currentSocket.on('notification', (notification) => {
         setNotifications(prev => [notification, ...prev]);
-        showToast(notification.title || 'New Notification', 'info');
+        toastApi.info(notification.title || 'New Notification');
       });
 
       currentSocket.on('announcement', (announcement) => {
-        showToast(`Announcement from ${announcement.sender}: ${announcement.title}`, 'warning');
+        toastApi.warning(`Announcement from ${announcement.sender}: ${announcement.title}`);
       });
       
     } else {
@@ -70,7 +71,7 @@ export const SocketProvider = ({ children }) => {
         currentSocket.off('announcement');
       }
     };
-  }, [user, showToast]);
+  }, [user, toastApi]);
 
   const sendMessage = useCallback((receiverId, content, type = 'direct') => {
     return new Promise((resolve, reject) => {

@@ -5,18 +5,30 @@ import api from '../../../services/api';
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
+  const [openDropdownId, setOpenDropdownId] = useState(null);
+
+  const fetchUsers = async () => {
+    try {
+      const res = await api.get('/admin/users');
+      if (res.data?.ok) setUsers(res.data.data);
+    } catch (err) {
+      console.error("Failed to load users:", err);
+    }
+  };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await api.get('/admin/users');
-        if (res.data?.ok) setUsers(res.data.data);
-      } catch (err) {
-        console.error("Failed to load users:", err);
-      }
-    };
     fetchUsers();
   }, []);
+
+  const handleAction = async (id, action) => {
+    try {
+      await api.put(`/admin/users/${id}/action`, { action });
+      setOpenDropdownId(null);
+      fetchUsers();
+    } catch (err) {
+      console.error(`Failed to ${action} user:`, err);
+    }
+  };
 
   const filteredUsers = users.filter(u => 
     u.name?.toLowerCase().includes(search.toLowerCase()) || 
@@ -93,12 +105,38 @@ export default function UserManagement() {
                       <div className="font-mono mt-1 text-xs">{user.phone || 'No phone'}</div>
                     </td>
                     <td className="py-4 px-6 text-slate-500 font-mono text-sm">
-                      {new Date(user.created_at).toLocaleDateString()}
+                      {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
                     </td>
-                    <td className="py-4 px-6 text-right">
-                      <button className="p-2 text-slate-400 hover:text-slate-900 transition">
+                    <td className="py-4 px-6 text-right relative">
+                      <button 
+                        onClick={() => setOpenDropdownId(openDropdownId === user.id ? null : user.id)}
+                        className="p-2 text-slate-400 hover:text-slate-900 transition"
+                      >
                         <MoreVertical className="w-5 h-5" />
                       </button>
+                      
+                      {openDropdownId === user.id && (
+                        <div className="absolute right-6 top-10 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-2 z-50 animate-in fade-in zoom-in-95 duration-200">
+                          <button 
+                            onClick={() => handleAction(user.id, 'notice')}
+                            className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 font-medium"
+                          >
+                            Send Notice
+                          </button>
+                          <button 
+                            onClick={() => handleAction(user.id, 'suspend')}
+                            className="w-full text-left px-4 py-2 text-sm text-amber-600 hover:bg-amber-50 font-medium flex items-center gap-2"
+                          >
+                            <ShieldAlert className="w-4 h-4" /> Suspend User
+                          </button>
+                          <button 
+                            onClick={() => handleAction(user.id, 'ban')}
+                            className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium flex items-center gap-2"
+                          >
+                            <Ban className="w-4 h-4" /> Ban User
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))

@@ -12,7 +12,7 @@ import type { Section } from "./types";
 const navItems: { id: Section; label: string; icon: React.ReactNode; badge?: number }[] = [
   { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
   { id: "children", label: "Children", icon: <Baby size={18} /> },
-  { id: "admissions", label: "Admissions", icon: <UserPlus size={18} />, badge: 2 },
+  { id: "applications", label: "Applications", icon: <UserPlus size={18} />, badge: 2 },
   { id: "parents", label: "Parents", icon: <Users size={18} /> },
   { id: "staff", label: "Staff & Nannies", icon: <UserCog size={18} /> },
   { id: "live-monitoring", label: "Live Monitoring", icon: <Monitor size={18} /> },

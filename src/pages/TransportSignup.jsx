@@ -1,15 +1,25 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import FormInput from '../components/FormInput'
 import api from '../services/api'
+import { useAuth } from '../context/AuthContext'
 
 export default function TransportSignup(){
   const [form, setForm] = useState({ name: '', email: '', password: '', vehicle: '' })
+  const navigate = useNavigate()
+  const { authenticate } = useAuth() || {}
+
   const submit = async e =>{
     e.preventDefault()
     try{ 
-      await api.post('/auth/signup', { ...form, role: 'transport' })
-      alert('Registered') 
+      const res = await api.post('/auth/signup', { ...form, role: 'transport' })
+      if (authenticate && res.data.token && res.data.user) {
+        authenticate(res.data.token, res.data.user)
+        navigate('/dashboard')
+      } else {
+        alert('Registered - proceed to login')
+        navigate('/login')
+      }
     }catch(err){
       const msg = err.response?.data?.message || err.response?.data?.error || err.message || 'Signup failed'
       alert(msg)

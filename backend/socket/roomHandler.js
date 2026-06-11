@@ -16,6 +16,9 @@ module.exports = (io, socket, onlineUsers) => {
   if (socket.user.role) {
     socket.join(`role_${socket.user.role}`);
   }
+  
+  // Also join a user-specific room for targeted notifications
+  socket.join(`user_${socket.user.id}`);
 
   // 3. Room messaging
   socket.on('room_message', ({ room, content }) => {

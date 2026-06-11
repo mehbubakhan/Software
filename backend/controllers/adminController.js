@@ -40,7 +40,7 @@ const getMetrics = async (req, res) => {
 
 const getUsers = async (req, res) => {
   try {
-    const [users] = await pool.query("SELECT id, name, email, role, phone, created_at FROM users ORDER BY created_at DESC");
+    const [users] = await pool.query("SELECT id, name, email, role, status FROM users ORDER BY id DESC");
     res.json({ ok: true, data: users });
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });

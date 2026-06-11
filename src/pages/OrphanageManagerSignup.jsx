@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import FormInput from '../components/FormInput'
 import api from '../services/api'
+import { useAuth } from '../context/AuthContext'
 
 const initialForm = {
   organizationName: '',
@@ -24,6 +25,7 @@ export default function OrphanageManagerSignup(){
   const [form, setForm] = useState(initialForm)
   const [submitting, setSubmitting] = useState(false)
   const navigate = useNavigate()
+  const { authenticate } = useAuth() || {}
 
   const setField = (key, value) => {
     setForm(prev => ({ ...prev, [key]: value }))
@@ -44,7 +46,7 @@ export default function OrphanageManagerSignup(){
 
     setSubmitting(true)
     try {
-      await api.post('/auth/signup', {
+      const payload = {
         name: form.organizationName,
         email: form.email,
         password: form.password,
@@ -56,9 +58,15 @@ export default function OrphanageManagerSignup(){
         state: form.state,
         pincode: form.pincode,
         registrationNumber: form.registrationNumber,
-      })
-      alert('Registered successfully. Please log in.')
-      navigate('/login')
+      }
+      const res = await api.post('/auth/signup', payload)
+      if (authenticate && res.data.token && res.data.user) {
+        authenticate(res.data.token, res.data.user)
+        navigate('/dashboard')
+      } else {
+        alert('Registered - please login')
+        navigate('/login')
+      }
     } catch (err) {
       const msg = err.response?.data?.message || err.response?.data?.error || err.message || 'Signup failed'
       alert(msg)

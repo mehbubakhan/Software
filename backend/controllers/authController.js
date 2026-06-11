@@ -73,7 +73,8 @@ const signup = async (req, res) => {
       }
     }
     console.log('User created:', user.id)
-    return res.json({ ok:true, user })
+    const token = jwt.sign({ id: user.id, role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '7d' })
+    return res.json({ ok:true, token, user: { id: user.id, name: user.name, email: user.email, role } })
   }catch(err){ 
     console.error('Signup error:', err)
     return res.status(500).json({ ok:false, error: err.message }) 

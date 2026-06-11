@@ -108,7 +108,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     { label: "Total Children", value: activeChildren, sub: "Enrolled", icon: <Baby size={18} />, color: "bg-fuchsia-500", light: "bg-fuchsia-50" },
     { label: "Present Today", value: 31, sub: "86% attendance", icon: <UserCheck size={18} />, color: "bg-green-500", light: "bg-green-50" },
     { label: "Absent Today", value: 5, sub: "With notifications", icon: <Users size={18} />, color: "bg-red-500", light: "bg-red-50" },
-    { label: "New Admissions", value: pendingAdmissions, sub: "Awaiting review", icon: <UserPlus size={18} />, color: "bg-blue-500", light: "bg-blue-50" },
+    { label: "New Applications", value: pendingAdmissions, sub: "Awaiting review", icon: <UserPlus size={18} />, color: "bg-blue-500", light: "bg-blue-50" },
     { label: "Pending Payments", value: 3, sub: "$2,350 outstanding", icon: <CreditCard size={18} />, color: "bg-yellow-500", light: "bg-yellow-50" },
     { label: "Active Staff", value: activeStaff, sub: "1 on leave today", icon: <UserCog size={18} />, color: "bg-purple-500", light: "bg-purple-50" },
     { label: "Vehicles Running", value: 2, sub: "1 en route now", icon: <Bus size={18} />, color: "bg-teal-500", light: "bg-teal-50" },
@@ -430,7 +430,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </Card>
 
         <Card className="p-5">
-          <h3 className="text-gray-700 mb-3">Admissions Pipeline</h3>
+          <h3 className="text-gray-700 mb-3">Applications Pipeline</h3>
           <div className="grid grid-cols-2 gap-3">
             {(["Pending", "Approved", "Waitlisted", "Rejected"] as const).map(s => (
               <div key={s} className="bg-gray-50 rounded-xl p-4 text-center">
@@ -468,7 +468,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Parent Name</label><input value={qaForm.parent || ""} onChange={(e: any) => qf("parent", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
             <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Parent Phone</label><input value={qaForm.phone || ""} onChange={(e: any) => qf("phone", e.target.value)} placeholder="+1 555-0000" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
           </div>
-          <p className="text-xs text-blue-600 bg-blue-50 p-2 rounded-lg">Full application details available in Admissions section.</p>
+          <p className="text-xs text-blue-600 bg-blue-50 p-2 rounded-lg">Full application details available in Applications section.</p>
         </div>
         <div className="flex justify-end gap-2 mt-5"><Btn variant="secondary" onClick={() => setQuickModal(null)}>Cancel</Btn><Btn onClick={submitQuickAction}>Submit Admission</Btn></div>
       </Modal>

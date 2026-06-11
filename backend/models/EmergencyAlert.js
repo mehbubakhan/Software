@@ -1,7 +1,8 @@
 const pool = require('../config/db')
 
 const createAlert = async ({ user_id, type, location, message }) => {
-  const [res] = await pool.query('INSERT INTO emergency_alerts (user_id, type, location, message) VALUES (?, ?, ?, ?)', [user_id, type, location, message])
+  // Pass user_id as both user_id and nanny_id to satisfy the database schema
+  const [res] = await pool.query('INSERT INTO emergency_alerts (user_id, nanny_id, type, location, message) VALUES (?, ?, ?, ?, ?)', [user_id, user_id, type, location, message])
   return { id: res.insertId }
 }
 

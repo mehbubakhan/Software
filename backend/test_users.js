@@ -1,13 +1,17 @@
 require('dotenv').config({ path: require('path').join(__dirname, '.env') });
-const pool = require('./config/db');
+const axios = require('axios');
+const jwt = require('jsonwebtoken');
+
+const token = jwt.sign({ id: 147, role: 'admin' }, process.env.JWT_SECRET || 'your_jwt_secret');
 
 async function testUsers() {
   try {
-    const [rows] = await pool.query('SELECT id, name, email, role FROM users ORDER BY id DESC LIMIT 5');
-    console.log(rows);
-  } catch (err) {
-    console.error("DB Query Error:", err);
+    const res = await axios.get('http://localhost:5001/api/admin/users', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    console.log("Success! Users found:", res.data.data.length);
+  } catch(err) {
+    console.error("Error:", err.response ? err.response.data : err.message);
   }
-  process.exit(0);
 }
 testUsers();

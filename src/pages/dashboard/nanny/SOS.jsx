@@ -1,17 +1,27 @@
 import React, { useState } from 'react';
 import { AlertTriangle, ShieldCheck, MapPin, Phone, VolumeX, CheckCircle2 } from 'lucide-react';
+import api from '../../../services/api';
 
 export default function SOS() {
   const [sosActive, setSosActive] = useState(false);
   const [silentActive, setSilentActive] = useState(false);
 
-  const triggerSos = () => {
+  const triggerSos = async () => {
     setSosActive(true);
-    // In a real app, this would hit the backend API and send SMS/Notifications
+    try {
+      await api.post('/sos', { message: 'Emergency SOS Triggered', lat: null, lng: null });
+    } catch(err) {
+      console.error(err);
+    }
   }
 
-  const triggerSilent = () => {
+  const triggerSilent = async () => {
     setSilentActive(true);
+    try {
+      await api.post('/sos', { message: 'Silent SOS Triggered', lat: null, lng: null });
+    } catch(err) {
+      console.error(err);
+    }
   }
 
   const cancelSos = () => {

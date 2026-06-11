@@ -1,7 +1,7 @@
 export type Section =
   | "dashboard"
   | "children"
-  | "admissions"
+  | "applications"
   | "parents"
   | "staff"
   | "live-monitoring"

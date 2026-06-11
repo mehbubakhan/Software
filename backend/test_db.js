@@ -1,14 +1,14 @@
-require('dotenv').config({ path: require('path').join(__dirname, '.env') });
-const pool = require('./config/db');
+require('dotenv').config({ path: require('path').join(__dirname, '.env') })
+const pool = require('./config/db')
 
-async function test() {
+async function run() {
   try {
-    const [rows] = await pool.query('SHOW TABLES');
-    console.log("Connected! Tables:", rows);
-    process.exit(0);
+    const [rows] = await pool.query('SELECT id, name, role, email FROM users WHERE name LIKE "%Mehbuba%" OR name LIKE "%Mehuba%" OR name LIKE "%Admin%"')
+    console.log("Users:", rows)
   } catch (err) {
-    console.error("DB Error:", err);
-    process.exit(1);
+    console.log("Error details:", err)
   }
+  process.exit(0)
 }
-test();
+
+run()

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { AlertTriangle, MapPin, Phone, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import api from '../../../services/api';
+import { useSocket } from '../../../context/SocketContext';
 
 export default function EmergencyCenter() {
   const [emergencies, setEmergencies] = useState([]);
+  const { socket } = useSocket() || {};
 
   const fetchEmergencies = async () => {
     try {
@@ -17,8 +19,16 @@ export default function EmergencyCenter() {
   useEffect(() => {
     fetchEmergencies();
     const interval = setInterval(fetchEmergencies, 10000); // Poll every 10s
-    return () => clearInterval(interval);
-  }, []);
+    
+    if (socket) {
+      socket.on('emergency_updated', fetchEmergencies);
+    }
+    
+    return () => {
+      clearInterval(interval);
+      if (socket) socket.off('emergency_updated', fetchEmergencies);
+    };
+  }, [socket]);
 
   const handleResolve = async (id) => {
     try {

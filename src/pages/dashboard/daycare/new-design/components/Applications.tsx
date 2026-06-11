@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSocket } from "../../../../../context/SocketContext";
 import api from "../../../../../services/api";
 import {
   Plus, Search, Eye, Pencil, Trash2, CheckCircle, XCircle,
@@ -118,12 +119,37 @@ type ModalType = "add" | "edit" | "view" | "visit" | "assign" | "moreinfo" | "su
 type DetailTab = "parent" | "child" | "package" | "visit";
 
 // ═════════════════════════════════════════════════════════════════════════
-export function Admissions() {
+export function Applications() {
   const [admissions, setAdmissions] = useState<AdmissionExt[]>([]);
+  const { socket } = useSocket() || {};
 
   useEffect(() => {
     fetchAdmissions();
   }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+    
+    const handleNewApplication = (app: any) => {
+      const newApp = {
+        ...EMPTY,
+        id: app.id.toString(),
+        admissionId: `ADM-${app.id}`,
+        childName: app.child_name,
+        parentName: app.parent_name,
+        package: app.package_type || 'Full-Time',
+        status: 'Pending' as any,
+        requestDate: new Date().toISOString().split('T')[0]
+      };
+      setAdmissions(prev => [newApp, ...prev]);
+      alert(`New admission application received for ${app.child_name}!`);
+    };
+
+    socket.on('new_application', handleNewApplication);
+    return () => {
+      socket.off('new_application', handleNewApplication);
+    };
+  }, [socket]);
 
   const fetchAdmissions = async () => {
     try {
