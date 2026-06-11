@@ -1,4 +1,23 @@
 const pool = require('../config/db')
+const fs = require('fs')
+const path = require('path')
+
+const mockFilePath = path.join(__dirname, '..', 'mockProfiles.json')
+let mockProfiles = {}
+try {
+  if (fs.existsSync(mockFilePath)) {
+    mockProfiles = JSON.parse(fs.readFileSync(mockFilePath, 'utf8'))
+  }
+} catch (e) {}
+
+const getMockProfiles = () => {
+  try {
+    if (fs.existsSync(mockFilePath)) {
+      return JSON.parse(fs.readFileSync(mockFilePath, 'utf8'))
+    }
+  } catch (e) {}
+  return mockProfiles
+}
 
 const parentSummary = async (req, res) => {
   try{
@@ -34,73 +53,134 @@ const nannySummary = async (req, res) => {
 const getParentOverview = async (req, res) => {
   try {
     const parent_id = req.user?.id || 1;
-    // We fetch real children from DB, but map them to the UI structure. If none, we provide fallbacks.
+    
+    // 1. Fetch children
     let dbChildren = [];
     try {
       [dbChildren] = await pool.query('SELECT * FROM children WHERE parent_id = ?', [parent_id]);
     } catch (dbErr) {
-      console.warn("DB unreachable, using mock children array.");
+      console.warn("DB unreachable for children, using mock.", dbErr.message);
     }
     
     let children = dbChildren.map(c => ({
       id: c.id,
       name: c.name,
-      age: c.dob ? Math.floor((new Date() - new Date(c.dob).getTime()) / 3.15576e+10) + ' years old' : '2 years old',
-      currentDaycare: 'Sunshine Daycare',
-      nextActivity: 'Art Class • Tomorrow 10:00 AM',
-      healthStatus: 'All vaccinations up to date'
+      age: c.dob ? Math.floor((new Date() - new Date(c.dob).getTime()) / 3.15576e+10) + ' years old' : 'Age unknown',
+      currentDaycare: 'Not enrolled',
+      nextActivity: 'None scheduled',
+      healthStatus: 'Up to date'
     }));
 
     if (children.length === 0) {
+      const currentMockProfiles = getMockProfiles();
+      const mockProfile = currentMockProfiles[parent_id] || {};
       children = [
-        { id: '1', name: 'Md Reza', age: '2 years old', currentDaycare: 'Sunshine Daycare', nextActivity: 'Art Class • Tomorrow 10:00 AM', healthStatus: 'All vaccinations up to date' },
-        { id: '2', name: 'Evan Jakaria', age: '4 years old', currentDaycare: 'Little Stars Center', nextActivity: 'Music Session • Jan 12, 2:00 PM', healthStatus: 'Checkup scheduled Jan 21' }
-      ]
+        { 
+          id: '1', 
+          name: mockProfile.childName || 'Demo Child', 
+          age: (mockProfile.childAge ? mockProfile.childAge : '2') + ' years old', 
+          currentDaycare: 'Sunshine Daycare', 
+          nextActivity: 'Art Class • Tomorrow 10:00 AM', 
+          healthStatus: 'All vaccinations up to date' 
+        }
+      ];
     }
 
+    // 2. Fetch Stats
+    const [[{ activeBookings }]] = await pool.query("SELECT COUNT(*) as activeBookings FROM parent_job_posts WHERE parent_id = ? AND status != 'closed'", [parent_id]);
+    const [[{ nanniesHired }]] = await pool.query("SELECT COUNT(*) as nanniesHired FROM parent_job_posts WHERE parent_id = ? AND status = 'filled'", [parent_id]);
+    const [[{ pendingOrders }]] = await pool.query("SELECT COUNT(*) as pendingOrders FROM orders WHERE user_id = ? AND status = 'Pending'", [parent_id]);
+    const [[{ totalOrders, deliveredOrders }]] = await pool.query("SELECT COUNT(*) as totalOrders, SUM(CASE WHEN status='Delivered' THEN 1 ELSE 0 END) as deliveredOrders FROM orders WHERE user_id = ?", [parent_id]);
+    const [[{ notificationsCount }]] = await pool.query("SELECT COUNT(*) as notificationsCount FROM admin_notifications"); // Or specific to user
+
+    const completionOrders = totalOrders > 0 ? Math.round((deliveredOrders || 0) / totalOrders * 100) : 0;
+
+    // 3. Fetch Nanny Bookings (using job posts as proxy for now)
+    const [dbBookings] = await pool.query("SELECT id, title, created_at, status FROM parent_job_posts WHERE parent_id = ? ORDER BY created_at DESC LIMIT 3", [parent_id]);
+    const nannyBookings = dbBookings.map(b => ({
+      id: b.id,
+      name: b.title,
+      date: new Date(b.created_at).toLocaleDateString(),
+      time: new Date(b.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+      status: b.status === 'filled' ? 'Confirmed' : 'Pending'
+    }));
+
+    // 4. Fetch Daycare Updates
+    let daycareUpdates = [];
+    if (dbChildren.length > 0) {
+      const childIds = dbChildren.map(c => c.id);
+      const [dbUpdates] = await pool.query(`SELECT id, type, description, time_recorded FROM daycare_daily_reports WHERE child_id IN (?) ORDER BY time_recorded DESC LIMIT 3`, [childIds]);
+      daycareUpdates = dbUpdates.map(u => ({
+        id: u.id,
+        title: u.type + ' Update',
+        location: u.description || 'Daycare Center',
+        time: new Date(u.time_recorded).toLocaleString(),
+        icon: u.type === 'meal' ? '🥣' : (u.type === 'sleep' ? '😴' : '🎨'),
+        color: 'blue'
+      }));
+    }
+
+    // 5. Fetch Upcoming Schedule (Meetups)
+    const [dbMeetups] = await pool.query("SELECT id, meetup_date, meetup_time, location, meeting_type FROM adoption_meetups WHERE created_by = ? ORDER BY meetup_date ASC LIMIT 3", [parent_id]);
+    const upcomingSchedule = dbMeetups.map(m => ({
+      id: m.id,
+      title: 'Adoption Meetup',
+      date: m.meetup_date ? new Date(m.meetup_date).toLocaleDateString() + ' • ' + (m.meetup_time || '') : 'TBD',
+      location: m.meeting_type === 'virtual' ? 'Virtual Meeting' : (m.location || 'TBD'),
+      icon: '📅',
+      color: 'purple'
+    }));
+
+    // 6. Fetch Recent Activities
+    let recentActivities = [];
+    if (dbChildren.length > 0) {
+      const childIds = dbChildren.map(c => c.id);
+      const [dbActivities] = await pool.query(`SELECT id, type as text, created_at as time FROM activities WHERE child_id IN (?) ORDER BY created_at DESC LIMIT 4`, [childIds]);
+      recentActivities = dbActivities.map(a => ({
+        id: a.id,
+        text: a.text || 'Activity logged',
+        time: new Date(a.time).toLocaleString(),
+        icon: '📝'
+      }));
+    }
+
+    // 7. Fetch Recent Orders
+    const [dbOrders] = await pool.query("SELECT id, tracking_number, status, total_amount, created_at FROM orders WHERE user_id = ? ORDER BY created_at DESC LIMIT 3", [parent_id]);
+    const recentOrders = dbOrders.map(o => ({
+      id: o.id,
+      orderId: o.tracking_number,
+      status: o.status,
+      item: 'Marketplace Order', // Join with order_items if needed
+      date: new Date(o.created_at).toLocaleDateString(),
+      price: '$' + parseFloat(o.total_amount).toFixed(2)
+    }));
+
+    const currentMockProfiles = getMockProfiles();
+    const mockProfile = currentMockProfiles[parent_id] || {};
     const data = {
-      user: { name: req.user?.name || 'Sarah' },
+      user: { name: mockProfile.name || req.user?.name || 'Parent' },
       children,
       stats: {
-        activeBookings: 2,
-        messages: 5,
-        notifications: 12,
-        weeklyHours: 8,
-        nanniesHired: 1,
-        daycareAdmins: 1,
-        pendingOrders: 3,
-        completionOrders: 45
+        activeBookings: activeBookings || 0,
+        messages: 0,
+        notifications: notificationsCount || 0,
+        weeklyHours: 0,
+        nanniesHired: nanniesHired || 0,
+        daycareAdmins: 0,
+        pendingOrders: pendingOrders || 0,
+        completionOrders: completionOrders
       },
-      nannyBookings: [
-        { id: 1, name: 'Maria Rodriguez', date: 'Jan 10, 2026', time: '09:00 - 14:00', status: 'Confirmed' },
-        { id: 2, name: 'Emma Watson', date: 'Jan 12, 2026', time: '11:00 - 15:00', status: 'Pending' }
-      ],
-      daycareUpdates: [
-        { id: 1, title: 'Lunch & Nap Time', location: 'Sunshine Daycare', time: 'Oct 3, 12:30 PM', icon: '🥣', color: 'blue' },
-        { id: 2, title: 'Art & Crafts Session', location: 'Little Stars Center', time: 'Oct 3, 2:00 PM', icon: '🎨', color: 'purple' }
-      ],
-      upcomingSchedule: [
-        { id: 1, title: 'Parent/Teacher Meetups - Sarah Johnson', date: 'Jan 12, 2026 • 10:00 AM', location: 'Zoom Meeting', icon: '📅', color: 'blue' },
-        { id: 2, title: 'Daycare Board Meeting', date: 'Jan 12, 2026 • 2:00 PM', location: 'Sunshine Daycare', icon: '🏢', color: 'purple' },
-        { id: 3, title: 'Baby Vaccination Reminder', date: 'Jan 15, 2026 • 11:00 AM', location: 'City Health Clinic', icon: '🏥', color: 'pink' },
-        { id: 4, title: 'Immunization Schedule', date: 'Jan 16, 2026 • 2:00 PM', location: 'Dr. Smith\'s Clinic', icon: '💉', color: 'green' }
-      ],
-      recentActivities: [
-        { id: 1, text: 'Interview scheduled with Sarah Johnson', time: '2 hours ago', icon: '💬' },
-        { id: 2, text: 'Daily activity report received', time: '4 hours ago', icon: '📝' },
-        { id: 3, text: 'Order #1254 shipped', time: '8 hours ago', icon: '📦' },
-        { id: 4, text: 'Payment reminder: Monthly Daycare fee', time: '1 day ago', icon: '💰' }
-      ],
-      recentOrders: [
-        { id: 1, orderId: '#ORD-2456', status: 'Delivered', item: 'Baby Stroller - Premium', date: 'Jan 8, 2026', price: '$289.99' },
-        { id: 2, orderId: '#ORD-2457', status: 'In Transit', item: 'Organic Baby Food Set', date: 'Jan 7, 2026', price: '$49.99' },
-        { id: 3, orderId: '#ORD-2458', status: 'Processing', item: 'Educational Toys Bundle', date: 'Jan 6, 2026', price: '$149.99' }
-      ]
+      nannyBookings: nannyBookings.length ? nannyBookings : [],
+      daycareUpdates: daycareUpdates.length ? daycareUpdates : [],
+      upcomingSchedule: upcomingSchedule.length ? upcomingSchedule : [],
+      recentActivities: recentActivities.length ? recentActivities : [],
+      recentOrders: recentOrders.length ? recentOrders : []
     };
 
     return res.json({ ok: true, data });
   } catch (err) {
-    return res.status(500).json({ ok: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) });
+    console.error("getParentOverview Error:", err);
+    return res.status(500).json({ ok: false, error: err.message });
   }
 }
 

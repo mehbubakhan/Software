@@ -92,7 +92,7 @@ const ATTENDANCE_METHODS = ["Face Recognition", "QR Code", "Manual", "Biometric"
 const SHIFT_COLORS: Record<string, string> = {
   Morning: "bg-amber-100 text-amber-700",
   Evening: "bg-purple-100 text-purple-700",
-  Night: "bg-indigo-100 text-indigo-700",
+  Night: "bg-fuchsia-100 text-fuchsia-700",
   Emergency: "bg-red-100 text-red-700",
 };
 
@@ -337,7 +337,7 @@ export function StaffNannies() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        <StatCard label="Total Staff" value={staff.length} color="indigo" icon={<Users size={20} />} />
+        <StatCard label="Total Staff" value={staff.length} color="fuchsia" icon={<Users size={20} />} />
         <StatCard label="Present Today" value={presentCount} color="green" icon={<CheckCircle size={20} />} />
         <StatCard label="Absent" value={absentCount} color="red" icon={<XCircle size={20} />} />
         <StatCard label="Suspended" value={suspendedCount} color="amber" icon={<Shield size={20} />} />
@@ -347,17 +347,17 @@ export function StaffNannies() {
       <div className="flex flex-wrap items-center gap-3 mb-5">
         <SearchBar value={search} onChange={setSearch} placeholder="Search by name, role, ID…" />
         <select value={filterRole} onChange={(e: any) => setFilterRole(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
           <option value="All">All Roles</option>
           {ROLES.map(r => <option key={r}>{r}</option>)}
         </select>
         <select value={filterShift} onChange={(e: any) => setFilterShift(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
           <option value="All">All Shifts</option>
           {SHIFT_TYPES.map(s => <option key={s}>{s}</option>)}
         </select>
         <select value={filterAtt} onChange={(e: any) => setFilterAtt(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
           <option value="All">All Attendance</option>
           {["Present", "Late", "Absent", "On Leave"].map(a => <option key={a}>{a}</option>)}
         </select>
@@ -382,7 +382,7 @@ export function StaffNannies() {
             <tbody>
               {filtered.map(s => (
                 <tr key={s.id} className={`border-b border-gray-50 hover:bg-gray-50 transition-colors ${s.suspended ? "opacity-60" : ""}`}>
-                  <td className="px-4 py-3 font-mono text-xs text-indigo-700">{s.staffId}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-fuchsia-700">{s.staffId}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <Avatar name={s.name} size="sm" />
@@ -412,7 +412,7 @@ export function StaffNannies() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1 flex-wrap">
                       <button onClick={() => openView(s)} title="View Profile"
-                        className="p-1.5 rounded hover:bg-indigo-50 text-indigo-600 transition-colors"><Eye size={14} /></button>
+                        className="p-1.5 rounded hover:bg-fuchsia-50 text-fuchsia-600 transition-colors"><Eye size={14} /></button>
                       <button onClick={() => { setSelected(s); setForm({ ...emptyForm, name: s.name, role: s.role, email: s.email, phone: s.phone, shift: s.shift, group: s.group, status: s.status, joinDate: s.joinDate, shiftType: s.shiftType, experience: s.experience, certifications: s.certifications, salary: s.salary, emergencyContact: s.emergencyContact, emergencyPhone: s.emergencyPhone, address: s.address, nationality: s.nationality }); setModal("edit"); }}
                         title="Edit" className="p-1.5 rounded hover:bg-amber-50 text-amber-600 transition-colors"><Pencil size={14} /></button>
                       <button onClick={() => openView(s, "attendance")} title="Track Attendance"
@@ -464,11 +464,11 @@ export function StaffNannies() {
                 <input value={certInput} onChange={(e: any) => setCertInput(e.target.value)}
                   onKeyDown={e => { if (e.key === "Enter" && certInput.trim()) { setForm(p => ({ ...p, certifications: [...p.certifications, certInput.trim()] })); setCertInput(""); e.preventDefault(); } }}
                   placeholder="Add certification and press Enter"
-                  className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                  className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500" />
               </div>
               <div className="flex flex-wrap gap-2">
                 {form.certifications.map((c, i) => (
-                  <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-indigo-100 text-indigo-700">
+                  <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-fuchsia-100 text-fuchsia-700">
                     {c}
                     <button onClick={() => setForm(p => ({ ...p, certifications: p.certifications.filter((_, j) => j !== i) }))}><X size={10} /></button>
                   </span>
@@ -490,7 +490,7 @@ export function StaffNannies() {
             <Avatar name={selected.name} size="lg" />
             <div>
               <h3 style={{ fontWeight: 600 }} className="text-lg">{selected.name}</h3>
-              <p className="text-sm text-gray-500">{selected.role} · <span className="font-mono text-indigo-600 text-xs">{selected.staffId}</span></p>
+              <p className="text-sm text-gray-500">{selected.role} · <span className="font-mono text-fuchsia-600 text-xs">{selected.staffId}</span></p>
               <div className="flex gap-2 mt-1">
                 <span className={`px-2 py-0.5 rounded-full text-xs ${SHIFT_COLORS[selected.shiftType]}`}>{selected.shiftType} Shift</span>
                 <span className={`px-2 py-0.5 rounded-full text-xs ${ATT_COLORS[selected.attendanceStatus]}`}>{selected.attendanceStatus}</span>
@@ -503,7 +503,7 @@ export function StaffNannies() {
           <div className="flex border-b border-gray-200 mb-5 gap-1">
             {(["info", "attendance", "payroll", "duty"] as ProfileTab[]).map(t => (
               <button key={t} onClick={() => setProfileTab(t)}
-                className={`px-4 py-2 text-sm capitalize transition-colors ${profileTab === t ? "border-b-2 border-indigo-600 text-indigo-700" : "text-gray-500 hover:text-gray-700"}`}>
+                className={`px-4 py-2 text-sm capitalize transition-colors ${profileTab === t ? "border-b-2 border-fuchsia-600 text-fuchsia-700" : "text-gray-500 hover:text-gray-700"}`}>
                 {t === "duty" ? "Duty Assignment" : t}
               </button>
             ))}
@@ -528,7 +528,7 @@ export function StaffNannies() {
                 <p className="text-gray-400 text-xs mb-1">Certifications</p>
                 <div className="flex flex-wrap gap-2">
                   {selected.certifications.length ? selected.certifications.map((c, i) => (
-                    <span key={i} className="px-2 py-0.5 rounded-full text-xs bg-indigo-50 text-indigo-700 border border-indigo-200">{c}</span>
+                    <span key={i} className="px-2 py-0.5 rounded-full text-xs bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-200">{c}</span>
                   )) : <span className="text-gray-400 text-xs">None</span>}
                 </div>
               </div>
@@ -548,14 +548,14 @@ export function StaffNannies() {
                 <div className="grid grid-cols-4 gap-2 mb-3">
                   {ATTENDANCE_METHODS.map(method => (
                     <button key={method} onClick={() => setAttMethod(method)}
-                      className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 text-xs transition-all ${attMethod === method ? "border-indigo-500 bg-indigo-50 text-indigo-700" : "border-gray-200 hover:border-gray-300"}`}>
+                      className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 text-xs transition-all ${attMethod === method ? "border-fuchsia-500 bg-fuchsia-50 text-fuchsia-700" : "border-gray-200 hover:border-gray-300"}`}>
                       <span className="text-lg">{method === "Face Recognition" ? "🤳" : method === "QR Code" ? "📱" : method === "Manual" ? "✋" : "👆"}</span>
                       {method}
                     </button>
                   ))}
                 </div>
                 <button onClick={simulateAttendance} disabled={attSimState === "scanning"}
-                  className={`w-full py-2.5 rounded-lg text-sm font-medium transition-all ${attSimState === "scanning" ? "bg-gray-200 text-gray-500 cursor-not-allowed" : attSimState === "done" ? "bg-green-500 text-white" : "bg-indigo-600 text-white hover:bg-indigo-700"}`}>
+                  className={`w-full py-2.5 rounded-lg text-sm font-medium transition-all ${attSimState === "scanning" ? "bg-gray-200 text-gray-500 cursor-not-allowed" : attSimState === "done" ? "bg-green-500 text-white" : "bg-fuchsia-600 text-white hover:bg-fuchsia-700"}`}>
                   {attSimState === "idle" ? `Check In via ${attMethod}` : attSimState === "scanning" ? "⏳ Processing…" : "✅ Checked In!"}
                 </button>
               </div>
@@ -583,9 +583,9 @@ export function StaffNannies() {
           {profileTab === "payroll" && (
             <div>
               <div className="grid grid-cols-3 gap-3 mb-4">
-                <div className="bg-indigo-50 rounded-xl p-3 text-center">
-                  <p className="text-xs text-indigo-500">Base Salary</p>
-                  <p className="text-lg text-indigo-700" style={{ fontWeight: 700 }}>${selected.salary.toLocaleString()}</p>
+                <div className="bg-fuchsia-50 rounded-xl p-3 text-center">
+                  <p className="text-xs text-fuchsia-500">Base Salary</p>
+                  <p className="text-lg text-fuchsia-700" style={{ fontWeight: 700 }}>${selected.salary.toLocaleString()}</p>
                 </div>
                 <div className="bg-green-50 rounded-xl p-3 text-center">
                   <p className="text-xs text-green-500">Last Month Net</p>
@@ -617,7 +617,7 @@ export function StaffNannies() {
           {profileTab === "duty" && (
             <div>
               {selected.dutyAssignment ? (
-                <div className="bg-indigo-50 rounded-xl p-4 mb-4">
+                <div className="bg-fuchsia-50 rounded-xl p-4 mb-4">
                   <p className="text-sm mb-3" style={{ fontWeight: 600 }}>Current Duty Assignment</p>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     {[["Group", selected.dutyAssignment.group], ["Classroom", selected.dutyAssignment.classroom],
@@ -648,7 +648,7 @@ export function StaffNannies() {
               <div className="grid grid-cols-4 gap-2">
                 {GROUPS.map(g => (
                   <button key={g} onClick={() => setDutyForm(p => ({ ...p, group: g }))}
-                    className={`p-2 rounded-lg border text-xs text-center transition-all ${dutyForm.group === g ? "border-indigo-500 bg-indigo-50 text-indigo-700" : "border-gray-200 hover:border-gray-300"}`}>{g}</button>
+                    className={`p-2 rounded-lg border text-xs text-center transition-all ${dutyForm.group === g ? "border-fuchsia-500 bg-fuchsia-50 text-fuchsia-700" : "border-gray-200 hover:border-gray-300"}`}>{g}</button>
                 ))}
               </div>
             </div>
@@ -674,12 +674,12 @@ export function StaffNannies() {
       {/* ── Generate Payroll Modal ── */}
       {modal === "payroll" && selected && (
         <Modal title={`Generate Payroll — ${selected.name}`} onClose={() => setModal(null)}>
-          <div className="bg-indigo-50 rounded-xl p-4 mb-4 text-sm">
+          <div className="bg-fuchsia-50 rounded-xl p-4 mb-4 text-sm">
             <div className="grid grid-cols-2 gap-3">
               <div><p className="text-xs text-gray-400">Base Salary</p><p style={{ fontWeight: 600 }}>${selected.salary.toLocaleString()}</p></div>
               <div><p className="text-xs text-gray-400">Deductions</p><p style={{ fontWeight: 600 }}>$150</p></div>
               <div><p className="text-xs text-gray-400">Bonus</p><p style={{ fontWeight: 600 }}>$0</p></div>
-              <div><p className="text-xs text-gray-400">Net Pay</p><p style={{ fontWeight: 700 }} className="text-indigo-700">${(selected.salary - 150).toLocaleString()}</p></div>
+              <div><p className="text-xs text-gray-400">Net Pay</p><p style={{ fontWeight: 700 }} className="text-fuchsia-700">${(selected.salary - 150).toLocaleString()}</p></div>
             </div>
           </div>
           <Select label="Payroll Month" value={payrollMonth} onChange={setPayrollMonth}

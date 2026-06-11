@@ -49,7 +49,7 @@ const STATUS_COLORS: Record<ConvStatus, string> = {
 
 const CATEGORY_COLORS: Record<ChatCategory, string> = {
   All: "bg-gray-100 text-gray-600",
-  Parents: "bg-indigo-100 text-indigo-700",
+  Parents: "bg-fuchsia-100 text-fuchsia-700",
   Staff: "bg-blue-100 text-blue-700",
   Transport: "bg-teal-100 text-teal-700",
   Billing: "bg-purple-100 text-purple-700",
@@ -303,18 +303,18 @@ export function Chat() {
       <div className="w-72 border-r border-gray-100 flex flex-col shrink-0">
         <div className="p-4 border-b border-gray-100">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-gray-900 text-sm" style={{ fontWeight: 700 }}>Messages {totalUnread > 0 && <span className="ml-1.5 px-1.5 py-0.5 bg-indigo-600 text-white text-xs rounded-full">{totalUnread}</span>}</h2>
+            <h2 className="text-gray-900 text-sm" style={{ fontWeight: 700 }}>Messages {totalUnread > 0 && <span className="ml-1.5 px-1.5 py-0.5 bg-fuchsia-600 text-white text-xs rounded-full">{totalUnread}</span>}</h2>
           </div>
           <div className="relative mb-3">
             <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input type="text" value={search} onChange={(e: any) => setSearch(e.target.value)} placeholder="Search conversations…"
-              className="w-full pl-8 pr-3 py-2 text-xs border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+              className="w-full pl-8 pr-3 py-2 text-xs border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" />
           </div>
           {/* Category filter */}
           <div className="flex flex-wrap gap-1">
             {(["All", "Parents", "Staff", "Transport", "Billing", "Emergency Support"] as ChatCategory[]).map(cat => (
               <button key={cat} onClick={() => setFilterCat(cat)}
-                className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all ${filterCat === cat ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
+                className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all ${filterCat === cat ? "bg-fuchsia-600 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
                 {CATEGORY_ICONS[cat]} {cat === "Emergency Support" ? "Emergency" : cat}
               </button>
             ))}
@@ -324,7 +324,7 @@ export function Chat() {
         <div className="flex-1 overflow-y-auto">
           {filteredConvs.map(c => (
             <button key={c.id} onClick={() => openConv(c.id)}
-              className={`w-full flex items-center gap-2.5 p-3 text-left hover:bg-gray-50 transition-colors border-b border-gray-50 ${active === c.id ? "bg-indigo-50" : ""} ${c.blocked ? "opacity-50" : ""}`}>
+              className={`w-full flex items-center gap-2.5 p-3 text-left hover:bg-gray-50 transition-colors border-b border-gray-50 ${active === c.id ? "bg-fuchsia-50" : ""} ${c.blocked ? "opacity-50" : ""}`}>
               <div className="relative shrink-0">
                 <Avatar name={c.from} size="sm" />
                 <div className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white ${STATUS_COLORS[c.status]}`} />
@@ -338,7 +338,7 @@ export function Chat() {
                   <p className="text-xs text-gray-400 truncate">{c.isTyping ? <span className="text-green-500 italic">typing…</span> : c.lastMessage}</p>
                   <div className="flex items-center gap-1 shrink-0">
                     {c.muted && <VolumeX size={9} className="text-gray-400" />}
-                    {c.unread > 0 && <span className="bg-indigo-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{c.unread}</span>}
+                    {c.unread > 0 && <span className="bg-fuchsia-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{c.unread}</span>}
                   </div>
                 </div>
                 <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs mt-0.5 ${CATEGORY_COLORS[c.category]}`}>
@@ -402,7 +402,7 @@ export function Chat() {
                 <div>
                   {/* Message bubble */}
                   {msg.type === "voice" ? (
-                    <div className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl ${msg.sender === "me" ? "bg-indigo-600 text-white rounded-br-sm" : "bg-gray-100 text-gray-800 rounded-bl-sm"}`}>
+                    <div className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl ${msg.sender === "me" ? "bg-fuchsia-600 text-white rounded-br-sm" : "bg-gray-100 text-gray-800 rounded-bl-sm"}`}>
                       <Mic size={14} />
                       <div className="flex gap-0.5 items-end h-4">
                         {Array.from({ length: 8 }).map((_, i) => (
@@ -413,7 +413,7 @@ export function Chat() {
                       <span className="text-xs">{msg.duration ?? "0:00"}</span>
                     </div>
                   ) : msg.type === "image" || msg.type === "file" ? (
-                    <div className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm ${msg.sender === "me" ? "bg-indigo-600 text-white rounded-br-sm" : "bg-gray-100 text-gray-800 rounded-bl-sm"}`}>
+                    <div className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm ${msg.sender === "me" ? "bg-fuchsia-600 text-white rounded-br-sm" : "bg-gray-100 text-gray-800 rounded-bl-sm"}`}>
                       {msg.type === "image" ? <Image size={14} /> : <FileText size={14} />}
                       <div>
                         <p className="text-xs" style={{ fontWeight: 500 }}>{msg.fileName}</p>
@@ -421,7 +421,7 @@ export function Chat() {
                       </div>
                     </div>
                   ) : (
-                    <div className={`px-4 py-2.5 rounded-2xl text-sm ${msg.sender === "me" ? "bg-indigo-600 text-white rounded-br-sm" : "bg-gray-100 text-gray-800 rounded-bl-sm"}`}>
+                    <div className={`px-4 py-2.5 rounded-2xl text-sm ${msg.sender === "me" ? "bg-fuchsia-600 text-white rounded-br-sm" : "bg-gray-100 text-gray-800 rounded-bl-sm"}`}>
                       {msg.text}
                     </div>
                   )}
@@ -429,7 +429,7 @@ export function Chat() {
                   <div className={`flex items-center gap-1 mt-0.5 ${msg.sender === "me" ? "justify-end" : ""}`}>
                     <p className="text-xs text-gray-400">{msg.time}</p>
                     {msg.sender === "me" && activeConv.readReceipts && (
-                      msg.read ? <CheckCheck size={12} className="text-indigo-500" /> : <Check size={12} className="text-gray-400" />
+                      msg.read ? <CheckCheck size={12} className="text-fuchsia-500" /> : <Check size={12} className="text-gray-400" />
                     )}
                   </div>
                 </div>
@@ -455,7 +455,7 @@ export function Chat() {
             <div className="flex flex-wrap gap-2">
               {QUICK_REPLIES.map(r => (
                 <button key={r} onClick={() => send(r)}
-                  className="px-3 py-1 rounded-full text-xs bg-white border border-gray-200 text-gray-600 hover:border-indigo-300 hover:text-indigo-600 transition-all">{r}</button>
+                  className="px-3 py-1 rounded-full text-xs bg-white border border-gray-200 text-gray-600 hover:border-fuchsia-300 hover:text-fuchsia-600 transition-all">{r}</button>
               ))}
             </div>
           </div>
@@ -492,10 +492,10 @@ export function Chat() {
               onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
               placeholder={activeConv.blocked ? "Conversation blocked" : "Type a message…"}
               disabled={activeConv.blocked}
-              className="flex-1 border border-gray-200 rounded-xl px-4 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+              className="flex-1 border border-gray-200 rounded-xl px-4 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 disabled:opacity-50"
             />
             <button onClick={() => setShowQuickReplies(p => !p)} title="Quick replies"
-              className={`p-1.5 rounded-lg transition-colors ${showQuickReplies ? "bg-indigo-50 text-indigo-600" : "hover:bg-gray-100 text-gray-400"}`}>
+              className={`p-1.5 rounded-lg transition-colors ${showQuickReplies ? "bg-fuchsia-50 text-fuchsia-600" : "hover:bg-gray-100 text-gray-400"}`}>
               <MessageSquare size={18} />
             </button>
             <button onClick={sendVoice} title={isRecording ? "Stop & Send" : "Voice message"}
@@ -503,7 +503,7 @@ export function Chat() {
               <Mic size={18} />
             </button>
             <button onClick={() => send()} disabled={!input.trim() || activeConv.blocked}
-              className="w-9 h-9 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl flex items-center justify-center transition-colors">
+              className="w-9 h-9 bg-fuchsia-600 hover:bg-fuchsia-700 disabled:opacity-50 text-white rounded-xl flex items-center justify-center transition-colors">
               <Send size={15} />
             </button>
           </div>
@@ -513,7 +513,7 @@ export function Chat() {
       {/* ── Video Call Modal ── */}
       {modal === "videoCall" && (
         <Modal title="" onClose={endVideoCall} size="lg">
-          <div className="bg-gray-900 rounded-xl overflow-hidden" style={{ height: 320 }}>
+          <div className="bg-slate-900 rounded-xl overflow-hidden" style={{ height: 320 }}>
             <div className="relative h-full flex items-center justify-center">
               <div className="text-center">
                 <Avatar name={activeConv.from} size="lg" />
@@ -522,7 +522,7 @@ export function Chat() {
                   {videoCallActive ? `${Math.floor(videoCallSeconds / 60)}:${String(videoCallSeconds % 60).padStart(2, "0")}` : "Calling…"}
                 </p>
               </div>
-              <div className="absolute bottom-4 right-4 w-20 h-16 bg-indigo-800 rounded-lg border-2 border-white/20 flex items-center justify-center">
+              <div className="absolute bottom-4 right-4 w-20 h-16 bg-fuchsia-800 rounded-lg border-2 border-white/20 flex items-center justify-center">
                 <span className="text-white text-xs">You</span>
               </div>
             </div>
@@ -540,7 +540,7 @@ export function Chat() {
         <Modal title="Share File" onClose={() => setModal(null)}>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { icon: <Image size={24} />, label: "Send Photo", action: () => sendFile("image"), color: "bg-indigo-50 text-indigo-600" },
+              { icon: <Image size={24} />, label: "Send Photo", action: () => sendFile("image"), color: "bg-fuchsia-50 text-fuchsia-600" },
               { icon: <FileText size={24} />, label: "Send Document", action: () => sendFile("file"), color: "bg-green-50 text-green-600" },
               { icon: <Mic size={24} />, label: "Voice Message", action: () => { sendVoice(); setModal(null); }, color: "bg-red-50 text-red-600" },
               { icon: <Video size={24} />, label: "Video Call", action: () => { setModal(null); startVideoCall(); }, color: "bg-purple-50 text-purple-600" },

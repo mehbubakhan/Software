@@ -20,6 +20,7 @@ export default function ParentSignup(){
     profilePhoto: null,
     parentGuardianInfo: false,
     idVerification: null,
+    childName: '',
     childDob: '',
     childAge: '',
     childGender: '',
@@ -51,7 +52,8 @@ export default function ParentSignup(){
         password: form.password,
         role: 'parent',
         dob: form.dob,
-        childName: form.username || 'Child 1',
+        childName: form.childName || 'Child 1',
+        childDob: form.childDob,
       })
       alert('Registered - proceed to login')
       navigate('/login')
@@ -157,6 +159,7 @@ export default function ParentSignup(){
                 <span className="text-xs font-semibold text-cyan-700">Age / Gender</span>
               </div>
               <div className="mt-4 grid gap-5 md:grid-cols-2">
+                <FormInput label="Child's Name" placeholder="Child's Name" value={form.childName} onChange={e => setField('childName', e.target.value)} required />
                 <FormInput label="Date of Birth" type="date" value={form.childDob} onChange={e => setField('childDob', e.target.value)} required />
                 <FormInput label="Age" type="number" placeholder="5" value={form.childAge} onChange={e => setField('childAge', e.target.value)} required />
               </div>

@@ -16,7 +16,7 @@ const normalizeRole = (role) => {
 const signup = async (req, res) => {
   try{
     console.log('Signup request:', req.body)
-    const { password, dob } = req.body
+    const { password, dob, childDob } = req.body
     const name = req.body.name?.trim()
     const email = req.body.email?.trim().toLowerCase()
     const role = normalizeRole(req.body.role)
@@ -30,7 +30,7 @@ const signup = async (req, res) => {
     const hash = await bcrypt.hash(password, salt)
     const user = await createUser({ name, email, passwordHash: hash, role })
     if (role === 'parent' && childName) {
-      await createChild({ name: childName, parent_id: user.id, dob: dob || null })
+      await createChild({ name: childName, parent_id: user.id, dob: childDob || null })
     }
     if (role === 'marketplace_seller') {
       const db = require('../config/db');

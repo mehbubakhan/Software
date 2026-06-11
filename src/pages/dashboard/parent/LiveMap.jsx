@@ -96,3 +96,4 @@ export default function LiveMap({ currentLat, currentLng, pathHistory }) {
     </div>
   );
 }
+

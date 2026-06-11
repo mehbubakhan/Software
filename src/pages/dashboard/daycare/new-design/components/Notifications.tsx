@@ -92,7 +92,7 @@ const CAT_COLORS: Record<NotifCategory, string> = {
   Payment: "bg-green-100 text-green-700",
   Emergency: "bg-red-100 text-red-700",
   "Parent Message": "bg-yellow-100 text-yellow-700",
-  "Staff Announcement": "bg-indigo-100 text-indigo-700",
+  "Staff Announcement": "bg-fuchsia-100 text-fuchsia-700",
 };
 
 const CATEGORIES: NotifCategory[] = ["All", "Pickup", "Medicine", "Payment", "Emergency", "Parent Message", "Staff Announcement"];
@@ -173,12 +173,12 @@ export function Notifications() {
           const cnt = notifs.filter(n => n.category === cat && !n.read).length;
           return (
             <button key={cat} onClick={() => setCatFilter(cat === catFilter ? "All" : cat)}
-              className={`p-3 rounded-xl border text-left transition-all ${catFilter === cat ? "border-indigo-400 bg-indigo-50" : "bg-white border-gray-100 hover:bg-gray-50"}`}>
+              className={`p-3 rounded-xl border text-left transition-all ${catFilter === cat ? "border-fuchsia-400 bg-fuchsia-50" : "bg-white border-gray-100 hover:bg-gray-50"}`}>
               <div className="flex items-center gap-1.5 mb-1">
                 <span className={`p-1 rounded-md ${CAT_COLORS[cat]}`}>{CAT_ICON[cat]}</span>
               </div>
               <p className="text-xs text-gray-500 leading-tight">{cat}</p>
-              {cnt > 0 && <p className="text-sm text-indigo-600 mt-0.5" style={{ fontWeight: 700 }}>{cnt} new</p>}
+              {cnt > 0 && <p className="text-sm text-fuchsia-600 mt-0.5" style={{ fontWeight: 700 }}>{cnt} new</p>}
             </button>
           );
         })}
@@ -193,7 +193,7 @@ export function Notifications() {
               <div className="flex gap-1">
                 {(["all", "unread", "read"] as const).map(f => (
                   <button key={f} onClick={() => setReadFilter(f)}
-                    className={`px-3 py-1.5 rounded-lg text-xs capitalize transition-all ${readFilter === f ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                    className={`px-3 py-1.5 rounded-lg text-xs capitalize transition-all ${readFilter === f ? "bg-fuchsia-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
                     {f === "all" ? "All" : f === "unread" ? `Unread (${unreadCount})` : `Read (${notifs.filter(n => n.read).length})`}
                   </button>
                 ))}
@@ -204,7 +204,7 @@ export function Notifications() {
               <div className="flex gap-1">
                 {(["all", "error", "warning", "info", "success"] as const).map(t => (
                   <button key={t} onClick={() => setTypeFilter(t)}
-                    className={`px-3 py-1.5 rounded-lg text-xs capitalize transition-all ${typeFilter === t ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                    className={`px-3 py-1.5 rounded-lg text-xs capitalize transition-all ${typeFilter === t ? "bg-fuchsia-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
                     {t}
                   </button>
                 ))}
@@ -215,7 +215,7 @@ export function Notifications() {
               <div className="flex flex-wrap gap-1">
                 {CATEGORIES.map(cat => (
                   <button key={cat} onClick={() => setCatFilter(cat)}
-                    className={`px-3 py-1.5 rounded-lg text-xs transition-all ${catFilter === cat ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                    className={`px-3 py-1.5 rounded-lg text-xs transition-all ${catFilter === cat ? "bg-fuchsia-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
                     {cat}
                   </button>
                 ))}
@@ -232,7 +232,7 @@ export function Notifications() {
           return (
             <button key={cat} onClick={() => setCatFilter(cat)}
               className={`px-3 py-2 text-sm whitespace-nowrap transition-colors flex items-center gap-1.5 ${
-                catFilter === cat ? "text-indigo-600 border-b-2 border-indigo-600" : "text-gray-500 hover:text-gray-700"
+                catFilter === cat ? "text-fuchsia-600 border-b-2 border-fuchsia-600" : "text-gray-500 hover:text-gray-700"
               }`}>
               {CAT_ICON[cat]}
               {cat}
@@ -268,7 +268,7 @@ export function Notifications() {
             </div>
             <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
               <button onClick={() => viewDetails(n)} title="View Details"
-                className="p-1.5 rounded hover:bg-white/80 text-gray-400 hover:text-indigo-600">
+                className="p-1.5 rounded hover:bg-white/80 text-gray-400 hover:text-fuchsia-600">
                 <Eye size={14} />
               </button>
               {!n.read && (
@@ -282,7 +282,7 @@ export function Notifications() {
                 <Trash2 size={14} />
               </button>
             </div>
-            {!n.read && <div className="w-2 h-2 bg-indigo-600 rounded-full shrink-0 mt-1.5" />}
+            {!n.read && <div className="w-2 h-2 bg-fuchsia-600 rounded-full shrink-0 mt-1.5" />}
           </div>
         ))}
         {displayed.length === 0 && (
@@ -290,7 +290,7 @@ export function Notifications() {
             <Bell size={32} className="mx-auto mb-2 opacity-40" />
             <p>No notifications match the current filter</p>
             <button onClick={() => { setCatFilter("All"); setReadFilter("all"); setTypeFilter("all"); }}
-              className="mt-2 text-indigo-600 text-sm hover:underline">Clear filters</button>
+              className="mt-2 text-fuchsia-600 text-sm hover:underline">Clear filters</button>
           </div>
         )}
       </div>

@@ -50,16 +50,31 @@ function ProfileView() {
     childName: '',
     childAge: '',
     childNotes: '',
+    photo: '',
   })
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfile(prev => ({ ...prev, photo: reader.result }));
+        localStorage.setItem('profilePhoto', reader.result);
+        window.dispatchEvent(new Event('profilePhotoUpdated'));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   useEffect(() => {
     api.get('/families/my/profile').then(res => {
       if (res.data.ok) {
-        setProfile(prev => ({ ...prev, ...res.data.profile }))
+        setProfile(prev => ({ ...prev, ...res.data.profile, photo: localStorage.getItem('profilePhoto') || prev.photo }))
       }
       setLoading(false)
     }).catch(err => {
       console.error(err)
+      setProfile(prev => ({ ...prev, photo: localStorage.getItem('profilePhoto') || prev.photo }))
       setLoading(false)
     })
   }, [])
@@ -86,8 +101,8 @@ function ProfileView() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white">Parent Profile</h1>
-        <p className="mt-2 text-slate-300">Manage parent details, child information, and emergency contacts.</p>
+        <h1 className="text-3xl font-bold text-slate-900">Parent Profile</h1>
+        <p className="mt-2 text-slate-600">Manage parent details, child information, and emergency contacts.</p>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
@@ -96,12 +111,16 @@ function ProfileView() {
           onSubmit={handleSave}
         >
           <div className="mb-6 flex items-center gap-5">
-            <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-fuchsia-500 bg-slate-100">
-              <span className="flex h-full w-full items-center justify-center text-3xl">👤</span>
+            <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-blue-600 bg-white">
+              {profile.photo ? (
+                <img src={profile.photo} alt="Profile" className="h-full w-full object-cover" />
+              ) : (
+                <span className="flex h-full w-full items-center justify-center text-3xl">👤</span>
+              )}
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900">Profile Photo</h2>
-              <input type="file" className="mt-2 text-sm text-slate-500 file:mr-4 file:rounded-full file:border-0 file:bg-fuchsia-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-fuchsia-700 hover:file:bg-fuchsia-100" />
+              <input type="file" accept="image/*" onChange={handlePhotoUpload} className="mt-2 text-sm text-slate-500 file:mr-4 file:rounded-full file:border-0 file:bg-blue-600/20 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-500 hover:file:bg-blue-600/30" />
             </div>
           </div>
           <h2 className="text-lg font-bold text-slate-900">Account Details</h2>
@@ -114,12 +133,12 @@ function ProfileView() {
               ['emergencyContact', 'Emergency Contact'],
             ].map(([key, label]) => (
               <label key={key} className="block">
-                <span className="text-sm font-semibold text-slate-700">{label}</span>
+                <span className="text-sm font-semibold text-slate-500">{label}</span>
                 <input
-                  className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500 text-slate-900"
+                  className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-blue-600 text-slate-900"
                   value={profile[key]}
-                  onChange={event => updateField(key, event.target.value)}
-                  type={key === 'email' ? 'email' : 'text'}
+                  onChange={(e) => updateField(key, e.target.value)}
+                  readOnly={key === 'email'}
                 />
               </label>
             ))}
@@ -128,10 +147,10 @@ function ProfileView() {
           <h2 className="mt-6 text-lg font-bold text-slate-900">Security</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             <label className="block">
-              <span className="text-sm font-semibold text-slate-700">Child Mode PIN</span>
+              <span className="text-sm font-semibold text-slate-500">Child Mode PIN</span>
               <div className="flex gap-2 mt-2">
                 <input
-                  className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500 text-slate-900 disabled:bg-slate-100 disabled:text-slate-500"
+                  className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-blue-600 text-slate-900 disabled:opacity-50"
                   value={profile.childModePin}
                   onChange={event => updateField('childModePin', event.target.value)}
                   type="password"
@@ -142,7 +161,7 @@ function ProfileView() {
                 <button
                   type="button"
                   onClick={() => setIsEditingPin(!isEditingPin)}
-                  className="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition font-semibold"
+                  className="px-4 py-2 bg-[#2A2E3D] text-slate-900 rounded-lg hover:bg-slate-700 transition font-semibold"
                 >
                   {isEditingPin ? 'Done' : 'Edit'}
                 </button>
@@ -151,7 +170,7 @@ function ProfileView() {
             </label>
           </div>
 
-          <button onClick={(e) => { e.preventDefault(); alert('Changes saved successfully to backend!'); }} className="mt-6 rounded-lg bg-fuchsia-600 px-5 py-2 font-semibold text-white hover:bg-fuchsia-700">
+          <button onClick={(e) => { e.preventDefault(); alert('Changes saved successfully to backend!'); }} className="mt-6 rounded-lg bg-blue-600 px-5 py-2 font-semibold text-slate-900 hover:bg-blue-500">
             Save Profile
           </button>
         </form>
@@ -159,16 +178,16 @@ function ProfileView() {
         <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="text-lg font-bold text-slate-900">Child Information</h2>
           <label className="mt-4 block">
-            <span className="text-sm font-semibold text-slate-700">Child Name</span>
-            <input className="mt-2 w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500" value={profile.childName} onChange={event => updateField('childName', event.target.value)} />
+            <span className="text-sm font-semibold text-slate-500">Child Name</span>
+            <input className="mt-2 w-full rounded-lg border border-slate-200 bg-white text-slate-900 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-600" value={profile.childName} onChange={event => updateField('childName', event.target.value)} />
           </label>
           <label className="mt-4 block">
-            <span className="text-sm font-semibold text-slate-700">Age</span>
-            <input className="mt-2 w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500" value={profile.childAge} onChange={event => updateField('childAge', event.target.value)} />
+            <span className="text-sm font-semibold text-slate-500">Age</span>
+            <input className="mt-2 w-full rounded-lg border border-slate-200 bg-white text-slate-900 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-600" value={profile.childAge} onChange={event => updateField('childAge', event.target.value)} />
           </label>
           <label className="mt-4 block">
-            <span className="text-sm font-semibold text-slate-700">Care Notes</span>
-            <textarea className="mt-2 min-h-24 w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500" value={profile.childNotes} onChange={event => updateField('childNotes', event.target.value)} />
+            <span className="text-sm font-semibold text-slate-500">Care Notes</span>
+            <textarea className="mt-2 min-h-24 w-full rounded-lg border border-slate-200 bg-white text-slate-900 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-600" value={profile.childNotes} onChange={event => updateField('childNotes', event.target.value)} />
           </label>
         </section>
       </div>
@@ -178,25 +197,25 @@ function ProfileView() {
 
 function NotificationsView() {
   const notifications = [
-    { title: 'Safety alert', body: 'Emma arrived at daycare and is inside the safe zone.', time: '5 mins ago', tone: 'border-red-400 bg-red-50' },
-    { title: 'Order update', body: 'Baby formula order is out for delivery.', time: '40 mins ago', tone: 'border-blue-400 bg-blue-50' },
-    { title: 'Meetup reminder', body: 'Adoption meetup scheduled for May 25, 2026 at 10:00 AM.', time: 'Today', tone: 'border-purple-400 bg-purple-50' },
-    { title: 'Activity report', body: 'Lunch and nap reports are ready to review.', time: 'Today', tone: 'border-green-400 bg-green-50' },
+    { title: 'Safety alert', body: 'Emma arrived at daycare and is inside the safe zone.', time: '5 mins ago', tone: 'border-red-500 bg-red-500/10' },
+    { title: 'Order update', body: 'Baby formula order is out for delivery.', time: '40 mins ago', tone: 'border-blue-500 bg-blue-500/10' },
+    { title: 'Meetup reminder', body: 'Adoption meetup scheduled for May 25, 2026 at 10:00 AM.', time: 'Today', tone: 'border-blue-600 bg-blue-600/10' },
+    { title: 'Activity report', body: 'Lunch and nap reports are ready to review.', time: 'Today', tone: 'border-green-500 bg-green-500/10' },
   ]
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white">Notifications</h1>
-        <p className="mt-2 text-slate-300">Safety alerts, order updates, meetup reminders, and child activity reports.</p>
+        <h1 className="text-3xl font-bold text-slate-900">Notifications</h1>
+        <p className="mt-2 text-slate-600">Safety alerts, order updates, meetup reminders, and child activity reports.</p>
       </div>
       <div className="space-y-3">
         {notifications.map(item => (
-          <div key={item.title} className={`rounded-lg border-l-4 p-4 ${item.tone}`}>
+          <div key={item.title} className={`rounded-lg border-l-4 p-4 ${item.tone} bg-white`}>
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="font-bold text-slate-900">{item.title}</h2>
-                <p className="mt-1 text-sm text-slate-700">{item.body}</p>
+                <p className="mt-1 text-sm text-slate-500">{item.body}</p>
               </div>
               <span className="shrink-0 text-xs font-semibold text-slate-500">{item.time}</span>
             </div>
@@ -218,28 +237,28 @@ function MessagesView() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white">Messages</h1>
-        <p className="mt-2 text-slate-300">Communicate with nannies, daycare admins, orphanage managers, and support.</p>
+        <h1 className="text-3xl font-bold text-slate-900">Messages</h1>
+        <p className="mt-2 text-slate-600">Communicate with nannies, daycare admins, orphanage managers, and support.</p>
       </div>
       <div className="grid gap-4 lg:grid-cols-[340px_1fr]">
         <aside className="space-y-2">
           {threads.map(thread => (
-            <button key={thread.name} className="w-full rounded-lg border border-slate-200 bg-white p-4 text-left hover:border-fuchsia-400">
+            <button key={thread.name} className="w-full rounded-lg border border-slate-200 bg-white p-4 text-left hover:border-blue-600 transition">
               <p className="font-bold text-slate-900">{thread.name}</p>
-              <p className="mt-1 truncate text-sm text-slate-600">{thread.message}</p>
-              <span className="mt-2 inline-flex rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">{thread.status}</span>
+              <p className="mt-1 truncate text-sm text-slate-500">{thread.message}</p>
+              <span className="mt-2 inline-flex rounded-full bg-white px-2 py-1 text-xs font-semibold text-blue-500">{thread.status}</span>
             </button>
           ))}
         </aside>
         <section className="rounded-lg border border-slate-200 bg-white p-5">
           <h2 className="text-lg font-bold text-slate-900">Conversation</h2>
           <div className="mt-4 space-y-3">
-            <p className="max-w-lg rounded-lg bg-slate-100 p-3 text-sm text-slate-700">Meal update: Emma finished lunch and is ready for nap time.</p>
-            <p className="ml-auto max-w-lg rounded-lg bg-fuchsia-600 p-3 text-sm text-white">Thank you. Please send the sleep report when she wakes up.</p>
+            <p className="max-w-lg rounded-lg bg-white p-3 text-sm text-slate-600">Meal update: Emma finished lunch and is ready for nap time.</p>
+            <p className="ml-auto max-w-lg rounded-lg bg-blue-600 p-3 text-sm text-slate-900">Thank you. Please send the sleep report when she wakes up.</p>
           </div>
           <div className="mt-6 flex gap-2">
-            <input className="flex-1 rounded-lg border border-slate-300 px-3 py-2 outline-none focus:ring-2 focus:ring-fuchsia-500" placeholder="Write a message..." />
-            <button className="rounded-lg bg-fuchsia-600 px-5 py-2 font-semibold text-white hover:bg-fuchsia-700">Send</button>
+            <input className="flex-1 rounded-lg border border-slate-200 bg-white text-slate-900 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-600" placeholder="Write a message..." />
+            <button className="rounded-lg bg-blue-600 px-5 py-2 font-semibold text-slate-900 hover:bg-blue-500 transition">Send</button>
           </div>
         </section>
       </div>
@@ -266,14 +285,14 @@ function SettingsView() {
   }
 
   const Toggle = ({ label, description, checked, onChange }) => (
-    <div className="flex items-center justify-between p-4 bg-[#151821] border border-[#2A2E3D] rounded-xl hover:border-fuchsia-500/50 transition">
+    <div className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-600/50 transition">
       <div>
-        <h3 className="text-white font-semibold">{label}</h3>
-        <p className="text-sm text-slate-400 mt-1">{description}</p>
+        <h3 className="text-slate-900 font-semibold">{label}</h3>
+        <p className="text-sm text-slate-500 mt-1">{description}</p>
       </div>
       <button
         onClick={onChange}
-        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${checked ? 'bg-fuchsia-600' : 'bg-slate-700'}`}
+        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${checked ? 'bg-blue-600' : 'bg-slate-700'}`}
       >
         <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
       </button>
@@ -283,8 +302,8 @@ function SettingsView() {
   return (
     <div className="space-y-8 max-w-4xl">
       <div>
-        <h1 className="text-3xl font-bold text-white">Settings</h1>
-        <p className="mt-2 text-slate-400">Manage your account preferences, notifications, and privacy.</p>
+        <h1 className="text-3xl font-bold text-slate-900">Settings</h1>
+        <p className="mt-2 text-slate-500">Manage your account preferences, notifications, and privacy.</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -340,16 +359,22 @@ function SettingsView() {
         <div className="flex flex-wrap gap-4">
           <button 
             onClick={() => setShowAddChild(true)}
-            className="px-5 py-2.5 bg-fuchsia-600 border border-fuchsia-500 text-white rounded-xl hover:bg-fuchsia-500 transition font-semibold"
+            className="px-5 py-2.5 bg-brand-purple border border-violet-500 text-white rounded-xl hover:bg-violet-500 transition font-semibold"
           >
             Add Child
           </button>
-          <button className="px-5 py-2.5 bg-[#151821] border border-[#2A2E3D] text-white rounded-xl hover:bg-slate-800 transition font-semibold">
+          <Link 
+            to="/dashboard/parent/profile"
+            className="px-5 py-2.5 bg-brand-card border border-[#2A2E3D] text-white rounded-xl hover:bg-[#2A2E3D] transition font-semibold"
+          >
+            Edit Profile
+          </Link>
+          <button className="px-5 py-2.5 bg-brand-card border border-[#2A2E3D] text-white rounded-xl hover:bg-[#2A2E3D] transition font-semibold">
             Change Password
           </button>
           <button 
             onClick={() => setShowPaymentModal(true)}
-            className="px-5 py-2.5 bg-[#151821] border border-[#2A2E3D] text-white rounded-xl hover:bg-slate-800 transition font-semibold"
+            className="px-5 py-2.5 bg-brand-card border border-[#2A2E3D] text-white rounded-xl hover:bg-[#2A2E3D] transition font-semibold"
           >
             Manage Payment Methods
           </button>
@@ -384,7 +409,7 @@ import AIAssistant from '../../components/AIAssistant';
 
 export default function ParentDashboard() {
   return (
-    <div className="min-h-[calc(100vh-68px)] bg-[#0B0E14] text-white md:flex">
+    <div className="min-h-[calc(100vh-68px)] bg-slate-50 text-slate-900 md:flex">
       <Sidebar items={items} variant="parent-workspace" />
       <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8 relative">
         <Routes>

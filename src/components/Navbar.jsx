@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Bell, MessageCircle, User, AlertTriangle, Shield } from 'lucide-react'
@@ -6,6 +6,15 @@ import { Bell, MessageCircle, User, AlertTriangle, Shield } from 'lucide-react'
 export default function Navbar(){
   const { user, logout } = useAuth() || {}
   const navigate = useNavigate()
+  const [photo, setPhoto] = useState(localStorage.getItem('profilePhoto') || (user?.role === 'admin' ? "https://i.pravatar.cc/150?img=11" : "https://i.pravatar.cc/150?img=5"))
+
+  useEffect(() => {
+    const handlePhotoChange = () => {
+      setPhoto(localStorage.getItem('profilePhoto') || (user?.role === 'admin' ? "https://i.pravatar.cc/150?img=11" : "https://i.pravatar.cc/150?img=5"));
+    };
+    window.addEventListener('profilePhotoUpdated', handlePhotoChange);
+    return () => window.removeEventListener('profilePhotoUpdated', handlePhotoChange);
+  }, [user]);
 
   return (
     <nav className="sticky top-0 z-30 border-b border-white/70 bg-white/75 px-4 py-3 shadow-sm shadow-fuchsia-900/5 backdrop-blur-xl sm:px-6">
@@ -81,7 +90,7 @@ export default function Navbar(){
               <div className="group relative">
                 <div className="flex items-center gap-3 cursor-pointer pl-3 border-l border-slate-200">
                   <img 
-                    src={user?.role === 'admin' ? "https://i.pravatar.cc/150?img=11" : "https://i.pravatar.cc/150?img=5"} 
+                    src={photo} 
                     alt="Profile" 
                     className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
                   />

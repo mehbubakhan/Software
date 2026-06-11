@@ -62,7 +62,7 @@ export default function StaffManagement() {
           <h1 className="text-2xl font-bold mb-2">Staff Management</h1>
           <p className="text-slate-500">Manage teachers and daycare workers</p>
         </div>
-        <button onClick={() => handleOpenForm()} className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition flex items-center gap-2">
+        <button onClick={() => handleOpenForm()} className="px-6 py-2 bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-lg font-medium transition flex items-center gap-2">
           <span>+</span> Add Staff
         </button>
       </div>
@@ -77,7 +77,7 @@ export default function StaffManagement() {
             <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="Email" className="w-full border px-3 py-2 rounded-lg" />
           </div>
           <div className="flex gap-2 mt-4">
-            <button onClick={(e) => { e.preventDefault(); alert('Changes saved successfully to backend!'); }} type="submit" className="bg-purple-600 text-white px-4 py-2 rounded-lg">Save</button>
+            <button onClick={(e) => { e.preventDefault(); alert('Changes saved successfully to backend!'); }} type="submit" className="bg-fuchsia-600 text-white px-4 py-2 rounded-lg">Save</button>
             <button type="button" onClick={() => setShowForm(false)} className="bg-slate-200 px-4 py-2 rounded-lg">Cancel</button>
           </div>
         </form>
@@ -100,7 +100,7 @@ export default function StaffManagement() {
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="text-lg font-bold text-slate-800">User #{person.user_id} <span className="px-2 py-0.5 ml-2 bg-green-100 text-green-700 text-xs font-bold rounded">Active</span></h3>
-                    <p className="text-sm text-purple-600 font-medium mb-1">{person.role}</p>
+                    <p className="text-sm text-fuchsia-600 font-medium mb-1">{person.role}</p>
                   </div>
                 </div>
                 <div className="text-xs text-slate-500 mt-2 space-y-1">
@@ -109,7 +109,7 @@ export default function StaffManagement() {
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <button onClick={() => handleOpenForm(person)} className="p-2 text-slate-400 hover:text-purple-600 transition bg-slate-50 hover:bg-purple-50 rounded-lg">✏️</button>
+                <button onClick={() => handleOpenForm(person)} className="p-2 text-slate-400 hover:text-fuchsia-600 transition bg-slate-50 hover:bg-fuchsia-50 rounded-lg">✏️</button>
                 <button onClick={() => handleDelete(person.id)} className="p-2 text-slate-400 hover:text-red-600 transition bg-slate-50 hover:bg-red-50 rounded-lg">🗑️</button>
               </div>
             </div>

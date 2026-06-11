@@ -263,7 +263,7 @@ export function Parents() {
         <div className="relative">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input value={search} onChange={(e: any) => setSearch(e.target.value)} placeholder="Search name, ID or email…"
-            className="pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg bg-white w-60 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            className="pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg bg-white w-60 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" />
         </div>
         <Btn onClick={() => { setForm({}); setModal("add"); }}><Plus size={15} /> Add Parent</Btn>
         <Btn variant="secondary" onClick={() => setShowFilter(!showFilter)}><Filter size={15} /> Filter <ChevronDown size={13} /></Btn>
@@ -274,7 +274,7 @@ export function Parents() {
         <Card className="p-4 mb-4">
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-gray-700">Filters</h4>
-            <button onClick={() => setFilters({ status: "All", payment: "All" })} className="text-xs text-indigo-600 flex items-center gap-1"><RefreshCw size={12} /> Reset</button>
+            <button onClick={() => setFilters({ status: "All", payment: "All" })} className="text-xs text-fuchsia-600 flex items-center gap-1"><RefreshCw size={12} /> Reset</button>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
@@ -284,7 +284,7 @@ export function Parents() {
               <div key={f.key} className="flex flex-col gap-1">
                 <label className="text-xs text-gray-500">{f.label}</label>
                 <select value={filters[f.key]} onChange={(e: any) => filt(f.key, e.target.value)}
-                  className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
                   {f.opts.map(o => <option key={o}>{o}</option>)}
                 </select>
               </div>
@@ -321,7 +321,7 @@ export function Parents() {
                     </td>
                     <td className="px-4 py-3">
                       {p.childNames.length > 0
-                        ? <div className="flex flex-col gap-0.5">{p.childNames.map(n => <span key={n} className="text-xs bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded">{n}</span>)}</div>
+                        ? <div className="flex flex-col gap-0.5">{p.childNames.map(n => <span key={n} className="text-xs bg-fuchsia-50 text-fuchsia-700 px-1.5 py-0.5 rounded">{n}</span>)}</div>
                         : <span className="text-xs text-gray-400">None</span>}
                     </td>
                     <td className="px-4 py-3">
@@ -339,7 +339,7 @@ export function Parents() {
                     <td className="px-4 py-3"><StatusBadge status={p.status} /></td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-0.5">
-                        <button title="View Profile" onClick={() => openProfile(p)} className="p-1.5 rounded hover:bg-indigo-50 text-indigo-500"><Eye size={14} /></button>
+                        <button title="View Profile" onClick={() => openProfile(p)} className="p-1.5 rounded hover:bg-fuchsia-50 text-fuchsia-500"><Eye size={14} /></button>
                         <button title="Edit" onClick={() => { setSelected(p); setForm({ ...p }); setModal("edit"); }} className="p-1.5 rounded hover:bg-blue-50 text-blue-500"><Pencil size={14} /></button>
                         <button title="Pickup Auth" onClick={() => openProfile(p, "pickup")} className="p-1.5 rounded hover:bg-green-50 text-green-600"><Shield size={14} /></button>
                         <button title="Send Message" onClick={() => { setSelected(p); setModal("message"); }} className="p-1.5 rounded hover:bg-purple-50 text-purple-500"><MessageSquare size={14} /></button>
@@ -404,7 +404,7 @@ export function Parents() {
             <div className="flex gap-0.5 border-b border-gray-200 mb-5 overflow-x-auto">
               {([{ id: "info", label: "Personal Info" }, { id: "pickup", label: "Pickup Auth" }, { id: "payments", label: "Payments" }, { id: "comm", label: "Communications" }] as { id: ProfileTab; label: string }[]).map(t => (
                 <button key={t.id} onClick={() => setProfileTab(t.id)}
-                  className={`px-4 py-2 text-sm whitespace-nowrap ${profileTab === t.id ? "text-indigo-600 border-b-2 border-indigo-600" : "text-gray-500 hover:text-gray-700"}`}>
+                  className={`px-4 py-2 text-sm whitespace-nowrap ${profileTab === t.id ? "text-fuchsia-600 border-b-2 border-fuchsia-600" : "text-gray-500 hover:text-gray-700"}`}>
                   {t.label}
                 </button>
               ))}
@@ -424,7 +424,7 @@ export function Parents() {
                   <p className="text-xs text-gray-400 mb-2">Linked Children</p>
                   <div className="flex flex-wrap gap-2">
                     {selected.childNames.length > 0
-                      ? selected.childNames.map(n => <span key={n} className="bg-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full flex items-center gap-1"><Baby size={12} />{n}</span>)
+                      ? selected.childNames.map(n => <span key={n} className="bg-fuchsia-100 text-fuchsia-700 text-xs px-3 py-1 rounded-full flex items-center gap-1"><Baby size={12} />{n}</span>)
                       : <span className="text-sm text-gray-400">No children linked</span>}
                   </div>
                 </div>
@@ -465,8 +465,8 @@ export function Parents() {
                   ))}
                 </div>
                 {/* Quick pickup approve by type */}
-                <div className="bg-indigo-50 rounded-xl p-4">
-                  <p className="text-xs text-indigo-700 mb-2" style={{ fontWeight: 600 }}>Quick Approve by Relationship</p>
+                <div className="bg-fuchsia-50 rounded-xl p-4">
+                  <p className="text-xs text-fuchsia-700 mb-2" style={{ fontWeight: 600 }}>Quick Approve by Relationship</p>
                   <div className="flex flex-wrap gap-2">
                     {relationshipOptions.map(r => (
                       <button key={r} onClick={() => {
@@ -475,7 +475,7 @@ export function Parents() {
                           : p
                         ));
                         setSelected(prev => prev ? { ...prev, pickupPersons: prev.pickupPersons.map(pp => pp.relationship === r ? { ...pp, status: "Approved" } : pp) } : prev);
-                      }} className="px-3 py-1 text-xs bg-white border border-indigo-200 text-indigo-700 rounded-full hover:bg-indigo-100 transition-colors flex items-center gap-1">
+                      }} className="px-3 py-1 text-xs bg-white border border-fuchsia-200 text-fuchsia-700 rounded-full hover:bg-fuchsia-100 transition-colors flex items-center gap-1">
                         <UserCheck size={11} /> Approve all {r}s
                       </button>
                     ))}
@@ -491,7 +491,7 @@ export function Parents() {
                   {[
                     { label: "Total Paid", value: `$${selected.paymentHistory.filter(p => p.status === "Paid").reduce((s, p) => s + p.amount, 0).toLocaleString()}`, color: "text-green-600" },
                     { label: "Outstanding", value: `$${selected.paymentHistory.filter(p => p.status !== "Paid").reduce((s, p) => s + p.amount, 0).toLocaleString()}`, color: "text-red-600" },
-                    { label: "Transactions", value: selected.paymentHistory.length, color: "text-indigo-600" },
+                    { label: "Transactions", value: selected.paymentHistory.length, color: "text-fuchsia-600" },
                   ].map(s => (
                     <div key={s.label} className="bg-gray-50 rounded-xl p-3 text-center">
                       <p className={`text-lg ${s.color}`} style={{ fontWeight: 700 }}>{s.value}</p>
@@ -549,7 +549,7 @@ export function Parents() {
         <div className="space-y-3">
           <div className="flex flex-col gap-1">
             <label className="text-sm text-gray-600">Message Type</label>
-            <select className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <select className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
               <option>Direct Message</option><option>Payment Reminder</option><option>Health Alert</option><option>General Announcement</option>
             </select>
           </div>
@@ -557,11 +557,11 @@ export function Parents() {
             <label className="text-sm text-gray-600">Message</label>
             <textarea rows={5} value={msgText} onChange={(e: any) => setMsgText(e.target.value)}
               placeholder="Type your message here…"
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
+              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 resize-none" />
           </div>
           <div className="flex flex-wrap gap-2">
             {["Payment is due", "Please update vaccination records", "Schedule a visit", "Pickup time reminder"].map(t => (
-              <button key={t} onClick={() => setMsgText(t)} className="text-xs px-2 py-1 bg-gray-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-full transition-colors">{t}</button>
+              <button key={t} onClick={() => setMsgText(t)} className="text-xs px-2 py-1 bg-gray-100 hover:bg-fuchsia-50 hover:text-fuchsia-600 rounded-full transition-colors">{t}</button>
             ))}
           </div>
         </div>
@@ -574,14 +574,14 @@ export function Parents() {
       {/* ═══ ADD PICKUP PERSON ═══════════════════════════════════════════ */}
       <Modal open={modal === "pickup-add"} onClose={() => setModal("profile")} title="Add Authorized Pickup Person">
         <div className="space-y-3">
-          <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Full Name</label><input value={newPickup.name} onChange={(e: any) => setNewPickup(p => ({ ...p, name: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
+          <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Full Name</label><input value={newPickup.name} onChange={(e: any) => setNewPickup(p => ({ ...p, name: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
           <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Relationship</label>
             <select value={newPickup.relationship} onChange={(e: any) => setNewPickup(p => ({ ...p, relationship: e.target.value as PickupPerson["relationship"] }))}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
               {relationshipOptions.map(r => <option key={r}>{r}</option>)}
             </select>
           </div>
-          <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Phone</label><input value={newPickup.phone} onChange={(e: any) => setNewPickup(p => ({ ...p, phone: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
+          <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Phone</label><input value={newPickup.phone} onChange={(e: any) => setNewPickup(p => ({ ...p, phone: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
           <div className="flex items-center gap-2"><input type="checkbox" id="phid" checked={newPickup.photoId} onChange={(e: any) => setNewPickup(p => ({ ...p, photoId: e.target.checked }))} className="w-4 h-4" /><label htmlFor="phid" className="text-sm text-gray-600">Photo ID verified</label></div>
         </div>
         <div className="flex justify-end gap-2 mt-5">
@@ -597,13 +597,13 @@ export function Parents() {
             <div key={key} className={`flex flex-col gap-1 ${key === "address" || key === "emergencyContact" ? "col-span-2" : ""}`}>
               <label className="text-sm text-gray-600">{label}</label>
               <input value={(form as any)[key] ?? (selected as any)?.[key] ?? ""} onChange={(e: any) => ff(key, e.target.value)}
-                className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" />
             </div>
           ))}
           <div className="flex flex-col gap-1">
             <label className="text-sm text-gray-600">Status</label>
             <select value={(form as any).status ?? "Active"} onChange={(e: any) => ff("status", e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
               <option>Active</option><option>Inactive</option>
             </select>
           </div>

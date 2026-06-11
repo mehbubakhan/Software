@@ -90,7 +90,7 @@ const ACTIVITY_STATUSES: Activity["status"][] = ["Scheduled", "In Progress", "Co
 const MOOD_CONFIG: { mood: MoodType; emoji: string; color: string }[] = [
   { mood: "Happy", emoji: "😊", color: "bg-yellow-100 text-yellow-700 border-yellow-300" },
   { mood: "Sad", emoji: "😢", color: "bg-blue-100 text-blue-700 border-blue-300" },
-  { mood: "Crying", emoji: "😭", color: "bg-indigo-100 text-indigo-700 border-indigo-300" },
+  { mood: "Crying", emoji: "😭", color: "bg-fuchsia-100 text-fuchsia-700 border-fuchsia-300" },
   { mood: "Active", emoji: "⚡", color: "bg-green-100 text-green-700 border-green-300" },
   { mood: "Aggressive", emoji: "😠", color: "bg-red-100 text-red-700 border-red-300" },
   { mood: "Sick", emoji: "🤒", color: "bg-orange-100 text-orange-700 border-orange-300" },
@@ -319,7 +319,7 @@ export function DailyActivities() {
       <div className="flex gap-1 mb-5 border-b border-gray-200">
         {([["tracker", "Per-Child Tracker"], ["schedule", "Activity Schedule"], ["report", "Daily Reports"]] as [MainTab, string][]).map(([t, label]) => (
           <button key={t} onClick={() => setMainTab(t)}
-            className={`px-4 py-2 text-sm transition-colors ${mainTab === t ? "border-b-2 border-indigo-600 text-indigo-700" : "text-gray-500 hover:text-gray-700"}`}>
+            className={`px-4 py-2 text-sm transition-colors ${mainTab === t ? "border-b-2 border-fuchsia-600 text-fuchsia-700" : "text-gray-500 hover:text-gray-700"}`}>
             {label}
           </button>
         ))}
@@ -335,7 +335,7 @@ export function DailyActivities() {
               <div className="space-y-1">
                 {records.map(r => (
                   <button key={r.childId} onClick={() => setSelectedChild(r)}
-                    className={`w-full flex items-center gap-2 p-2 rounded-lg text-left transition-colors ${selectedChild.childId === r.childId ? "bg-indigo-50 border border-indigo-200" : "hover:bg-gray-50"}`}>
+                    className={`w-full flex items-center gap-2 p-2 rounded-lg text-left transition-colors ${selectedChild.childId === r.childId ? "bg-fuchsia-50 border border-fuchsia-200" : "hover:bg-gray-50"}`}>
                     <Avatar name={r.childName} size="sm" />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs truncate" style={{ fontWeight: 500 }}>{r.childName}</p>
@@ -376,7 +376,7 @@ export function DailyActivities() {
               <div className="flex flex-wrap gap-1 mb-4">
                 {(["food", "sleep", "education", "mood", "medicine", "bathroom"] as TrackTab[]).map(t => (
                   <button key={t} onClick={() => setTrackTab(t)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs border transition-all capitalize ${trackTab === t ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"}`}>
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs border transition-all capitalize ${trackTab === t ? "bg-fuchsia-600 text-white border-fuchsia-600" : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"}`}>
                     {CAT_ICONS[t]} {t}
                   </button>
                 ))}
@@ -590,7 +590,7 @@ export function DailyActivities() {
                   <p className="text-xs text-gray-500 mb-2" style={{ fontWeight: 600 }}>PHOTOS TODAY ({cur.photos.length})</p>
                   <div className="flex flex-wrap gap-2">
                     {cur.photos.map(photo => (
-                      <div key={photo.id} className="w-16 h-16 rounded-lg bg-indigo-100 flex flex-col items-center justify-center text-xs text-indigo-500 border border-indigo-200">
+                      <div key={photo.id} className="w-16 h-16 rounded-lg bg-fuchsia-100 flex flex-col items-center justify-center text-xs text-fuchsia-500 border border-fuchsia-200">
                         <Camera size={16} />
                         <span className="text-xs mt-0.5 text-center px-1 truncate w-full text-center">{photo.time}</span>
                       </div>
@@ -608,12 +608,12 @@ export function DailyActivities() {
         <div>
           <div className="flex flex-wrap items-center gap-3 mb-5">
             <select value={filterGroup} onChange={(e: any) => setFilterGroup(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
               <option value="All">All Groups</option>
               {GROUPS.map(g => <option key={g}>{g}</option>)}
             </select>
             <select value={filterType} onChange={(e: any) => setFilterType(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
               <option value="All">All Types</option>
               {ACTIVITY_TYPES.map(t => <option key={t}>{t}</option>)}
             </select>
@@ -623,7 +623,7 @@ export function DailyActivities() {
               <Card key={a.id} className="p-4">
                 <div className="flex items-start gap-4">
                   <div className="w-14 text-center shrink-0">
-                    <p className="text-xs text-indigo-600" style={{ fontWeight: 600 }}>{a.time}</p>
+                    <p className="text-xs text-fuchsia-600" style={{ fontWeight: 600 }}>{a.time}</p>
                     <p className="text-xs text-gray-400">{a.date}</p>
                   </div>
                   <div className={`w-1 self-stretch rounded-full shrink-0 ${a.status === "Completed" ? "bg-green-400" : a.status === "In Progress" ? "bg-blue-400 animate-pulse" : a.status === "Cancelled" ? "bg-red-300" : "bg-gray-200"}`} />
@@ -785,7 +785,7 @@ export function DailyActivities() {
             <div className="grid grid-cols-4 gap-2">
               {MOOD_CONFIG.map(mc => (
                 <button key={mc.mood} onClick={() => setMoodForm(p => ({ ...p, mood: mc.mood }))}
-                  className={`p-2 rounded-xl border text-center transition-all ${moodForm.mood === mc.mood ? "ring-2 ring-indigo-400 " : ""} ${mc.color}`}>
+                  className={`p-2 rounded-xl border text-center transition-all ${moodForm.mood === mc.mood ? "ring-2 ring-fuchsia-400 " : ""} ${mc.color}`}>
                   <span className="text-2xl block">{mc.emoji}</span>
                   <span className="text-xs">{mc.mood}</span>
                 </button>
@@ -852,7 +852,7 @@ export function DailyActivities() {
             </div>
             <div className="flex flex-wrap gap-2">
               {["Child had a great day!", "Your child was very active today.", "Please review the medicine schedule.", "Child ate well today.", "Sleep was shorter than usual today."].map(t => (
-                <button key={t} onClick={() => setNotifyMsg(t)} className="px-3 py-1 rounded-full text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100">{t}</button>
+                <button key={t} onClick={() => setNotifyMsg(t)} className="px-3 py-1 rounded-full text-xs bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-200 hover:bg-fuchsia-100">{t}</button>
               ))}
             </div>
             <Textarea label="Additional Message" value={notifyMsg} onChange={setNotifyMsg} rows={3} placeholder="Add a personal note for the parent…" />
@@ -868,7 +868,7 @@ export function DailyActivities() {
       {modal === "report" && (
         <Modal title={`Daily Report — ${selectedChild.childName}`} onClose={() => setModal(null)} size="lg">
           <div className="space-y-4">
-            <div className="flex items-center gap-3 bg-indigo-50 rounded-xl p-4">
+            <div className="flex items-center gap-3 bg-fuchsia-50 rounded-xl p-4">
               <Avatar name={selectedChild.childName} size="md" />
               <div>
                 <p style={{ fontWeight: 600 }}>{selectedChild.childName}</p>
@@ -886,7 +886,7 @@ export function DailyActivities() {
               <div key={section.label}>
                 <p className="text-sm" style={{ fontWeight: 600 }}>{section.label}</p>
                 <ul className="mt-1 space-y-0.5">
-                  {section.items.map((item, i) => <li key={i} className="text-xs text-gray-600 pl-3 border-l-2 border-indigo-200">{item}</li>)}
+                  {section.items.map((item, i) => <li key={i} className="text-xs text-gray-600 pl-3 border-l-2 border-fuchsia-200">{item}</li>)}
                 </ul>
               </div>
             ))}

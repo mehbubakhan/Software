@@ -42,7 +42,7 @@ export default function DaycareDashboard() {
             <p className="text-xs text-slate-500 mb-1">Active Children</p>
             <p className="text-2xl font-bold">{stats.activeChildren}</p>
           </div>
-          <div className="bg-purple-50 text-purple-500 p-3 rounded-lg">👥</div>
+          <div className="bg-fuchsia-50 text-fuchsia-500 p-3 rounded-lg">👥</div>
         </div>
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
           <div>
@@ -65,11 +65,11 @@ export default function DaycareDashboard() {
         <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
           <div className="flex justify-between items-center p-6 border-b border-slate-100">
             <h2 className="font-bold text-lg">Recent Booking Requests</h2>
-            <button className="text-purple-600 text-sm font-medium hover:underline">View All</button>
+            <button className="text-fuchsia-600 text-sm font-medium hover:underline">View All</button>
           </div>
           <div className="p-0">
             {recentRequests.map(req => (
-              <div key={req.id} className="flex justify-between items-center p-6 border-b border-slate-50 hover:bg-slate-50 transition">
+              <div key={req.id} className="flex justify-between items-center p-6 border-b border-slate-50 hover:bg-fuchsia-50/50 transition">
                 <div>
                   <h3 className="font-bold text-md">{req.childName} <span className={`text-xs px-2 py-0.5 rounded-full ml-2 ${req.status === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>{req.status}</span></h3>
                   <p className="text-xs text-slate-500 mt-1">Parent: {req.parentName}</p>
@@ -77,8 +77,8 @@ export default function DaycareDashboard() {
                 </div>
                 {req.status === 'pending' && (
                   <div className="flex gap-2">
-                    <button className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-medium transition">Approve</button>
-                    <button className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition">Reject</button>
+                    <button className="px-4 py-2 bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-lg text-sm font-medium transition">Approve</button>
+                    <button className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm font-medium transition">Reject</button>
                   </div>
                 )}
               </div>
@@ -95,13 +95,13 @@ export default function DaycareDashboard() {
           <div className="space-y-4 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent">
             {schedule.map((item, idx) => (
               <div key={idx} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                <div className="flex items-center justify-center w-4 h-4 rounded-full border border-white bg-slate-300 group-hover:bg-purple-500 text-slate-500 group-hover:text-purple-100 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 transition-colors"></div>
+                <div className="flex items-center justify-center w-4 h-4 rounded-full border border-white bg-slate-300 group-hover:bg-fuchsia-500 text-slate-500 group-hover:text-fuchsia-100 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 transition-colors"></div>
                 <div className="w-[calc(100%-1.5rem)] md:w-[calc(50%-1.5rem)] p-3 rounded border border-slate-100 shadow-sm bg-white">
                   <div className="flex justify-between items-center">
                     <div className="font-bold text-sm text-slate-800">{item.title}</div>
                     <div className="text-xs text-slate-500">{item.time}</div>
                   </div>
-                  <div className="text-xs text-purple-600 mt-1 font-medium">{item.count} children</div>
+                  <div className="text-xs text-fuchsia-600 mt-1 font-medium">{item.count} children</div>
                 </div>
               </div>
             ))}
@@ -111,21 +111,21 @@ export default function DaycareDashboard() {
 
       {/* Bottom widgets */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:border-fuchsia-200 transition">
           <div>
             <h3 className="text-slate-500 text-xs mb-1">Occupancy Rate</h3>
-            <div className="text-3xl font-bold text-purple-600">84%</div>
+            <div className="text-3xl font-bold text-fuchsia-600">84%</div>
             <p className="text-xs text-slate-400 mt-1">42 of 50 capacity</p>
           </div>
-          <div className="w-16 h-16 rounded-full border-4 border-slate-100 border-t-purple-500 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-full border-4 border-slate-100 border-t-fuchsia-500 flex items-center justify-center">
           </div>
         </div>
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:border-fuchsia-200 transition">
           <h3 className="text-slate-500 text-xs mb-1">Staff on Duty</h3>
           <div className="text-3xl font-bold">{stats.staffCount}</div>
           <p className="text-xs text-slate-400 mt-1">8 Teachers, 4 Assistants</p>
         </div>
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:border-fuchsia-200 transition">
           <div>
             <h3 className="text-slate-500 text-xs mb-1">Avg. Rating</h3>
             <div className="text-3xl font-bold text-amber-500">4.8 <span className="text-sm">★</span></div>

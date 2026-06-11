@@ -254,3 +254,4 @@ export default function LearningPlatform() {
     </div>
   )
 }
+

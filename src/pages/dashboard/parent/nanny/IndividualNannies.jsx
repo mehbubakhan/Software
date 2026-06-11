@@ -25,11 +25,14 @@ export default function IndividualNannies() {
   }, [])
 
   return (
-    <div className="bg-[#111322] min-h-screen text-slate-100 -m-6 p-8 font-sans">
+    <div className="space-y-6 pb-12 font-sans">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Nanny Hiring</h1>
-          <p className="text-slate-400">Find the perfect nanny for your family</p>
+          <button onClick={() => navigate(-1)} className="text-slate-400 hover:text-slate-600 flex items-center gap-2 mb-4 transition text-sm font-semibold">
+            <span>←</span> Back to Services
+          </button>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Nanny Hiring</h1>
+          <p className="text-slate-500">Find the perfect nanny for your family</p>
         </div>
 
         {/* Search Bar & Filters section */}
@@ -41,7 +44,7 @@ export default function IndividualNannies() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by name or location..." 
-              className="w-full bg-[#1a1c2d] border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-indigo-500"
+              className="w-full bg-white border border-slate-300 rounded-full py-3 pl-12 pr-4 text-slate-900 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 shadow-sm"
             />
           </div>
           <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
@@ -49,10 +52,10 @@ export default function IndividualNannies() {
               <button
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
-                className={`px-6 py-3 rounded-xl font-bold whitespace-nowrap transition-colors ${
+                className={`px-6 py-3 rounded-full font-bold whitespace-nowrap transition-colors shadow-sm ${
                   activeFilter === filter
-                    ? 'bg-indigo-600 text-white border border-indigo-500'
-                    : 'bg-[#1a1c2d] border border-slate-700 text-slate-300 hover:bg-slate-800'
+                    ? 'bg-fuchsia-600 text-white'
+                    : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
                 }`}
               >
                 {filter}
@@ -62,8 +65,8 @@ export default function IndividualNannies() {
         </div>
 
         <div>
-          <h2 className="text-xl font-bold text-white mb-1">Individual Nannies</h2>
-          <p className="text-slate-400 text-sm mb-6">{
+          <h2 className="text-xl font-bold text-slate-900 mb-1">Individual Nannies</h2>
+          <p className="text-slate-500 text-sm mb-6">{
             nannies.filter(nanny => {
               const matchesSearch = nanny.name.toLowerCase().includes(searchQuery.toLowerCase()) || nanny.location.toLowerCase().includes(searchQuery.toLowerCase());
               const matchesFilter = activeFilter === 'All' || (nanny.type && nanny.type.toLowerCase().includes(activeFilter.toLowerCase()));
@@ -73,47 +76,50 @@ export default function IndividualNannies() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {loading ? (
-              <div className="col-span-3 text-center text-slate-400 py-12">Loading nannies...</div>
+              <div className="col-span-3 text-center text-slate-500 py-12">Loading nannies...</div>
             ) : (
               nannies.filter(nanny => {
                 const matchesSearch = nanny.name.toLowerCase().includes(searchQuery.toLowerCase()) || nanny.location.toLowerCase().includes(searchQuery.toLowerCase());
                 const matchesFilter = activeFilter === 'All' || (nanny.type && nanny.type.toLowerCase().includes(activeFilter.toLowerCase()));
                 return matchesSearch && matchesFilter;
               }).map(nanny => (
-                <div key={nanny.id} className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-5 hover:border-indigo-500 transition flex flex-col">
+                <div key={nanny.id} className="bg-white border border-slate-200 rounded-2xl p-5 hover:shadow-lg transition flex flex-col text-slate-900 cursor-pointer" onClick={() => navigate(`/dashboard/parent/hire-nanny/${nanny.id}`)}>
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center text-3xl">
+                    <div className="w-16 h-16 bg-slate-100 border border-slate-200 rounded-full flex items-center justify-center text-3xl">
                       {nanny.photo}
                     </div>
                     <div>
                       <h3 className="font-bold text-lg">{nanny.name}</h3>
-                      <p className="text-xs text-slate-400">{nanny.experience}</p>
+                      <p className="text-xs text-slate-500">{nanny.experience}</p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 text-sm mb-4">
                     <span className="text-yellow-400">★</span>
                     <span className="font-bold">{nanny.rating}</span>
-                    <span className="text-slate-400">({nanny.reviews} reviews)</span>
+                    <span className="text-slate-500">({nanny.reviews} reviews)</span>
                   </div>
 
-                  <div className="space-y-2 text-sm text-slate-300 mb-6 flex-1">
-                    <p className="flex items-center gap-2">📍 <span className="text-slate-400">{nanny.location}</span></p>
-                    <p className="flex items-center gap-2">🕒 <span className="text-slate-400">{nanny.type}</span></p>
-                    <p className="flex items-center gap-2">💲 <span className="text-slate-400">{nanny.rate}</span></p>
+                  <div className="space-y-2 text-sm text-slate-600 mb-6 flex-1">
+                    <p className="flex items-center gap-2">📍 <span className="text-slate-500">{nanny.location}</span></p>
+                    <p className="flex items-center gap-2">🕒 <span className="text-slate-500">{nanny.type}</span></p>
+                    <p className="flex items-center gap-2">💲 <span className="text-fuchsia-600 font-bold">{nanny.rate}</span></p>
                   </div>
 
                   <div className="flex flex-wrap gap-2 mb-6">
                     {nanny.skills.map((skill, idx) => (
-                      <span key={idx} className="bg-slate-800 text-slate-300 px-3 py-1 rounded-full text-xs font-medium">
+                      <span key={idx} className="bg-slate-100 border border-slate-200 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold">
                         {skill}
                       </span>
                     ))}
                   </div>
 
                   <button 
-                    onClick={() => navigate(`/dashboard/parent/hire-nanny/${nanny.id}`)}
-                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition mt-auto"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/dashboard/parent/hire-nanny/${nanny.id}`)
+                    }}
+                    className="w-full bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold py-3 rounded-xl transition mt-auto"
                   >
                     View Profile
                   </button>
@@ -126,3 +132,4 @@ export default function IndividualNannies() {
     </div>
   )
 }
+

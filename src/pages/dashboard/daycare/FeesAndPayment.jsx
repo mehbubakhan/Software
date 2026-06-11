@@ -29,7 +29,7 @@ export default function FeesAndPayment() {
         </div>
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
           <p className="text-xs text-slate-500 mb-1">Expected Revenue</p>
-          <p className="text-3xl font-bold text-purple-600">$14,500</p>
+          <p className="text-3xl font-bold text-fuchsia-600">$14,500</p>
         </div>
       </div>
 

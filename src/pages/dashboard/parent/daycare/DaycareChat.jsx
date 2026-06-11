@@ -42,34 +42,34 @@ export default function DaycareChat() {
   };
 
   return (
-    <div className="bg-[#111322] min-h-[calc(100vh-68px)] text-slate-100 -m-6 p-8 font-sans pb-24">
+    <div className="bg-slate-50 min-h-[calc(100vh-68px)] text-slate-800 -m-6 p-8 font-sans pb-24">
       <div className="max-w-4xl mx-auto mt-4 h-[calc(100vh-140px)] flex flex-col">
         
         {/* Header */}
-        <div className="bg-[#1a1c2d] border border-slate-700 rounded-t-2xl p-6 flex items-center justify-between shadow-sm z-10">
+        <div className="bg-white border border-slate-200 rounded-t-2xl p-6 flex items-center justify-between shadow-sm z-10">
           <div>
-            <button onClick={() => navigate(-1)} className="text-slate-400 hover:text-white flex items-center gap-2 mb-2 transition text-sm font-semibold">
+            <button onClick={() => navigate(-1)} className="text-slate-500 hover:text-slate-800 flex items-center gap-2 mb-2 transition text-sm font-semibold">
               ← Back to Details
             </button>
             <div className="flex items-center gap-3">
-              <h1 className="text-xl font-bold text-white">Little Stars Daycare</h1>
-              <span className="text-sm text-slate-400 flex items-center gap-1">
+              <h1 className="text-xl font-bold text-slate-800">Little Stars Daycare</h1>
+              <span className="text-sm text-slate-500 flex items-center gap-1">
                 <span className="text-yellow-400 leading-none">★</span> 4.8 (124 reviews)
               </span>
-              <span className="bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded text-xs font-semibold flex items-center gap-1">🔴 Live CCTV</span>
+              <span className="bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded text-xs font-semibold flex items-center gap-1">🔴 Live CCTV</span>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-xl font-bold text-white">$1,200/mo</div>
-            <div className="text-xs text-slate-400">Full-Time Care</div>
+            <div className="text-xl font-bold text-slate-800">$1,200/mo</div>
+            <div className="text-xs text-slate-500">Full-Time Care</div>
           </div>
         </div>
 
         {/* Chat Area */}
-        <div className="bg-[#1a1c2d] border-x border-slate-700 flex-1 p-6 overflow-y-auto flex flex-col gap-4">
+        <div className="bg-white border-x border-slate-200 flex-1 p-6 overflow-y-auto flex flex-col gap-4">
           {messages.map(msg => (
             <div key={msg.id} className={`flex flex-col max-w-[80%] ${msg.sender === 'user' ? 'self-end' : 'self-start'}`}>
-              <div className={`p-4 rounded-2xl ${msg.sender === 'user' ? 'bg-fuchsia-600 text-white rounded-br-sm' : 'bg-slate-800 text-slate-200 rounded-bl-sm'}`}>
+              <div className={`p-4 rounded-2xl ${msg.sender === 'user' ? 'bg-fuchsia-600 text-white rounded-br-sm shadow-sm' : 'bg-slate-100 text-slate-800 rounded-bl-sm border border-slate-200 shadow-sm'}`}>
                 {msg.text}
               </div>
               <div className={`text-xs text-slate-500 mt-1 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
@@ -80,14 +80,14 @@ export default function DaycareChat() {
         </div>
 
         {/* Input Area */}
-        <div className="bg-[#1a1c2d] border border-slate-700 rounded-b-2xl p-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.3)]">
+        <div className="bg-white border border-slate-200 rounded-b-2xl p-4 shadow-sm">
           <form onSubmit={handleSend} className="flex gap-4">
             <input 
               type="text" 
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Type your message..." 
-              className="flex-1 bg-[#111322] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-fuchsia-500 transition"
+              className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-fuchsia-500 focus:ring-1 focus:ring-fuchsia-500 transition"
             />
             <button 
               type="submit"
@@ -103,3 +103,4 @@ export default function DaycareChat() {
     </div>
   );
 }
+

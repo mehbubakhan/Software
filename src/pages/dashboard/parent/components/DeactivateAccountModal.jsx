@@ -41,22 +41,22 @@ export default function DeactivateAccountModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm">
-      <div className="bg-[#1A1D27] border border-red-900/50 rounded-3xl w-full max-w-md overflow-hidden flex flex-col p-6 animate-in zoom-in duration-300 shadow-2xl">
+      <div className="bg-white border border-red-900/50 rounded-3xl w-full max-w-md overflow-hidden flex flex-col p-6 animate-in zoom-in duration-300 shadow-2xl">
         <div className="flex justify-between items-center mb-6">
           <h3 className="font-bold text-red-500 text-xl flex items-center gap-2"><span>⚠️</span> Deactivate Account</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-white transition">✕</button>
+          <button onClick={onClose} className="text-slate-500 hover:text-slate-800 transition">✕</button>
         </div>
         
-        <div className="text-slate-300 mb-6 space-y-4">
+        <div className="text-slate-600 mb-6 space-y-4">
           <p>Are you sure you want to deactivate your account?</p>
           
           <div className="space-y-4 pt-2">
             <div>
-              <label className="block text-sm font-semibold text-slate-300 mb-1">Deactivation Duration</label>
+              <label className="block text-sm font-semibold text-slate-600 mb-1">Deactivation Duration</label>
               <select 
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 transition appearance-none"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-red-500 transition appearance-none"
               >
                 <option value="1_week">1 Week</option>
                 <option value="1_month">1 Month</option>
@@ -66,13 +66,13 @@ export default function DeactivateAccountModal({ isOpen, onClose }) {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-300 mb-1">Confirm Password</label>
+              <label className="block text-sm font-semibold text-slate-600 mb-1">Confirm Password</label>
               <input 
                 type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 transition"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-red-500 transition"
               />
             </div>
             {error && <p className="text-sm text-red-400 font-semibold">{error}</p>}
@@ -89,14 +89,14 @@ export default function DeactivateAccountModal({ isOpen, onClose }) {
         <div className="flex gap-3">
           <button 
             onClick={onClose}
-            className="flex-1 px-4 py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition font-semibold"
+            className="flex-1 px-4 py-3 bg-slate-50 text-slate-800 rounded-xl hover:bg-slate-700 transition font-semibold"
           >
             Cancel
           </button>
           <button 
             onClick={handleDeactivate}
             disabled={loading}
-            className="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl hover:bg-red-500 transition font-semibold disabled:opacity-50"
+            className="flex-1 px-4 py-3 bg-red-600 text-slate-800 rounded-xl hover:bg-red-500 transition font-semibold disabled:opacity-50"
           >
             {loading ? 'Processing...' : 'Yes, Deactivate'}
           </button>
@@ -105,3 +105,6 @@ export default function DeactivateAccountModal({ isOpen, onClose }) {
     </div>
   );
 }
+
+
+

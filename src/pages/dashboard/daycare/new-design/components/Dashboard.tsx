@@ -20,7 +20,7 @@ const PIE_COLORS = ["#6366f1", "#8b5cf6", "#06b6d4", "#10b981"];
 
 // ── Recent activities feed ─────────────────────────────────────────────────
 const initialActivities = [
-  { id: "ra1", icon: <UserPlus size={14} />, color: "bg-indigo-100 text-indigo-600", title: "New admission: Lucas Moore", sub: "Application submitted by Anna Moore", time: "10 min ago", type: "admission" },
+  { id: "ra1", icon: <UserPlus size={14} />, color: "bg-fuchsia-100 text-fuchsia-600", title: "New admission: Lucas Moore", sub: "Application submitted by Anna Moore", time: "10 min ago", type: "admission" },
   { id: "ra2", icon: <MessageSquare size={14} />, color: "bg-blue-100 text-blue-600", title: "Message from Sarah Johnson", sub: "\"Is Emma eating well today?\"", time: "32 min ago", type: "message" },
   { id: "ra3", icon: <UserCheck size={14} />, color: "bg-green-100 text-green-600", title: "Staff attendance logged", sub: "Jennifer Clark checked in at 07:45 AM", time: "1 hr ago", type: "staff" },
   { id: "ra4", icon: <Utensils size={14} />, color: "bg-orange-100 text-orange-600", title: "Lunch served — Sunflower group", sub: "Meal: Chicken soup, fruit salad, juice", time: "2 hrs ago", type: "meal" },
@@ -32,7 +32,7 @@ const initialActivities = [
 
 // ── Upcoming events ────────────────────────────────────────────────────────
 const initialEvents = [
-  { id: "e1", date: "Jun 5", day: "Thu", title: "Parent-Teacher Meeting", type: "meeting", time: "10:00 AM", color: "border-l-indigo-500" },
+  { id: "e1", date: "Jun 5", day: "Thu", title: "Parent-Teacher Meeting", type: "meeting", time: "10:00 AM", color: "border-l-fuchsia-500" },
   { id: "e2", date: "Jun 6", day: "Fri", title: "Vaccination Day (MMR)", type: "health", time: "09:00 AM", color: "border-l-red-500" },
   { id: "e3", date: "Jun 7", day: "Sat", title: "Payment Deadline — June", type: "payment", time: "All day", color: "border-l-yellow-500" },
   { id: "e4", date: "Jun 10", day: "Tue", title: "Sports Day", type: "event", time: "08:30 AM", color: "border-l-green-500" },
@@ -41,7 +41,7 @@ const initialEvents = [
 ];
 
 const eventTypeIcon: Record<string, React.ReactNode> = {
-  meeting: <Users size={13} className="text-indigo-600" />,
+  meeting: <Users size={13} className="text-fuchsia-600" />,
   health: <Pill size={13} className="text-red-500" />,
   payment: <CreditCard size={13} className="text-yellow-600" />,
   event: <Calendar size={13} className="text-green-600" />,
@@ -90,7 +90,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
   // ── Quick action handlers ────────────────────────────────────────────────
   const quickActions: QuickAction[] = [
-    { id: "add-child", label: "Add Child", icon: <Baby size={18} />, color: "bg-indigo-50 text-indigo-600 hover:bg-indigo-100", action: () => setQuickModal("add-child") },
+    { id: "add-child", label: "Add Child", icon: <Baby size={18} />, color: "bg-fuchsia-50 text-fuchsia-600 hover:bg-fuchsia-100", action: () => setQuickModal("add-child") },
     { id: "new-admission", label: "New Admission", icon: <UserPlus size={18} />, color: "bg-blue-50 text-blue-600 hover:bg-blue-100", action: () => setQuickModal("new-admission") },
     { id: "add-staff", label: "Add Staff", icon: <UserCog size={18} />, color: "bg-purple-50 text-purple-600 hover:bg-purple-100", action: () => setQuickModal("add-staff") },
     { id: "open-cctv", label: "Open CCTV", icon: <Monitor size={18} />, color: "bg-teal-50 text-teal-600 hover:bg-teal-100", action: () => onNavigate?.("live-monitoring") },
@@ -105,7 +105,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const alerts = mockNotifications.filter(n => !n.read).length;
 
   const stats = [
-    { label: "Total Children", value: activeChildren, sub: "Enrolled", icon: <Baby size={18} />, color: "bg-indigo-500", light: "bg-indigo-50" },
+    { label: "Total Children", value: activeChildren, sub: "Enrolled", icon: <Baby size={18} />, color: "bg-fuchsia-500", light: "bg-fuchsia-50" },
     { label: "Present Today", value: 31, sub: "86% attendance", icon: <UserCheck size={18} />, color: "bg-green-500", light: "bg-green-50" },
     { label: "Absent Today", value: 5, sub: "With notifications", icon: <Users size={18} />, color: "bg-red-500", light: "bg-red-50" },
     { label: "New Admissions", value: pendingAdmissions, sub: "Awaiting review", icon: <UserPlus size={18} />, color: "bg-blue-500", light: "bg-blue-50" },
@@ -136,7 +136,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       title: newEventForm.title,
       type: newEventForm.type,
       time: newEventForm.time || "TBD",
-      color: "border-l-indigo-500",
+      color: "border-l-fuchsia-500",
     }]);
     setNewEventForm({ date: "", title: "", type: "meeting", time: "" });
     setQuickModal(null);
@@ -159,7 +159,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       setActivities(prev => [{
         id: `ra${Date.now()}`,
         icon: <Bell size={14} />,
-        color: "bg-indigo-100 text-indigo-600",
+        color: "bg-fuchsia-100 text-fuchsia-600",
         title: labels[quickModal!],
         sub: `Added just now by Dr. Patricia Lee`,
         time: "Just now",
@@ -218,7 +218,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 {["all", "admission", "message", "staff", "meal", "vehicle", "emergency"].map(f => (
                   <button key={f} onClick={() => setActivityFilter(f)}
                     className={`px-2.5 py-1 rounded-full text-xs capitalize transition-all ${
-                      activityFilter === f ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      activityFilter === f ? "bg-fuchsia-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                     }`}>
                     {f}
                   </button>
@@ -291,7 +291,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="p-5">
           <div className="flex items-center gap-2 mb-4">
-            <TrendingUp size={16} className="text-indigo-600" />
+            <TrendingUp size={16} className="text-fuchsia-600" />
             <h3 className="text-gray-700">Enrollment Trend</h3>
           </div>
           <ResponsiveContainer width="100%" height={180}>
@@ -339,7 +339,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             <h3 className="text-gray-700">Upcoming Events</h3>
             <button
               onClick={() => setQuickModal("add-event")}
-              className="text-indigo-600 hover:text-indigo-800 transition-colors"
+              className="text-fuchsia-600 hover:text-fuchsia-800 transition-colors"
             >
               <Plus size={16} />
             </button>
@@ -421,7 +421,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                     <span className="text-xs text-gray-500">{count}/{capacity} · {pct}%</span>
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full bg-indigo-500 transition-all" style={{ width: `${pct}%` }} />
+                    <div className="h-full rounded-full bg-fuchsia-500 transition-all" style={{ width: `${pct}%` }} />
                   </div>
                 </div>
               );
@@ -446,16 +446,16 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       <Modal open={quickModal === "add-child"} onClose={() => setQuickModal(null)} title="Quick: Add Child">
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Full Name</label><input value={qaForm.name || ""} onChange={(e: any) => qf("name", e.target.value)} placeholder="Child's name" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
-            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Date of Birth</label><input type="date" value={qaForm.dob || ""} onChange={(e: any) => qf("dob", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
-            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Parent Name</label><input value={qaForm.parent || ""} onChange={(e: any) => qf("parent", e.target.value)} placeholder="Parent / guardian" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
+            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Full Name</label><input value={qaForm.name || ""} onChange={(e: any) => qf("name", e.target.value)} placeholder="Child's name" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
+            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Date of Birth</label><input type="date" value={qaForm.dob || ""} onChange={(e: any) => qf("dob", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
+            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Parent Name</label><input value={qaForm.parent || ""} onChange={(e: any) => qf("parent", e.target.value)} placeholder="Parent / guardian" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
             <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Group</label>
-              <select value={qaForm.group || "Sunflower"} onChange={(e: any) => qf("group", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <select value={qaForm.group || "Sunflower"} onChange={(e: any) => qf("group", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
                 {["Sunflower", "Butterfly", "Rainbow", "Star"].map(g => <option key={g}>{g}</option>)}
               </select>
             </div>
           </div>
-          <p className="text-xs text-indigo-600 bg-indigo-50 p-2 rounded-lg">Full profile can be completed in the Children section.</p>
+          <p className="text-xs text-fuchsia-600 bg-fuchsia-50 p-2 rounded-lg">Full profile can be completed in the Children section.</p>
         </div>
         <div className="flex justify-end gap-2 mt-5"><Btn variant="secondary" onClick={() => setQuickModal(null)}>Cancel</Btn><Btn onClick={submitQuickAction}>Add Child</Btn></div>
       </Modal>
@@ -463,10 +463,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       <Modal open={quickModal === "new-admission"} onClose={() => setQuickModal(null)} title="Quick: New Admission">
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Child Name</label><input value={qaForm.name || ""} onChange={(e: any) => qf("name", e.target.value)} placeholder="Child's full name" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
-            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">DOB</label><input type="date" value={qaForm.dob || ""} onChange={(e: any) => qf("dob", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
-            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Parent Name</label><input value={qaForm.parent || ""} onChange={(e: any) => qf("parent", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
-            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Parent Phone</label><input value={qaForm.phone || ""} onChange={(e: any) => qf("phone", e.target.value)} placeholder="+1 555-0000" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
+            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Child Name</label><input value={qaForm.name || ""} onChange={(e: any) => qf("name", e.target.value)} placeholder="Child's full name" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
+            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">DOB</label><input type="date" value={qaForm.dob || ""} onChange={(e: any) => qf("dob", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
+            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Parent Name</label><input value={qaForm.parent || ""} onChange={(e: any) => qf("parent", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
+            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Parent Phone</label><input value={qaForm.phone || ""} onChange={(e: any) => qf("phone", e.target.value)} placeholder="+1 555-0000" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
           </div>
           <p className="text-xs text-blue-600 bg-blue-50 p-2 rounded-lg">Full application details available in Admissions section.</p>
         </div>
@@ -476,14 +476,14 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       <Modal open={quickModal === "add-staff"} onClose={() => setQuickModal(null)} title="Quick: Add Staff Member">
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Full Name</label><input value={qaForm.name || ""} onChange={(e: any) => qf("name", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
+            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Full Name</label><input value={qaForm.name || ""} onChange={(e: any) => qf("name", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
             <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Role</label>
-              <select value={qaForm.role || "Teacher"} onChange={(e: any) => qf("role", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <select value={qaForm.role || "Teacher"} onChange={(e: any) => qf("role", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
                 {["Lead Teacher", "Assistant Teacher", "Nanny", "Driver", "Nurse"].map(r => <option key={r}>{r}</option>)}
               </select>
             </div>
-            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Email</label><input type="email" value={qaForm.email || ""} onChange={(e: any) => qf("email", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
-            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Phone</label><input value={qaForm.phone || ""} onChange={(e: any) => qf("phone", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
+            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Email</label><input type="email" value={qaForm.email || ""} onChange={(e: any) => qf("email", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
+            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Phone</label><input value={qaForm.phone || ""} onChange={(e: any) => qf("phone", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
           </div>
         </div>
         <div className="flex justify-end gap-2 mt-5"><Btn variant="secondary" onClick={() => setQuickModal(null)}>Cancel</Btn><Btn onClick={submitQuickAction}>Add Staff</Btn></div>
@@ -491,21 +491,21 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
       <Modal open={quickModal === "upload-activity"} onClose={() => setQuickModal(null)} title="Quick: Upload Activity">
         <div className="space-y-3">
-          <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Activity Title</label><input value={qaForm.title || ""} onChange={(e: any) => qf("title", e.target.value)} placeholder="e.g. Finger Painting" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
+          <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Activity Title</label><input value={qaForm.title || ""} onChange={(e: any) => qf("title", e.target.value)} placeholder="e.g. Finger Painting" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Group</label>
-              <select value={qaForm.group || "All"} onChange={(e: any) => qf("group", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <select value={qaForm.group || "All"} onChange={(e: any) => qf("group", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
                 {["All", "Sunflower", "Butterfly", "Rainbow", "Star"].map(g => <option key={g}>{g}</option>)}
               </select>
             </div>
             <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Type</label>
-              <select value={qaForm.type || "Educational"} onChange={(e: any) => qf("type", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <select value={qaForm.type || "Educational"} onChange={(e: any) => qf("type", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
                 {["Educational", "Physical", "Arts", "Social", "Meal"].map(t => <option key={t}>{t}</option>)}
               </select>
             </div>
           </div>
-          <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Notes</label><textarea rows={3} value={qaForm.notes || ""} onChange={(e: any) => qf("notes", e.target.value)} placeholder="Brief description…" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" /></div>
-          <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center cursor-pointer hover:border-indigo-300 transition-colors">
+          <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Notes</label><textarea rows={3} value={qaForm.notes || ""} onChange={(e: any) => qf("notes", e.target.value)} placeholder="Brief description…" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 resize-none" /></div>
+          <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center cursor-pointer hover:border-fuchsia-300 transition-colors">
             <Upload size={20} className="mx-auto mb-1 text-gray-400" />
             <p className="text-xs text-gray-500">Click to upload photos/videos</p>
           </div>
@@ -516,16 +516,16 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       <Modal open={quickModal === "send-notification"} onClose={() => setQuickModal(null)} title="Send Notification">
         <div className="space-y-3">
           <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Recipients</label>
-            <select value={qaForm.recipients || "All Parents"} onChange={(e: any) => qf("recipients", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <select value={qaForm.recipients || "All Parents"} onChange={(e: any) => qf("recipients", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
               {["All Parents", "All Staff", "Everyone", "Specific Group — Sunflower", "Specific Group — Butterfly"].map(r => <option key={r}>{r}</option>)}
             </select>
           </div>
           <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Notification Type</label>
-            <select value={qaForm.notifType || "Announcement"} onChange={(e: any) => qf("notifType", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <select value={qaForm.notifType || "Announcement"} onChange={(e: any) => qf("notifType", e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
               {["Announcement", "Emergency", "Reminder", "Activity Update", "Payment Reminder"].map(t => <option key={t}>{t}</option>)}
             </select>
           </div>
-          <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Message</label><textarea rows={4} value={qaForm.message || ""} onChange={(e: any) => qf("message", e.target.value)} placeholder="Type your notification message…" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" /></div>
+          <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Message</label><textarea rows={4} value={qaForm.message || ""} onChange={(e: any) => qf("message", e.target.value)} placeholder="Type your notification message…" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 resize-none" /></div>
           <div className="flex items-center gap-2">
             <input type="checkbox" id="send-sms" className="rounded" />
             <label htmlFor="send-sms" className="text-sm text-gray-600">Also send via SMS</label>
@@ -536,13 +536,13 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
       <Modal open={quickModal === "add-event"} onClose={() => setQuickModal(null)} title="Add Upcoming Event">
         <div className="space-y-3">
-          <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Event Title</label><input value={newEventForm.title} onChange={(e: any) => setNewEventForm(p => ({ ...p, title: e.target.value }))} placeholder="e.g. Parent-Teacher Meeting" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
+          <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Event Title</label><input value={newEventForm.title} onChange={(e: any) => setNewEventForm(p => ({ ...p, title: e.target.value }))} placeholder="e.g. Parent-Teacher Meeting" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
           <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Date</label><input type="date" value={newEventForm.date} onChange={(e: any) => setNewEventForm(p => ({ ...p, date: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
-            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Time</label><input value={newEventForm.time} onChange={(e: any) => setNewEventForm(p => ({ ...p, time: e.target.value }))} placeholder="10:00 AM" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" /></div>
+            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Date</label><input type="date" value={newEventForm.date} onChange={(e: any) => setNewEventForm(p => ({ ...p, date: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
+            <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Time</label><input value={newEventForm.time} onChange={(e: any) => setNewEventForm(p => ({ ...p, time: e.target.value }))} placeholder="10:00 AM" className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" /></div>
           </div>
           <div className="flex flex-col gap-1"><label className="text-sm text-gray-600">Type</label>
-            <select value={newEventForm.type} onChange={(e: any) => setNewEventForm(p => ({ ...p, type: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <select value={newEventForm.type} onChange={(e: any) => setNewEventForm(p => ({ ...p, type: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
               {["meeting", "health", "payment", "event", "staff", "admin"].map(t => <option key={t} value={t} className="capitalize">{t}</option>)}
             </select>
           </div>

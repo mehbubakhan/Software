@@ -15,7 +15,7 @@ export default function ProgramsAndPackages() {
           <h1 className="text-2xl font-bold mb-2">Programs & Packages</h1>
           <p className="text-slate-500">Manage your daycare admission packages</p>
         </div>
-        <button className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition flex items-center gap-2">
+        <button className="px-6 py-2 bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-lg font-medium transition flex items-center gap-2">
           <span>+</span> Add Package
         </button>
       </div>
@@ -30,12 +30,12 @@ export default function ProgramsAndPackages() {
                   <p className="text-xs text-slate-400 mt-1">{pkg.age}</p>
                 </div>
                 <div className="flex gap-2">
-                  <button className="text-slate-400 hover:text-purple-600 transition">✏️</button>
+                  <button className="text-slate-400 hover:text-fuchsia-600 transition">✏️</button>
                   <button className="text-slate-400 hover:text-red-600 transition">🗑️</button>
                 </div>
               </div>
               
-              <div className="text-4xl font-black text-purple-600 mb-6">
+              <div className="text-4xl font-black text-fuchsia-600 mb-6">
                 {pkg.price}
                 <span className="text-sm font-medium text-slate-400 ml-1">/{pkg.duration.toLowerCase()}</span>
               </div>
@@ -51,7 +51,7 @@ export default function ProgramsAndPackages() {
             
             <div className="pt-4 border-t border-slate-100 flex justify-between items-center">
               <span className="text-xs font-medium px-2 py-1 bg-green-50 text-green-600 rounded">Active</span>
-              <button className="text-sm text-purple-600 font-medium hover:underline">View details</button>
+              <button className="text-sm text-fuchsia-600 font-medium hover:underline">View details</button>
             </div>
           </div>
         ))}

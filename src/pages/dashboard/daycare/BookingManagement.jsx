@@ -54,19 +54,19 @@ export default function BookingManagement() {
         {/* Tabs */}
         <div className="flex border-b border-slate-100">
           <button 
-            className={`flex-1 py-4 text-sm font-bold text-center border-b-2 transition ${activeTab === 'pending' ? 'border-purple-600 text-purple-700' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            className={`flex-1 py-4 text-sm font-bold text-center border-b-2 transition ${activeTab === 'pending' ? 'border-fuchsia-600 text-fuchsia-700' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
             onClick={() => setActiveTab('pending')}
           >
             Pending Requests
           </button>
           <button 
-            className={`flex-1 py-4 text-sm font-bold text-center border-b-2 transition ${activeTab === 'approved' ? 'border-purple-600 text-purple-700' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            className={`flex-1 py-4 text-sm font-bold text-center border-b-2 transition ${activeTab === 'approved' ? 'border-fuchsia-600 text-fuchsia-700' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
             onClick={() => setActiveTab('approved')}
           >
             Approved
           </button>
           <button 
-            className={`flex-1 py-4 text-sm font-bold text-center border-b-2 transition ${activeTab === 'rejected' ? 'border-purple-600 text-purple-700' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            className={`flex-1 py-4 text-sm font-bold text-center border-b-2 transition ${activeTab === 'rejected' ? 'border-fuchsia-600 text-fuchsia-700' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
             onClick={() => setActiveTab('rejected')}
           >
             Rejected

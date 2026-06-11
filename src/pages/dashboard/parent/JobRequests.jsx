@@ -186,10 +186,10 @@ TOTAL PAID     : $${Number(customAmount || 0).toFixed(2)}
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between border-b border-slate-700 pb-4">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">Job Requests & Bookings</h1>
-          <p className="mt-2 text-slate-400">Track your direct nanny bookings and public job postings.</p>
+          <h1 className="text-3xl font-bold text-slate-800">Job Requests & Bookings</h1>
+          <p className="mt-2 text-slate-500">Track your direct nanny bookings and public job postings.</p>
         </div>
         {activeTab === 'postings' && (
           <button 
@@ -213,13 +213,13 @@ TOTAL PAID     : $${Number(customAmount || 0).toFixed(2)}
       <div className="flex gap-4">
         <button 
           onClick={() => setActiveTab('direct')}
-          className={`px-6 py-3 rounded-xl font-bold transition ${activeTab === 'direct' ? 'bg-indigo-600 text-white' : 'bg-[#1a1c2d] text-slate-400 hover:text-white border border-slate-700'}`}
+          className={`px-6 py-3 rounded-xl font-bold transition ${activeTab === 'direct' ? 'bg-fuchsia-600 text-white' : 'bg-white text-slate-500 hover:text-slate-800 border border-slate-200'}`}
         >
           Direct Bookings
         </button>
         <button 
           onClick={() => setActiveTab('postings')}
-          className={`px-6 py-3 rounded-xl font-bold transition ${activeTab === 'postings' ? 'bg-indigo-600 text-white' : 'bg-[#1a1c2d] text-slate-400 hover:text-white border border-slate-700'}`}
+          className={`px-6 py-3 rounded-xl font-bold transition ${activeTab === 'postings' ? 'bg-fuchsia-600 text-white' : 'bg-white text-slate-500 hover:text-slate-800 border border-slate-200'}`}
         >
           Public Job Postings
         </button>
@@ -229,32 +229,32 @@ TOTAL PAID     : $${Number(customAmount || 0).toFixed(2)}
       {activeTab === 'postings' && (
         <div className="space-y-6">
           {showForm && (
-            <form onSubmit={handleSubmit} className="rounded-2xl border border-slate-700 bg-[#1a1c2d] p-8 shadow-sm space-y-4 max-w-2xl text-slate-100">
-              <h2 className="text-xl font-bold text-white">{editingJobId ? 'Edit Job Post' : 'Create a Public Job Post'}</h2>
+            <form onSubmit={handleSubmit} className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm space-y-4 max-w-2xl text-slate-800">
+              <h2 className="text-xl font-bold text-slate-800">{editingJobId ? 'Edit Job Post' : 'Create a Public Job Post'}</h2>
               <div className="grid grid-cols-2 gap-4">
                 <label className="block col-span-2">
-                  <span className="text-sm font-semibold text-slate-400">Job Title</span>
-                  <input required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="mt-2 w-full rounded-xl bg-slate-900 border border-slate-700 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500 text-white" placeholder="e.g. Part-time Nanny for 4yo" />
+                  <span className="text-sm font-semibold text-slate-500">Job Title</span>
+                  <input required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="mt-2 w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800" placeholder="e.g. Part-time Nanny for 4yo" />
                 </label>
                 <label className="block">
-                  <span className="text-sm font-semibold text-slate-400">Child Age(s)</span>
-                  <input required value={formData.child_age} onChange={e => setFormData({...formData, child_age: e.target.value})} className="mt-2 w-full rounded-xl bg-slate-900 border border-slate-700 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500 text-white" placeholder="e.g. 4 and 6" />
+                  <span className="text-sm font-semibold text-slate-500">Child Age(s)</span>
+                  <input required value={formData.child_age} onChange={e => setFormData({...formData, child_age: e.target.value})} className="mt-2 w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800" placeholder="e.g. 4 and 6" />
                 </label>
                 <label className="block">
-                  <span className="text-sm font-semibold text-slate-400">Salary Offered ($/hr)</span>
-                  <input type="number" required value={formData.salary_offered} onChange={e => setFormData({...formData, salary_offered: e.target.value})} className="mt-2 w-full rounded-xl bg-slate-900 border border-slate-700 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500 text-white" placeholder="e.g. 20" />
+                  <span className="text-sm font-semibold text-slate-500">Salary Offered ($/hr)</span>
+                  <input type="number" required value={formData.salary_offered} onChange={e => setFormData({...formData, salary_offered: e.target.value})} className="mt-2 w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800" placeholder="e.g. 20" />
                 </label>
                 <label className="block">
-                  <span className="text-sm font-semibold text-slate-400">Schedule</span>
-                  <input required value={formData.schedule} onChange={e => setFormData({...formData, schedule: e.target.value})} className="mt-2 w-full rounded-xl bg-slate-900 border border-slate-700 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500 text-white" placeholder="e.g. Mon-Fri 9AM-5PM" />
+                  <span className="text-sm font-semibold text-slate-500">Schedule</span>
+                  <input required value={formData.schedule} onChange={e => setFormData({...formData, schedule: e.target.value})} className="mt-2 w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800" placeholder="e.g. Mon-Fri 9AM-5PM" />
                 </label>
                 <label className="block">
-                  <span className="text-sm font-semibold text-slate-400">Location</span>
-                  <input required value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} className="mt-2 w-full rounded-xl bg-slate-900 border border-slate-700 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500 text-white" placeholder="e.g. Downtown" />
+                  <span className="text-sm font-semibold text-slate-500">Location</span>
+                  <input required value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} className="mt-2 w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800" placeholder="e.g. Downtown" />
                 </label>
                 <label className="block col-span-2">
-                  <span className="text-sm font-semibold text-slate-400">Special Requirements</span>
-                  <textarea value={formData.special_requirements} onChange={e => setFormData({...formData, special_requirements: e.target.value})} className="mt-2 w-full rounded-xl bg-slate-900 border border-slate-700 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500 min-h-24 text-white" placeholder="e.g. Must have car, CPR certified" />
+                  <span className="text-sm font-semibold text-slate-500">Special Requirements</span>
+                  <textarea value={formData.special_requirements} onChange={e => setFormData({...formData, special_requirements: e.target.value})} className="mt-2 w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500 min-h-24 text-slate-800" placeholder="e.g. Must have car, CPR certified" />
                 </label>
               </div>
               <button type="submit" className="mt-6 rounded-xl bg-emerald-600 px-5 py-3 font-bold text-white hover:bg-emerald-500 w-full transition shadow-lg shadow-emerald-500/20">
@@ -264,30 +264,30 @@ TOTAL PAID     : $${Number(customAmount || 0).toFixed(2)}
           )}
 
           {loading ? (
-            <p className="text-slate-400">Loading jobs...</p>
+            <p className="text-slate-500">Loading jobs...</p>
           ) : jobs.length === 0 ? (
-            <div className="rounded-2xl border border-slate-700 bg-[#1a1c2d] p-12 text-center text-slate-400">
+            <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center text-slate-500">
               <span className="text-4xl mb-4 block">📝</span>
-              <p className="text-lg font-bold text-white mb-2">No Public Postings Found</p>
+              <p className="text-lg font-bold text-slate-800 mb-2">No Public Postings Found</p>
               <p>Create a public job posting to have nannies apply to you.</p>
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {jobs.map(job => (
-                <div key={job.id} className="rounded-2xl border border-slate-700 bg-[#1a1c2d] p-6 shadow-sm hover:border-indigo-500 transition">
+                <div key={job.id} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:border-fuchsia-500 transition">
                   <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-bold text-lg text-white">{job.title}</h3>
+                    <h3 className="font-bold text-lg text-slate-800">{job.title}</h3>
                     <div className="flex items-center gap-2">
-                      <button onClick={() => handleEditPost(job)} className="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition" title="Edit Post">✏️</button>
+                      <button onClick={() => handleEditPost(job)} className="p-1.5 text-slate-500 hover:text-slate-800 bg-slate-50 hover:bg-slate-700 rounded transition" title="Edit Post">✏️</button>
                       <button onClick={() => handleDeletePost(job.id)} className="p-1.5 text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 rounded transition" title="Delete Post">🗑️</button>
-                      <span className={`ml-2 px-3 py-1 text-xs font-bold rounded-full ${job.status === 'open' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-400 border border-slate-700'}`}>
+                      <span className={`ml-2 px-3 py-1 text-xs font-bold rounded-full ${job.status === 'open' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-50 text-slate-500 border border-slate-200'}`}>
                         {job.status.toUpperCase()}
                       </span>
                     </div>
                   </div>
                   <p className="text-xs text-slate-500 mb-4 font-semibold uppercase tracking-wider">Posted {new Date(job.created_at || new Date()).toLocaleDateString()}</p>
                   
-                  <div className="space-y-3 text-sm text-slate-300">
+                  <div className="space-y-3 text-sm text-slate-600">
                     <p className="flex justify-between"><span className="font-semibold text-slate-500">Children:</span> {job.child_age}</p>
                     <p className="flex justify-between"><span className="font-semibold text-slate-500">Pay:</span> ${job.salary_offered}/hr</p>
                     <p className="flex justify-between"><span className="font-semibold text-slate-500">Schedule:</span> {job.schedule}</p>
@@ -304,32 +304,32 @@ TOTAL PAID     : $${Number(customAmount || 0).toFixed(2)}
       {activeTab === 'direct' && (
         <div className="space-y-6">
           {directRequests.length === 0 ? (
-            <div className="rounded-2xl border border-slate-700 bg-[#1a1c2d] p-12 text-center text-slate-400">
+            <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center text-slate-500">
               <span className="text-4xl mb-4 block">🤝</span>
-              <p className="text-lg font-bold text-white mb-2">No Direct Bookings Yet</p>
+              <p className="text-lg font-bold text-slate-800 mb-2">No Direct Bookings Yet</p>
               <p>When you send a job request directly to a nanny from their profile, it will appear here.</p>
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {directRequests.map(req => (
-                <div key={req.id} className="rounded-2xl border border-slate-700 bg-[#1a1c2d] p-6 shadow-sm hover:border-indigo-500 transition">
+                <div key={req.id} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:border-fuchsia-500 transition">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-xl border border-indigo-500/30">
+                      <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-xl border border-fuchsia-500/30">
                         👶
                       </div>
                       <div>
-                        <h3 className="font-bold text-lg text-white leading-tight">{req.nannyName}</h3>
-                        <p className="text-xs text-slate-400">Direct Request</p>
+                        <h3 className="font-bold text-lg text-slate-800 leading-tight">{req.nannyName}</h3>
+                        <p className="text-xs text-slate-500">Direct Request</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button onClick={() => handleDeleteDirectRequest(req.id)} className="p-1.5 text-slate-500 hover:text-red-400 bg-slate-800 hover:bg-red-500/10 rounded transition" title="Delete Booking Record">🗑️</button>
+                      <button onClick={() => handleDeleteDirectRequest(req.id)} className="p-1.5 text-slate-500 hover:text-red-400 bg-slate-50 hover:bg-red-500/10 rounded transition" title="Delete Booking Record">🗑️</button>
                       <span className={`px-3 py-1 text-xs font-bold rounded-full border ${
                         req.status === 'Approved' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
-                        req.status === 'Booked' ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' :
+                        req.status === 'Booked' ? 'bg-indigo-500/20 text-fuchsia-600 border-fuchsia-500/30' :
                         req.status === 'Pending' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
-                        req.status === 'Cancelled' ? 'bg-slate-500/20 text-slate-400 border-slate-500/30' :
+                        req.status === 'Cancelled' ? 'bg-slate-500/20 text-slate-500 border-slate-500/30' :
                         'bg-red-500/20 text-red-400 border-red-500/30'
                       }`}>
                         {req.status.toUpperCase()}
@@ -337,10 +337,10 @@ TOTAL PAID     : $${Number(customAmount || 0).toFixed(2)}
                     </div>
                   </div>
                   
-                  <div className="space-y-3 text-sm text-slate-300 flex-1 mb-6">
-                    <p className="flex items-center gap-2">📅 <span className="text-white font-semibold">{req.date}</span></p>
-                    <p className="flex items-center gap-2">🕒 <span className="text-white font-semibold">{req.time}</span></p>
-                    <p className="mt-4 pt-4 border-t border-slate-800 text-slate-400 text-xs italic line-clamp-2">
+                  <div className="space-y-3 text-sm text-slate-600 flex-1 mb-6">
+                    <p className="flex items-center gap-2">📅 <span className="text-slate-800 font-semibold">{req.date}</span></p>
+                    <p className="flex items-center gap-2">🕒 <span className="text-slate-800 font-semibold">{req.time}</span></p>
+                    <p className="mt-4 pt-4 border-t border-slate-200 text-slate-500 text-xs italic line-clamp-2">
                       "{req.description}"
                     </p>
                   </div>
@@ -352,11 +352,11 @@ TOTAL PAID     : $${Number(customAmount || 0).toFixed(2)}
                         💳 Make Payment
                       </button>
                     ) : req.status === 'Pending' ? (
-                      <button onClick={() => handleCancelRequest(req.id)} className="text-slate-400 text-sm font-bold hover:text-white transition">Cancel Request</button>
+                      <button onClick={() => handleCancelRequest(req.id)} className="text-slate-500 text-sm font-bold hover:text-slate-800 transition">Cancel Request</button>
                     ) : req.status === 'Booked' ? (
-                      <span className="text-indigo-400 text-sm font-bold">Confirmed ✓</span>
+                      <span className="text-fuchsia-600 text-sm font-bold">Confirmed ✓</span>
                     ) : (
-                      <button onClick={() => setSelectedRequest(req)} className="text-slate-400 text-sm font-bold hover:text-white transition">View Details</button>
+                      <button onClick={() => setSelectedRequest(req)} className="text-slate-500 text-sm font-bold hover:text-slate-800 transition">View Details</button>
                     )}
                   </div>
                 </div>
@@ -369,42 +369,42 @@ TOTAL PAID     : $${Number(customAmount || 0).toFixed(2)}
       {/* View Details Modal */}
       {selectedRequest && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-[#1a1c2d] border border-slate-700 rounded-3xl w-full max-w-md overflow-hidden flex flex-col shadow-2xl">
-            <div className="bg-slate-800 p-6 flex justify-between items-start border-b border-slate-700">
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md overflow-hidden flex flex-col shadow-2xl">
+            <div className="bg-slate-50 p-6 flex justify-between items-start border-b border-slate-200">
               <div>
-                <h3 className="font-bold text-white text-xl flex items-center gap-2">Request Details</h3>
-                <p className="text-slate-400 text-sm mt-1">Direct booking to {selectedRequest.nannyName}</p>
+                <h3 className="font-bold text-slate-800 text-xl flex items-center gap-2">Request Details</h3>
+                <p className="text-slate-500 text-sm mt-1">Direct booking to {selectedRequest.nannyName}</p>
               </div>
-              <button onClick={() => setSelectedRequest(null)} className="text-slate-400 hover:text-white transition">✕</button>
+              <button onClick={() => setSelectedRequest(null)} className="text-slate-500 hover:text-slate-800 transition">✕</button>
             </div>
             <div className="p-6 space-y-4">
               <div>
                 <span className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Status</span>
                 <span className={`px-3 py-1 text-xs font-bold rounded-full border inline-block ${
-                  selectedRequest.status === 'Declined' || selectedRequest.status === 'Cancelled' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-slate-500/20 text-slate-400 border-slate-500/30'
+                  selectedRequest.status === 'Declined' || selectedRequest.status === 'Cancelled' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-slate-500/20 text-slate-500 border-slate-500/30'
                 }`}>
                   {selectedRequest.status.toUpperCase()}
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-800">
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-200">
                 <div>
                   <span className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Date</span>
-                  <span className="text-white font-semibold">{selectedRequest.date}</span>
+                  <span className="text-slate-800 font-semibold">{selectedRequest.date}</span>
                 </div>
                 <div>
                   <span className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Time</span>
-                  <span className="text-white font-semibold">{selectedRequest.time}</span>
+                  <span className="text-slate-800 font-semibold">{selectedRequest.time}</span>
                 </div>
               </div>
-              <div className="pt-4 border-t border-slate-800">
+              <div className="pt-4 border-t border-slate-200">
                 <span className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Description</span>
-                <p className="text-slate-300 text-sm leading-relaxed bg-slate-900/50 p-4 rounded-xl border border-slate-800">
+                <p className="text-slate-600 text-sm leading-relaxed bg-slate-50/50 p-4 rounded-xl border border-slate-200">
                   {selectedRequest.description}
                 </p>
               </div>
             </div>
-            <div className="p-4 border-t border-slate-700 flex justify-end">
-              <button onClick={() => setSelectedRequest(null)} className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-semibold transition">Close</button>
+            <div className="p-4 border-t border-slate-200 flex justify-end">
+              <button onClick={() => setSelectedRequest(null)} className="px-6 py-2 bg-slate-50 hover:bg-slate-700 text-slate-800 rounded-xl font-semibold transition">Close</button>
             </div>
           </div>
         </div>
@@ -413,48 +413,48 @@ TOTAL PAID     : $${Number(customAmount || 0).toFixed(2)}
       {/* Professional Payment Modal */}
       {paymentData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-[#1a1c2d] border border-slate-700 rounded-3xl w-full max-w-lg overflow-hidden flex flex-col shadow-2xl relative max-h-[90vh]">
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-lg overflow-hidden flex flex-col shadow-2xl relative max-h-[90vh]">
             
             {isProcessingPayment && (
-              <div className="absolute inset-0 bg-[#1a1c2d]/90 z-10 flex flex-col items-center justify-center backdrop-blur-sm">
-                <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                <h3 className="text-xl font-bold text-white">Processing Payment Securely</h3>
-                <p className="text-slate-400 mt-2">Please do not close this window...</p>
+              <div className="absolute inset-0 bg-white/90 z-10 flex flex-col items-center justify-center backdrop-blur-sm">
+                <div className="w-16 h-16 border-4 border-fuchsia-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                <h3 className="text-xl font-bold text-slate-800">Processing Payment Securely</h3>
+                <p className="text-slate-500 mt-2">Please do not close this window...</p>
               </div>
             )}
 
-            <div className="bg-slate-800 p-6 border-b border-slate-700 flex justify-between items-center shrink-0">
+            <div className="bg-slate-50 p-6 border-b border-slate-200 flex justify-between items-center shrink-0">
               <div>
-                <h3 className="font-bold text-white text-xl flex items-center gap-2"><span>💳</span> Secure Checkout</h3>
-                {paymentStep < 3 && <p className="text-slate-400 text-sm mt-1">Booking {paymentData.nannyName}</p>}
+                <h3 className="font-bold text-slate-800 text-xl flex items-center gap-2"><span>💳</span> Secure Checkout</h3>
+                {paymentStep < 3 && <p className="text-slate-500 text-sm mt-1">Booking {paymentData.nannyName}</p>}
               </div>
-              {paymentStep < 3 && <button onClick={() => setPaymentData(null)} className="text-slate-400 hover:text-white transition w-8 h-8 flex items-center justify-center bg-slate-700/50 rounded-full shrink-0">✕</button>}
+              {paymentStep < 3 && <button onClick={() => setPaymentData(null)} className="text-slate-500 hover:text-slate-800 transition w-8 h-8 flex items-center justify-center bg-slate-700/50 rounded-full shrink-0">✕</button>}
             </div>
 
             <div className="p-6 overflow-y-auto">
               {paymentStep === 1 && (
                 <div className="space-y-6">
-                  <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-700 mb-6 flex justify-between items-center">
+                  <div className="bg-slate-50/50 rounded-xl p-6 border border-slate-200 mb-6 flex justify-between items-center">
                     <div>
-                      <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Enter Amount to Pay ($)</p>
+                      <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Enter Amount to Pay ($)</p>
                       <div className="relative">
-                        <span className="absolute left-3 top-3 text-white font-black text-2xl">$</span>
+                        <span className="absolute left-3 top-3 text-slate-800 font-black text-2xl">$</span>
                         <input 
                           type="number"
                           value={customAmount}
                           onChange={(e) => setCustomAmount(e.target.value)}
-                          className="bg-slate-900 border border-slate-600 rounded-xl py-2 pl-10 pr-4 text-3xl font-black text-white focus:outline-none focus:border-emerald-500 w-48 transition"
+                          className="bg-slate-50 border border-slate-300 rounded-xl py-2 pl-10 pr-4 text-3xl font-black text-slate-800 focus:outline-none focus:border-emerald-500 w-48 transition"
                         />
                       </div>
                     </div>
                     <div className="text-right mt-6">
-                      <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Service</p>
-                      <p className="text-indigo-400 font-bold">Booking Fee</p>
+                      <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Service</p>
+                      <p className="text-fuchsia-600 font-bold">Booking Fee</p>
                     </div>
                   </div>
 
                   <div>
-                    <h4 className="text-white font-semibold mb-4">Select Payment Method</h4>
+                    <h4 className="text-slate-800 font-semibold mb-4">Select Payment Method</h4>
                     <div className="grid grid-cols-2 gap-3">
                       {['bKash', 'Nagad', 'Rocket', 'DBL', 'Credit Card'].map(method => (
                         <button 
@@ -462,8 +462,8 @@ TOTAL PAID     : $${Number(customAmount || 0).toFixed(2)}
                           onClick={() => setPaymentMethod(method)}
                           className={`p-4 rounded-xl border text-sm font-bold transition flex items-center justify-center gap-2 ${
                             paymentMethod === method 
-                              ? 'border-indigo-500 bg-indigo-500/20 text-indigo-300' 
-                              : 'border-slate-700 bg-slate-900/50 text-slate-400 hover:bg-slate-800 hover:text-white hover:border-slate-600'
+                              ? 'border-fuchsia-500 bg-indigo-500/20 text-indigo-300' 
+                              : 'border-slate-200 bg-slate-50/50 text-slate-500 hover:bg-slate-50 hover:text-slate-800 hover:border-slate-300'
                           }`}
                         >
                           {method === 'Credit Card' ? '💳' : '📱'} {method}
@@ -475,7 +475,7 @@ TOTAL PAID     : $${Number(customAmount || 0).toFixed(2)}
                   {paymentMethod && (
                     <button 
                       onClick={() => setPaymentStep(2)}
-                      className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-500/20"
+                      className="w-full py-4 bg-fuchsia-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-500/20"
                     >
                       Continue with {paymentMethod} ➔
                     </button>
@@ -485,51 +485,51 @@ TOTAL PAID     : $${Number(customAmount || 0).toFixed(2)}
 
               {paymentStep === 2 && (
                 <div className="space-y-6">
-                  <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800 flex justify-between items-center mb-2">
+                  <div className="bg-slate-50/50 rounded-xl p-4 border border-slate-200 flex justify-between items-center mb-2">
                     <div>
-                      <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Total Amount</p>
+                      <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Total Amount</p>
                       <p className="text-xl font-bold text-emerald-400">${Number(customAmount || 0).toFixed(2)}</p>
                     </div>
                   </div>
 
-                  <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800 flex justify-between items-center">
+                  <div className="bg-slate-50/50 rounded-xl p-4 border border-slate-200 flex justify-between items-center">
                     <div>
-                      <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Paying With</p>
-                      <p className="text-white font-bold flex items-center gap-2">
+                      <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Paying With</p>
+                      <p className="text-slate-800 font-bold flex items-center gap-2">
                         {paymentMethod === 'Credit Card' ? '💳' : '📱'} {paymentMethod}
                       </p>
                     </div>
-                    <button onClick={() => setPaymentStep(1)} className="text-indigo-400 text-sm font-semibold hover:text-indigo-300">Change</button>
+                    <button onClick={() => setPaymentStep(1)} className="text-fuchsia-600 text-sm font-semibold hover:text-indigo-300">Change</button>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
                       {paymentMethod === 'Credit Card' ? 'Card Number' : `${paymentMethod} Account Number`}
                     </label>
                     <input 
                       type="text" 
                       placeholder={paymentMethod === 'Credit Card' ? '0000 0000 0000 0000' : 'e.g. 01XXXXXXXXX'}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 font-mono"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-fuchsia-500 font-mono"
                     />
                   </div>
 
                   {paymentMethod === 'Credit Card' && (
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Expiry Date</label>
-                        <input type="text" placeholder="MM/YY" className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 font-mono"/>
+                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Expiry Date</label>
+                        <input type="text" placeholder="MM/YY" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-fuchsia-500 font-mono"/>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">CVC</label>
-                        <input type="password" placeholder="***" className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 font-mono"/>
+                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">CVC</label>
+                        <input type="password" placeholder="***" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-fuchsia-500 font-mono"/>
                       </div>
                     </div>
                   )}
 
                   {paymentMethod !== 'Credit Card' && (
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">PIN / OTP</label>
-                      <input type="password" placeholder="Enter PIN" className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 font-mono"/>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">PIN / OTP</label>
+                      <input type="password" placeholder="Enter PIN" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-fuchsia-500 font-mono"/>
                     </div>
                   )}
 
@@ -548,7 +548,7 @@ TOTAL PAID     : $${Number(customAmount || 0).toFixed(2)}
                   <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 border-2 border-emerald-500 shadow-lg shadow-emerald-500/20">
                     ✓
                   </div>
-                  <h2 className="text-2xl font-bold text-white mb-6">Payment Successful!</h2>
+                  <h2 className="text-2xl font-bold text-slate-800 mb-6">Payment Successful!</h2>
                   
                   {/* Payment Receipt Slip */}
                   <div id="payment-receipt" className="bg-slate-100 rounded-xl p-6 text-slate-800 text-left mb-8 shadow-inner border border-slate-300 relative overflow-hidden">
@@ -588,13 +588,13 @@ TOTAL PAID     : $${Number(customAmount || 0).toFixed(2)}
                   <div className="flex gap-4">
                     <button 
                       onClick={downloadReceipt}
-                      className="flex-1 py-4 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold rounded-xl transition flex items-center justify-center gap-2"
+                      className="flex-1 py-4 bg-slate-50 hover:bg-slate-700 border border-slate-300 text-slate-800 font-bold rounded-xl transition flex items-center justify-center gap-2"
                     >
                       <span>📥</span> Save Slip
                     </button>
                     <button 
                       onClick={() => setPaymentData(null)}
-                      className="flex-1 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-500/20"
+                      className="flex-1 py-4 bg-fuchsia-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-500/20"
                     >
                       Return Home
                     </button>
@@ -609,3 +609,6 @@ TOTAL PAID     : $${Number(customAmount || 0).toFixed(2)}
     </div>
   )
 }
+
+
+

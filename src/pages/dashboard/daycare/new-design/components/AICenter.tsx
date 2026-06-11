@@ -86,7 +86,7 @@ const SEED_AUTOMATION: AutomationTask[] = [
 ];
 
 const ROLE_PERMISSIONS = [
-  { role: "Super Admin", permissions: ["All modules", "User management", "CCTV access", "Data export", "System settings"], color: "bg-indigo-100 text-indigo-700" },
+  { role: "Super Admin", permissions: ["All modules", "User management", "CCTV access", "Data export", "System settings"], color: "bg-fuchsia-100 text-fuchsia-700" },
   { role: "Admin", permissions: ["All modules", "CCTV access", "Data export"], color: "bg-blue-100 text-blue-700" },
   { role: "Teacher", permissions: ["Children", "Daily Activities", "Attendance", "Chat"], color: "bg-green-100 text-green-700" },
   { role: "Nurse", permissions: ["Health & Medicine", "Children", "Chat"], color: "bg-purple-100 text-purple-700" },
@@ -109,7 +109,7 @@ function emotionColor(em: EmotionType) {
     Happy: "bg-green-100 text-green-700",
     Neutral: "bg-gray-100 text-gray-700",
     Sad: "bg-blue-100 text-blue-700",
-    Crying: "bg-indigo-100 text-indigo-700",
+    Crying: "bg-fuchsia-100 text-fuchsia-700",
     Aggressive: "bg-red-100 text-red-700",
     Isolated: "bg-orange-100 text-orange-700",
   };
@@ -196,7 +196,7 @@ function AIMonitoringTab() {
   const kpis = [
     { label: "Behavior Alerts", value: String(unacknowledged), sub: "Unacknowledged", color: "text-red-600", bg: "bg-red-50" },
     { label: "Safety Alerts", value: String(unresolvedSafety), sub: "Unresolved", color: "text-orange-600", bg: "bg-orange-50" },
-    { label: "AI Confidence", value: "89%", sub: "Avg. detection score", color: "text-indigo-600", bg: "bg-indigo-50" },
+    { label: "AI Confidence", value: "89%", sub: "Avg. detection score", color: "text-fuchsia-600", bg: "bg-fuchsia-50" },
     { label: "Monitored", value: "32", sub: "Children active now", color: "text-green-600", bg: "bg-green-50" },
   ];
 
@@ -236,7 +236,7 @@ function AIMonitoringTab() {
           <div className="flex flex-wrap gap-1.5 mb-3">
             {(["All", "Crying", "Aggressive", "Isolated", "Sad", "Happy", "Neutral"] as const).map(f => (
               <button key={f} onClick={() => setFilter(f)}
-                className={`px-2.5 py-1 rounded-full text-xs transition-all ${filter === f ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                className={`px-2.5 py-1 rounded-full text-xs transition-all ${filter === f ? "bg-fuchsia-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
                 {f}{f !== "All" && emotionCounts[f as EmotionType] ? ` (${emotionCounts[f as EmotionType]})` : ""}
               </button>
             ))}
@@ -249,7 +249,7 @@ function AIMonitoringTab() {
                   a.acknowledged ? "bg-gray-50 border-gray-100" : a.severity === "high" ? "bg-red-50 border-red-100" : "bg-orange-50 border-orange-100"
                 }`}
                 onClick={() => setSelected(a)}>
-                <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-xs shrink-0" style={{ fontWeight: 700 }}>
+                <div className="w-8 h-8 rounded-full bg-fuchsia-100 flex items-center justify-center text-xs shrink-0" style={{ fontWeight: 700 }}>
                   {a.childName.split(" ").map(n => n[0]).join("")}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -264,7 +264,7 @@ function AIMonitoringTab() {
                 </div>
                 {!a.acknowledged && (
                   <button onClick={e => { e.stopPropagation(); acknowledge(a.id); }}
-                    className="shrink-0 text-xs px-2 py-1 bg-white border border-gray-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-300 text-gray-600 transition-colors">
+                    className="shrink-0 text-xs px-2 py-1 bg-white border border-gray-200 rounded-lg hover:bg-fuchsia-50 hover:border-fuchsia-300 text-gray-600 transition-colors">
                     ACK
                   </button>
                 )}
@@ -325,12 +325,12 @@ function AIMonitoringTab() {
             );
           })}
         </div>
-        <div className="mt-4 p-3 bg-indigo-50 border border-indigo-200 rounded-xl">
+        <div className="mt-4 p-3 bg-fuchsia-50 border border-fuchsia-200 rounded-xl">
           <div className="flex items-center gap-2 mb-1">
-            <Brain size={15} className="text-indigo-600" />
-            <p className="text-sm text-indigo-700" style={{ fontWeight: 600 }}>AI Smart Recommendations</p>
+            <Brain size={15} className="text-fuchsia-600" />
+            <p className="text-sm text-fuchsia-700" style={{ fontWeight: 600 }}>AI Smart Recommendations</p>
           </div>
-          <ul className="text-xs text-indigo-600 space-y-1 ml-5 list-disc">
+          <ul className="text-xs text-fuchsia-600 space-y-1 ml-5 list-disc">
             {(emotionCounts["Crying"] ?? 0) > 0 && <li>Crying detected — recommend one-on-one session with caregiver.</li>}
             {(emotionCounts["Aggressive"] ?? 0) > 0 && <li>Aggressive behavior detected — alert guardian and schedule behavior assessment.</li>}
             {(emotionCounts["Isolated"] ?? 0) > 0 && <li>Isolated child detected — encourage group play activities immediately.</li>}
@@ -424,7 +424,7 @@ function SmartAttendanceTab() {
   const methodCount = (m: string) => logs.filter(l => l.method === m).length;
 
   const methods = [
-    { method: "Face Recognition" as const, color: "text-indigo-600", bg: "bg-indigo-50" },
+    { method: "Face Recognition" as const, color: "text-fuchsia-600", bg: "bg-fuchsia-50" },
     { method: "QR Code" as const, color: "text-blue-600", bg: "bg-blue-50" },
     { method: "GPS Pickup" as const, color: "text-green-600", bg: "bg-green-50" },
     { method: "Manual" as const, color: "text-orange-600", bg: "bg-orange-50" },
@@ -447,7 +447,7 @@ function SmartAttendanceTab() {
           <div className="grid grid-cols-3 gap-2 mb-4">
             {(["Face Recognition", "QR Code", "GPS Pickup"] as const).map(m => (
               <button key={m} onClick={() => { setScanMode(m); setScanResult(null); }}
-                className={`p-3 rounded-xl border text-center transition-all ${scanMode === m ? "bg-indigo-600 text-white border-indigo-600" : "bg-gray-50 border-gray-200 hover:bg-indigo-50 hover:border-indigo-300 text-gray-700"}`}>
+                className={`p-3 rounded-xl border text-center transition-all ${scanMode === m ? "bg-fuchsia-600 text-white border-fuchsia-600" : "bg-gray-50 border-gray-200 hover:bg-fuchsia-50 hover:border-fuchsia-300 text-gray-700"}`}>
                 <div className="flex justify-center mb-1">
                   {m === "Face Recognition" ? <Camera size={18} /> : m === "QR Code" ? <QrCode size={18} /> : <MapPin size={18} />}
                 </div>
@@ -459,21 +459,21 @@ function SmartAttendanceTab() {
           {scanMode === "QR Code" && (
             <input value={qrValue} onChange={(e: any) => setQrValue(e.target.value)}
               placeholder="Enter QR code or child ID..."
-              className="w-full mb-3 border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+              className="w-full mb-3 border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" />
           )}
 
           {scanMode && (
             <div className="mb-4">
               <div className={`relative h-32 rounded-xl border-2 flex items-center justify-center mb-3 overflow-hidden transition-all ${
-                scanning ? "border-indigo-400 bg-indigo-50"
+                scanning ? "border-fuchsia-400 bg-fuchsia-50"
                 : scanResult?.status === "success" ? "border-green-400 bg-green-50"
                 : scanResult?.status === "fail" ? "border-red-400 bg-red-50"
                 : "border-dashed border-gray-300 bg-gray-50"
               }`}>
                 {scanning ? (
                   <div className="text-center">
-                    <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-                    <p className="text-sm text-indigo-600">Scanning {scanMode}...</p>
+                    <div className="w-10 h-10 border-4 border-fuchsia-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                    <p className="text-sm text-fuchsia-600">Scanning {scanMode}...</p>
                   </div>
                 ) : scanResult ? (
                   <div className="text-center">
@@ -518,7 +518,7 @@ function SmartAttendanceTab() {
             {logs.map(l => (
               <div key={l.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs shrink-0 font-bold ${
-                  l.method === "Face Recognition" ? "bg-indigo-100 text-indigo-700"
+                  l.method === "Face Recognition" ? "bg-fuchsia-100 text-fuchsia-700"
                   : l.method === "QR Code" ? "bg-blue-100 text-blue-700"
                   : l.method === "GPS Pickup" ? "bg-green-100 text-green-700"
                   : "bg-orange-100 text-orange-700"
@@ -558,7 +558,7 @@ function SecurityTab() {
   const displayed = auditFilter === "All" ? audit : audit.filter(a => a.status === auditFilter);
 
   const securityFeatures = [
-    { label: "AES-256 Encryption", sub: "All data encrypted at rest & transit", bg: "bg-indigo-50" },
+    { label: "AES-256 Encryption", sub: "All data encrypted at rest & transit", bg: "bg-fuchsia-50" },
     { label: "JWT Authentication", sub: "Token-based session management", bg: "bg-blue-50" },
     { label: `IP Tracking`, sub: `${audit.filter(a => a.status === "Failed").length} suspicious IPs flagged`, bg: "bg-orange-50" },
     { label: "Audit Logs", sub: `${audit.length} entries today`, bg: "bg-green-50" },
@@ -570,7 +570,7 @@ function SecurityTab() {
         {securityFeatures.map(k => (
           <Card key={k.label} className="p-4">
             <div className={`w-9 h-9 rounded-lg ${k.bg} flex items-center justify-center mb-2`}>
-              <Shield size={18} className="text-indigo-500" />
+              <Shield size={18} className="text-fuchsia-500" />
             </div>
             <p className="text-sm text-gray-800" style={{ fontWeight: 600 }}>{k.label}</p>
             <p className="text-xs text-gray-400 mt-0.5">{k.sub}</p>
@@ -590,7 +590,7 @@ function SecurityTab() {
           <div className="flex gap-1 mb-3 flex-wrap">
             {(["All", "Success", "Failed", "Warning"] as const).map(f => (
               <button key={f} onClick={() => setAuditFilter(f)}
-                className={`px-3 py-1 rounded-lg text-xs transition-all ${auditFilter === f ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                className={`px-3 py-1 rounded-lg text-xs transition-all ${auditFilter === f ? "bg-fuchsia-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
                 {f}
               </button>
             ))}
@@ -728,7 +728,7 @@ function AutomationTab() {
   };
 
   function typeIcon(type: string) {
-    if (type === "Report") return <FileText size={15} className="text-indigo-500" />;
+    if (type === "Report") return <FileText size={15} className="text-fuchsia-500" />;
     if (type === "Notification") return <Bell size={15} className="text-yellow-500" />;
     if (type === "GPS") return <MapPin size={15} className="text-green-500" />;
     if (type === "Email") return <MessageSquare size={15} className="text-blue-500" />;
@@ -742,7 +742,7 @@ function AutomationTab() {
 
   const automationKpis = [
     { label: "Active Automations", value: String(activeCount), sub: `of ${tasks.length} total`, color: "text-green-600" },
-    { label: "Total Runs Today", value: totalRuns.toLocaleString(), sub: "All tasks combined", color: "text-indigo-600" },
+    { label: "Total Runs Today", value: totalRuns.toLocaleString(), sub: "All tasks combined", color: "text-fuchsia-600" },
     { label: "GPS Updates", value: "8,400+", sub: "Active tracking", color: "text-blue-600" },
     { label: "Reports Generated", value: "142", sub: "This month", color: "text-purple-600" },
   ];
@@ -791,7 +791,7 @@ function AutomationTab() {
                 <div className="flex gap-1.5 shrink-0">
                   <button onClick={() => triggerRun(t.id)} disabled={running !== null}
                     title="Run now"
-                    className="p-1.5 rounded-lg bg-gray-100 hover:bg-indigo-100 hover:text-indigo-700 text-gray-500 transition-colors disabled:opacity-40">
+                    className="p-1.5 rounded-lg bg-gray-100 hover:bg-fuchsia-100 hover:text-fuchsia-700 text-gray-500 transition-colors disabled:opacity-40">
                     <Play size={13} />
                   </button>
                   <button onClick={() => toggleTask(t.id)}
@@ -817,7 +817,7 @@ function AutomationTab() {
               { channel: "Push Notifications", count: "24 sent today" },
             ].map(n => (
               <div key={n.channel} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                <Bell size={14} className="text-indigo-600 shrink-0" />
+                <Bell size={14} className="text-fuchsia-600 shrink-0" />
                 <div className="flex-1">
                   <p className="text-sm text-gray-700" style={{ fontWeight: 500 }}>{n.channel}</p>
                   <p className="text-xs text-gray-400">{n.count}</p>
@@ -835,7 +835,7 @@ function AutomationTab() {
               { label: "API Response Time", value: "124ms", pct: 85, color: "bg-green-400" },
               { label: "Database Load", value: "23%", pct: 23, color: "bg-blue-400" },
               { label: "Memory Usage", value: "61%", pct: 61, color: "bg-yellow-400" },
-              { label: "Storage Used", value: "38%", pct: 38, color: "bg-indigo-400" },
+              { label: "Storage Used", value: "38%", pct: 38, color: "bg-fuchsia-400" },
             ].map(s => (
               <div key={s.label} className="flex items-center gap-3">
                 <span className="text-xs text-gray-600 w-36 shrink-0">{s.label}</span>
@@ -955,7 +955,7 @@ function AssistantTab() {
           <div className="space-y-3 max-h-[440px] overflow-y-auto pr-2">
             {messages.map(msg => (
               <div key={msg.id} className={`flex ${msg.sender === "assistant" ? "justify-start" : "justify-end"}`}>
-                <div className={`max-w-[85%] rounded-2xl p-4 shadow-sm ${msg.sender === "assistant" ? "bg-gray-100 text-gray-900" : "bg-indigo-600 text-white"}`}>
+                <div className={`max-w-[85%] rounded-2xl p-4 shadow-sm ${msg.sender === "assistant" ? "bg-gray-100 text-gray-900" : "bg-fuchsia-600 text-white"}`}>
                   <p className="text-sm leading-6">{msg.text}</p>
                   <div className="text-[11px] text-gray-500 mt-2 text-right">{msg.time}</div>
                 </div>
@@ -977,7 +977,7 @@ function AssistantTab() {
               value={input}
               onChange={e => setInput(e.target.value)}
               placeholder="Ask the AI assistant a question..."
-              className="w-full resize-none rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full resize-none rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
             />
             <div className="flex items-center justify-between gap-3">
               <p className="text-xs text-gray-500">Use the prompt buttons above for quick ideas.</p>
@@ -1014,7 +1014,7 @@ export function AICenter() {
         {TABS.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
             className={`flex items-center gap-2 px-4 py-2.5 text-sm whitespace-nowrap transition-colors ${
-              tab === t.id ? "text-indigo-600 border-b-2 border-indigo-600" : "text-gray-500 hover:text-gray-700"
+              tab === t.id ? "text-fuchsia-600 border-b-2 border-fuchsia-600" : "text-gray-500 hover:text-gray-700"
             }`}>
             {t.label}
           </button>

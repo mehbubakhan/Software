@@ -25,16 +25,16 @@ export default function AgencyNannies() {
   }, [])
 
   return (
-    <div className="bg-[#111322] min-h-screen text-slate-100 -m-6 p-8 font-sans">
+    <div className="space-y-6 pb-12 font-sans">
       <div className="max-w-6xl mx-auto">
         
         <div className="flex items-center gap-4 mb-8">
-          <button onClick={() => navigate('/dashboard/parent/hire-nanny')} className="text-slate-400 hover:text-white transition text-xl">
+          <button onClick={() => navigate('/dashboard/parent/hire-nanny')} className="text-slate-400 hover:text-slate-600 transition text-xl font-bold bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-sm border border-slate-200">
             ←
           </button>
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Nanny Agencies</h1>
-            <p className="text-slate-400">Browse verified agencies and find the perfect nanny for your family</p>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">Nanny Agencies</h1>
+            <p className="text-slate-500">Browse verified agencies and find the perfect nanny for your family</p>
           </div>
         </div>
 
@@ -47,7 +47,7 @@ export default function AgencyNannies() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by name or location..." 
-              className="w-full bg-[#1a1c2d] border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-indigo-500"
+              className="w-full bg-white border border-slate-300 rounded-full py-3 pl-12 pr-4 text-slate-900 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 shadow-sm"
             />
           </div>
           <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
@@ -55,10 +55,10 @@ export default function AgencyNannies() {
               <button
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
-                className={`px-6 py-3 rounded-xl font-bold whitespace-nowrap transition-colors ${
+                className={`px-6 py-3 rounded-full font-bold whitespace-nowrap transition-colors shadow-sm ${
                   activeFilter === filter
-                    ? 'bg-indigo-600 text-white border border-indigo-500'
-                    : 'bg-[#1a1c2d] border border-slate-700 text-slate-300 hover:bg-slate-800'
+                    ? 'bg-fuchsia-600 text-white'
+                    : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
                 }`}
               >
                 {filter}
@@ -69,7 +69,7 @@ export default function AgencyNannies() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
-            <div className="col-span-3 text-center text-slate-400 py-12">Loading agencies...</div>
+            <div className="col-span-3 text-center text-slate-500 py-12">Loading agencies...</div>
           ) : (
             agencies.filter(agency => {
               const matchesSearch = agency.name.toLowerCase().includes(searchQuery.toLowerCase()) || agency.location.toLowerCase().includes(searchQuery.toLowerCase());
@@ -78,39 +78,42 @@ export default function AgencyNannies() {
               if (activeFilter === 'Large Agency') matchesFilter = parseInt(agency.numNannies) > 20;
               return matchesSearch && matchesFilter;
             }).map(agency => (
-              <div key={agency.id} className="bg-[#1a1c2d] border border-slate-700 rounded-2xl p-6 hover:border-indigo-500 transition flex flex-col">
+              <div key={agency.id} className="bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-lg transition flex flex-col text-slate-900 cursor-pointer" onClick={() => navigate('/dashboard/parent/hire-nanny/individuals')}>
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center text-2xl shrink-0">
+                  <div className="w-12 h-12 bg-slate-100 border border-slate-200 rounded-full flex items-center justify-center text-2xl shrink-0">
                     {agency.logo}
                   </div>
                   <div>
                     <h3 className="font-bold text-lg leading-tight">{agency.name}</h3>
-                    <p className="text-xs text-slate-400 mt-1 line-clamp-2">{agency.desc}</p>
+                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">{agency.desc}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 text-sm mb-4">
                   <span className="text-yellow-400">★</span>
                   <span className="font-bold">{agency.rating}</span>
-                  <span className="text-slate-400">({agency.reviews} reviews)</span>
+                  <span className="text-slate-500">({agency.reviews} reviews)</span>
                 </div>
 
-                <div className="space-y-2 text-sm text-slate-300 mb-6 flex-1">
-                  <p className="flex items-center gap-2">📍 <span className="text-slate-400">{agency.location}</span></p>
-                  <p className="flex items-center gap-2">👥 <span className="text-slate-400">{agency.numNannies} Nannies</span></p>
+                <div className="space-y-2 text-sm text-slate-600 mb-6 flex-1">
+                  <p className="flex items-center gap-2">📍 <span className="text-slate-500">{agency.location}</span></p>
+                  <p className="flex items-center gap-2">👥 <span className="text-slate-500">{agency.numNannies} Nannies</span></p>
                 </div>
 
                 <div className="flex flex-wrap gap-2 mb-6">
                   {agency.skills.map((skill, idx) => (
-                    <span key={idx} className="bg-slate-800 text-slate-300 px-3 py-1 rounded-full text-xs font-medium">
+                    <span key={idx} className="bg-slate-100 border border-slate-200 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold">
                       {skill}
                     </span>
                   ))}
                 </div>
 
                 <button 
-                  onClick={() => navigate('/dashboard/parent/hire-nanny/individuals')}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition mt-auto"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate('/dashboard/parent/hire-nanny/individuals')
+                  }}
+                  className="w-full bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold py-3 rounded-xl transition mt-auto"
                 >
                   View Nannies
                 </button>
@@ -123,3 +126,4 @@ export default function AgencyNannies() {
     </div>
   )
 }
+

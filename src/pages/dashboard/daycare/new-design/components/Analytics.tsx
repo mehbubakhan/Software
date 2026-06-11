@@ -191,7 +191,7 @@ export function Analytics() {
   const [showPeriod, setShowPeriod] = useState(false);
 
   const kpis = [
-    { label: "Total Children", value: "32", sub: "+4 this month", color: "text-indigo-600", icon: <Users size={20} className="text-indigo-500" />, bg: "bg-indigo-50" },
+    { label: "Total Children", value: "32", sub: "+4 this month", color: "text-fuchsia-600", icon: <Users size={20} className="text-fuchsia-500" />, bg: "bg-fuchsia-50" },
     { label: "Attendance Rate", value: "94%", sub: "+3% vs last month", color: "text-green-600", icon: <TrendingUp size={20} className="text-green-500" />, bg: "bg-green-50" },
     { label: "Monthly Revenue", value: "$30.6K", sub: "+4% vs May", color: "text-blue-600", icon: <DollarSign size={20} className="text-blue-500" />, bg: "bg-blue-50" },
     { label: "Transport Usage", value: "72%", sub: "23 of 32 children", color: "text-cyan-600", icon: <Bus size={20} className="text-cyan-500" />, bg: "bg-cyan-50" },
@@ -216,7 +216,7 @@ export function Analytics() {
                 <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 w-44">
                   {REPORT_PERIODS.map(p => (
                     <button key={p} onClick={() => { setPeriod(p); setShowPeriod(false); }}
-                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 first:rounded-t-xl last:rounded-b-xl ${period === p ? "text-indigo-600" : "text-gray-700"}`}>
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 first:rounded-t-xl last:rounded-b-xl ${period === p ? "text-fuchsia-600" : "text-gray-700"}`}>
                       {p}
                     </button>
                   ))}
@@ -255,7 +255,7 @@ export function Analytics() {
         {TABS.map(t => (
           <button key={t.id} onClick={() => setActiveTab(t.id)}
             className={`px-4 py-2.5 text-sm whitespace-nowrap transition-colors ${
-              activeTab === t.id ? "text-indigo-600 border-b-2 border-indigo-600" : "text-gray-500 hover:text-gray-700"
+              activeTab === t.id ? "text-fuchsia-600 border-b-2 border-fuchsia-600" : "text-gray-500 hover:text-gray-700"
             }`}>
             {t.label}
           </button>
@@ -357,7 +357,7 @@ export function Analytics() {
           <div className="grid grid-cols-3 gap-4">
             {[
               { label: "Avg. Daily Attendance", value: "94%", sub: "30 of 32 children daily", color: "text-green-600" },
-              { label: "Perfect Attendance", value: "12", sub: "Children this month", color: "text-indigo-600" },
+              { label: "Perfect Attendance", value: "12", sub: "Children this month", color: "text-fuchsia-600" },
               { label: "Chronic Absenteeism", value: "2", sub: "Below 80% attendance", color: "text-red-600" },
             ].map(k => (
               <Card key={k.label} className="p-5">
@@ -544,7 +544,7 @@ export function Analytics() {
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-4">
             {[
-              { label: "Activities Completed", value: "238", sub: "This month", color: "text-indigo-600" },
+              { label: "Activities Completed", value: "238", sub: "This month", color: "text-fuchsia-600" },
               { label: "Avg. Per Child", value: "7.4", sub: "Activities/day", color: "text-green-600" },
               { label: "Most Popular", value: "Outdoor Play", sub: "55 completions", color: "text-blue-600" },
             ].map(k => (
@@ -603,7 +603,7 @@ export function Analytics() {
                   <div key={m.meal} className="flex items-center gap-3">
                     <span className="text-sm w-36 shrink-0">{m.meal}</span>
                     <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-indigo-400 rounded-full" style={{ width: `${m.rate}%` }} />
+                      <div className="h-full bg-fuchsia-400 rounded-full" style={{ width: `${m.rate}%` }} />
                     </div>
                     <span className="text-xs text-gray-500 w-8 text-right">{m.rate}%</span>
                   </div>
@@ -620,7 +620,7 @@ export function Analytics() {
             {[
               { label: "Bus Users", value: "23", sub: "72% of children", color: "text-blue-600" },
               { label: "Routes Active", value: "3", sub: "Morning & Evening", color: "text-green-600" },
-              { label: "On-Time Rate", value: "94%", sub: "This month", color: "text-indigo-600" },
+              { label: "On-Time Rate", value: "94%", sub: "This month", color: "text-fuchsia-600" },
               { label: "Avg. Delay", value: "4 min", sub: "When delayed", color: "text-orange-600" },
             ].map(k => (
               <Card key={k.label} className="p-5">
@@ -664,7 +664,7 @@ export function Analytics() {
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${(v.used / v.capacity) * 100}%` }} />
+                        <div className="h-full bg-fuchsia-500 rounded-full" style={{ width: `${(v.used / v.capacity) * 100}%` }} />
                       </div>
                       <span className="text-xs text-gray-500">{v.used}/{v.capacity}</span>
                     </div>

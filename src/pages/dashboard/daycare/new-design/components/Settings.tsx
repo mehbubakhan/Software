@@ -40,7 +40,7 @@ const LOGIN_HISTORY = [
 function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
   return (
     <button onClick={onToggle}
-      className={`relative w-10 h-6 rounded-full transition-colors ${on ? "bg-indigo-600" : "bg-gray-300"}`}>
+      className={`relative w-10 h-6 rounded-full transition-colors ${on ? "bg-fuchsia-600" : "bg-gray-300"}`}>
       <span className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${on ? "left-5" : "left-1"}`} />
     </button>
   );
@@ -155,7 +155,7 @@ export function Settings() {
             {TABS.map(t => (
               <button key={t.id} onClick={() => setTab(t.id)}
                 className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-all text-left ${
-                  tab === t.id ? "bg-indigo-50 text-indigo-700" : "text-gray-600 hover:bg-gray-50"
+                  tab === t.id ? "bg-fuchsia-50 text-fuchsia-700" : "text-gray-600 hover:bg-gray-50"
                 }`}>
                 {t.icon}<span>{t.label}</span>
               </button>
@@ -171,10 +171,10 @@ export function Settings() {
 
               {/* Logo upload */}
               <div className="flex items-center gap-5 mb-6 p-4 bg-gray-50 rounded-xl">
-                <div className="w-20 h-20 rounded-xl bg-indigo-100 flex items-center justify-center overflow-hidden border-2 border-indigo-200">
+                <div className="w-20 h-20 rounded-xl bg-fuchsia-100 flex items-center justify-center overflow-hidden border-2 border-fuchsia-200">
                   {logoPreview
                     ? <img src={logoPreview} alt="Logo" className="w-full h-full object-cover" />
-                    : <span className="text-indigo-700 text-2xl" style={{ fontWeight: 700 }}>TS</span>
+                    : <span className="text-fuchsia-700 text-2xl" style={{ fontWeight: 700 }}>TS</span>
                   }
                 </div>
                 <div>
@@ -201,7 +201,7 @@ export function Settings() {
                 <div className="col-span-2">
                   <label className="text-sm text-gray-600 block mb-1">Description</label>
                   <textarea value={general.description} onChange={(e: any) => gf("description", e.target.value)} rows={2}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 resize-none" />
                 </div>
                 <Input label="Email" type="email" value={general.email} onChange={(e: React.ChangeEvent<HTMLInputElement>) => gf("email", e.target.value)} />
                 <Input label="Phone" value={general.phone} onChange={(e: React.ChangeEvent<HTMLInputElement>) => gf("phone", e.target.value)} />
@@ -243,7 +243,7 @@ export function Settings() {
                 <div className="flex flex-col gap-1">
                   <label className="text-sm text-gray-600">Days Open</label>
                   <select value={schedule.daysOpen} onChange={(e: any) => sf("daysOpen", e.target.value)}
-                    className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
                     <option>Monday - Friday</option>
                     <option>Monday - Saturday</option>
                     <option>All Week</option>
@@ -299,7 +299,7 @@ export function Settings() {
               {/* Change Password */}
               <Card className="p-6">
                 <div className="flex items-center gap-2 mb-5">
-                  <Key size={18} className="text-indigo-600" />
+                  <Key size={18} className="text-fuchsia-600" />
                   <h3 className="text-gray-800">Change Password</h3>
                 </div>
                 {pwSuccess && (
@@ -320,7 +320,7 @@ export function Settings() {
                           value={pwForm[f.key]}
                           onChange={(e: any) => setPwForm(p => ({ ...p, [f.key]: e.target.value }))}
                           placeholder="••••••••"
-                          className="w-full border border-gray-200 rounded-lg px-3 py-2 pr-10 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          className="w-full border border-gray-200 rounded-lg px-3 py-2 pr-10 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
                         />
                         <button type="button" onClick={() => setShowPw(p => ({ ...p, [f.key]: !p[f.key] }))}
                           className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400">
@@ -337,7 +337,7 @@ export function Settings() {
                         value={pwForm.confirm}
                         onChange={(e: any) => setPwForm(p => ({ ...p, confirm: e.target.value }))}
                         placeholder="••••••••"
-                        className="w-full border border-gray-200 rounded-lg px-3 py-2 pr-10 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 pr-10 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
                       />
                       <button type="button" onClick={() => setShowPw(p => ({ ...p, confirm: !p.confirm }))}
                         className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400">
@@ -359,7 +359,7 @@ export function Settings() {
               {/* 2FA & Security Toggles */}
               <Card className="p-6">
                 <div className="flex items-center gap-2 mb-5">
-                  <Smartphone size={18} className="text-indigo-600" />
+                  <Smartphone size={18} className="text-fuchsia-600" />
                   <h3 className="text-gray-800">Security Options</h3>
                 </div>
                 <div className="space-y-3">
@@ -382,7 +382,7 @@ export function Settings() {
               {/* CCTV Permissions */}
               <Card className="p-6">
                 <div className="flex items-center gap-2 mb-5">
-                  <Monitor size={18} className="text-indigo-600" />
+                  <Monitor size={18} className="text-fuchsia-600" />
                   <h3 className="text-gray-800">CCTV Access Permissions</h3>
                 </div>
                 <div className="space-y-3">
@@ -406,7 +406,7 @@ export function Settings() {
               <Card className="p-6">
                 <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-2">
-                    <Globe size={18} className="text-indigo-600" />
+                    <Globe size={18} className="text-fuchsia-600" />
                     <h3 className="text-gray-800">Active Sessions</h3>
                   </div>
                   <Btn variant="secondary" size="sm" onClick={() => setShowHistory(true)}>
@@ -415,8 +415,8 @@ export function Settings() {
                 </div>
                 <div className="space-y-3">
                   {sessions.map(s => (
-                    <div key={s.id} className={`flex items-center gap-4 p-4 rounded-xl border ${s.current ? "bg-indigo-50 border-indigo-200" : "bg-gray-50 border-gray-100"}`}>
-                      <Monitor size={18} className={s.current ? "text-indigo-600" : "text-gray-400"} />
+                    <div key={s.id} className={`flex items-center gap-4 p-4 rounded-xl border ${s.current ? "bg-fuchsia-50 border-fuchsia-200" : "bg-gray-50 border-gray-100"}`}>
+                      <Monitor size={18} className={s.current ? "text-fuchsia-600" : "text-gray-400"} />
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <p className="text-sm" style={{ fontWeight: 500 }}>{s.device}</p>
@@ -448,8 +448,8 @@ export function Settings() {
                   { name: "Star", age: "4-5 years", capacity: 10, current: 4, room: "Room 104" },
                 ].map(g => (
                   <div key={g.name} className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl hover:bg-gray-50">
-                    <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                      <span className="text-indigo-700 text-sm" style={{ fontWeight: 700 }}>{g.name[0]}</span>
+                    <div className="w-10 h-10 bg-fuchsia-100 rounded-lg flex items-center justify-center">
+                      <span className="text-fuchsia-700 text-sm" style={{ fontWeight: 700 }}>{g.name[0]}</span>
                     </div>
                     <div className="flex-1">
                       <p style={{ fontWeight: 600 }}>{g.name} Group</p>
@@ -457,7 +457,7 @@ export function Settings() {
                     </div>
                     <div className="text-sm text-gray-600">{g.current}/{g.capacity} enrolled</div>
                     <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${(g.current / g.capacity) * 100}%` }} />
+                      <div className="h-full bg-fuchsia-500 rounded-full" style={{ width: `${(g.current / g.capacity) * 100}%` }} />
                     </div>
                   </div>
                 ))}

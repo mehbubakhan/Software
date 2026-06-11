@@ -87,7 +87,7 @@ export function Input({ label, onChange, ...props }: Omit<React.InputHTMLAttribu
     <div className="flex flex-col gap-1">
       {label && <label className="text-sm text-gray-600">{label}</label>}
       <input
-        className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+        className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-transparent transition-all"
         onChange={onChange ? (e) => onChange(e.target.value) : undefined}
         {...props}
       />
@@ -100,7 +100,7 @@ export function Select({ label, children, options, onChange, ...props }: Omit<Re
     <div className="flex flex-col gap-1">
       {label && <label className="text-sm text-gray-600">{label}</label>}
       <select
-        className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+        className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 transition-all"
         onChange={onChange ? e => onChange(e.target.value) : undefined}
         {...props}
       >
@@ -116,7 +116,7 @@ export function Textarea({ label, onChange, ...props }: Omit<React.TextareaHTMLA
       {label && <label className="text-sm text-gray-600">{label}</label>}
       <textarea
         rows={3}
-        className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none"
+        className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 transition-all resize-none"
         onChange={onChange ? (e) => (onChange as (v: string) => void)(e.target.value) : undefined}
         {...props}
       />
@@ -138,7 +138,7 @@ export function Btn({
   const base = "inline-flex items-center gap-2 rounded-lg font-medium transition-all cursor-pointer disabled:opacity-50";
   const sizes = { sm: "px-3 py-1.5 text-xs", md: "px-4 py-2 text-sm", lg: "px-5 py-2.5 text-base" };
   const variants = {
-    primary: "bg-indigo-600 text-white hover:bg-indigo-700",
+    primary: "bg-fuchsia-600 text-white hover:bg-fuchsia-700",
     secondary: "bg-gray-100 text-gray-700 hover:bg-gray-200",
     danger: "bg-red-500 text-white hover:bg-red-600",
     ghost: "text-gray-600 hover:bg-gray-100",
@@ -158,7 +158,7 @@ export function Btn({
 
 export function Avatar({ name, size = "md" }: { name: string; size?: "sm" | "md" | "lg" }) {
   const initials = name.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
-  const colors = ["bg-indigo-500", "bg-purple-500", "bg-blue-500", "bg-green-500", "bg-orange-500", "bg-pink-500"];
+  const colors = ["bg-fuchsia-500", "bg-purple-500", "bg-blue-500", "bg-green-500", "bg-orange-500", "bg-pink-500"];
   const color = colors[name.charCodeAt(0) % colors.length];
   const sizes = { sm: "w-7 h-7 text-xs", md: "w-9 h-9 text-sm", lg: "w-12 h-12 text-base" };
   return (
@@ -206,7 +206,7 @@ export function SearchBar({ value, onChange, placeholder }: { value: string; onC
       value={value}
       onChange={(e: any) => onChange(e.target.value)}
       placeholder={placeholder ?? "Search…"}
-      className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white w-64 focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
     />
   );
 }

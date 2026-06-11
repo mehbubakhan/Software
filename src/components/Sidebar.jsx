@@ -51,12 +51,12 @@ const renderIcon = (iconName) => {
 
   if (variant === 'parent-workspace') {
     return (
-      <aside className="flex flex-col w-full bg-[#0F111A] border-b border-[#1A1D27] md:min-h-[calc(100vh-68px)] md:w-[280px] md:border-b-0 md:border-r">
+      <aside className="flex flex-col w-full bg-slate-50 border-b border-slate-200 md:min-h-[calc(100vh-68px)] md:w-[280px] md:border-b-0 md:border-r">
         <div className="flex items-center gap-3 p-6 pb-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded bg-fuchsia-600 text-sm font-bold text-white">M</div>
+          <div className="flex h-8 w-8 items-center justify-center rounded bg-blue-600 text-sm font-bold text-white">M</div>
           <div>
-            <h1 className="font-bold text-white">Minimate</h1>
-            <p className="text-xs text-slate-400">Parent Portal</p>
+            <h1 className="font-bold text-slate-900">Minimate</h1>
+            <p className="text-xs text-slate-500">Parent Portal</p>
           </div>
         </div>
         
@@ -69,7 +69,7 @@ const renderIcon = (iconName) => {
                   end={i.path === '/dashboard/parent'}
                   className={({ isActive }) =>
                     `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition duration-200 focus:outline-none ${
-                      isActive ? 'bg-[#7c3aed] text-white' : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
+                      isActive ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                     }`
                   }
                 >
@@ -84,37 +84,37 @@ const renderIcon = (iconName) => {
         <div className="p-6 pt-2">
           <button 
             onClick={() => navigate('/dashboard/child')}
-            className="w-full rounded-xl bg-fuchsia-600 py-3 font-bold text-white transition hover:bg-fuchsia-500 shadow-[0_0_15px_rgba(192,38,211,0.4)]"
+            className="w-full rounded-xl bg-blue-600 py-3 font-bold text-white transition hover:bg-blue-500 shadow-sm"
           >
             Child mode
           </button>
         </div>
 
         {showPinModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-            <div className="bg-[#1A1D27] border border-[#2A2E3D] p-8 rounded-3xl w-full max-w-sm text-center">
-              <h2 className="text-xl font-bold text-white mb-2">Parent Verification</h2>
-              <p className="text-sm text-slate-400 mb-6">Enter PIN to exit Child Mode</p>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div className="bg-white border border-slate-200 p-8 rounded-3xl w-full max-w-sm text-center shadow-xl">
+              <h2 className="text-xl font-bold text-slate-900 mb-2">Parent Verification</h2>
+              <p className="text-sm text-slate-500 mb-6">Enter PIN to exit Child Mode</p>
               
               <input 
                 type="password" 
                 maxLength="4"
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
-                className="w-full text-center text-2xl tracking-widest bg-[#0B0E14] border border-[#2A2E3D] rounded-xl p-4 text-white focus:outline-none focus:border-fuchsia-500 mb-4"
+                className="w-full text-center text-2xl tracking-widest bg-slate-50 border border-slate-200 rounded-xl p-4 text-slate-900 focus:outline-none focus:border-blue-600 mb-4"
                 placeholder="****"
               />
               
               <div className="flex gap-3">
                 <button 
                   onClick={() => { setShowPinModal(false); setPin(''); }}
-                  className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition"
+                  className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold rounded-xl transition"
                 >
                   Cancel
                 </button>
                 <button 
                   onClick={handlePinSubmit}
-                  className="flex-1 py-3 bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold rounded-xl transition"
+                  className="flex-1 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition"
                 >
                   Verify
                 </button>

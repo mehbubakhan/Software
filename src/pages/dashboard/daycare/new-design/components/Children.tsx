@@ -299,7 +299,7 @@ export function Children() {
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input value={search} onChange={(e: any) => setSearch(e.target.value)}
             placeholder="Search by name, ID or parent…"
-            className="pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg bg-white w-60 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            className="pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg bg-white w-60 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" />
         </div>
         <Btn onClick={openAdd}><Plus size={15} /> Add Child</Btn>
         <Btn variant="secondary" onClick={() => setShowFilter(!showFilter)}>
@@ -341,7 +341,7 @@ export function Children() {
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-gray-700">Filter Children</h4>
             <button onClick={() => setFilters({ group: "All", gender: "All", package: "All", health: "All", attendance: "All", specialNeeds: "All", archived: false })}
-              className="text-xs text-indigo-600 hover:underline flex items-center gap-1"><RefreshCw size={12} /> Reset</button>
+              className="text-xs text-fuchsia-600 hover:underline flex items-center gap-1"><RefreshCw size={12} /> Reset</button>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {([
@@ -355,7 +355,7 @@ export function Children() {
               <div key={f.key} className="flex flex-col gap-1">
                 <label className="text-xs text-gray-500">{f.label}</label>
                 <select value={(filters as any)[f.key]} onChange={(e: any) => filt(f.key as any, e.target.value)}
-                  className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
                   {f.opts.map(o => <option key={o}>{o}</option>)}
                 </select>
               </div>
@@ -406,7 +406,7 @@ export function Children() {
                   <td className="px-4 py-3 text-gray-400 text-xs">{c.createdDate}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-0.5">
-                      <button title="View Profile" onClick={() => openProfile(c)} className="p-1.5 rounded hover:bg-indigo-50 text-indigo-500"><Eye size={14} /></button>
+                      <button title="View Profile" onClick={() => openProfile(c)} className="p-1.5 rounded hover:bg-fuchsia-50 text-fuchsia-500"><Eye size={14} /></button>
                       <button title="Edit" onClick={() => openEdit(c)} className="p-1.5 rounded hover:bg-blue-50 text-blue-500"><Pencil size={14} /></button>
                       <button title="Timeline" onClick={() => { setSelected(c); setModal("timeline"); }} className="p-1.5 rounded hover:bg-purple-50 text-purple-500"><Clock size={14} /></button>
                       <button title="Report" onClick={() => { setSelected(c); setModal("report"); }} className="p-1.5 rounded hover:bg-green-50 text-green-600"><FileText size={14} /></button>
@@ -569,7 +569,7 @@ export function Children() {
             <div className="flex gap-0.5 border-b border-gray-200 mb-5 overflow-x-auto">
               {PROFILE_TABS.map(t => (
                 <button key={t.id} onClick={() => setProfileTab(t.id)}
-                  className={`px-4 py-2 text-sm whitespace-nowrap transition-colors ${profileTab === t.id ? "text-indigo-600 border-b-2 border-indigo-600" : "text-gray-500 hover:text-gray-700"}`}>
+                  className={`px-4 py-2 text-sm whitespace-nowrap transition-colors ${profileTab === t.id ? "text-fuchsia-600 border-b-2 border-fuchsia-600" : "text-gray-500 hover:text-gray-700"}`}>
                   {t.label}
                 </button>
               ))}
@@ -702,22 +702,22 @@ export function Children() {
             {profileTab === "timeline" && (
               <div>
                 {/* Add entry */}
-                <div className="bg-indigo-50 rounded-xl p-3 mb-4">
-                  <p className="text-xs text-indigo-700 mb-2" style={{ fontWeight: 600 }}>Add Timeline Entry</p>
+                <div className="bg-fuchsia-50 rounded-xl p-3 mb-4">
+                  <p className="text-xs text-fuchsia-700 mb-2" style={{ fontWeight: 600 }}>Add Timeline Entry</p>
                   <div className="grid grid-cols-2 gap-2">
                     <select value={newTimeline.type} onChange={(e: any) => setNewTimeline(p => ({ ...p, type: e.target.value as any }))}
-                      className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                      className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
                       {["food", "sleep", "play", "education", "medicine", "note"].map(t => <option key={t}>{t}</option>)}
                     </select>
                     <input value={newTimeline.time} onChange={(e: any) => setNewTimeline(p => ({ ...p, time: e.target.value }))}
                       placeholder="Time (e.g. 02:00 PM)"
-                      className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                      className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500" />
                     <input value={newTimeline.title} onChange={(e: any) => setNewTimeline(p => ({ ...p, title: e.target.value }))}
                       placeholder="Title"
-                      className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                      className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500" />
                     <input value={newTimeline.detail} onChange={(e: any) => setNewTimeline(p => ({ ...p, detail: e.target.value }))}
                       placeholder="Details"
-                      className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                      className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500" />
                   </div>
                   <div className="mt-2 flex justify-end">
                     <Btn size="sm" onClick={() => addTimelineEntry(selected.id)}><Plus size={12} /> Add</Btn>
@@ -755,19 +755,19 @@ export function Children() {
       <Modal open={modal === "timeline"} onClose={() => setModal(null)} title={`Timeline — ${selected?.name}`} width="max-w-lg">
         {selected && (
           <div>
-            <div className="bg-indigo-50 rounded-xl p-3 mb-4">
-              <p className="text-xs text-indigo-700 mb-2" style={{ fontWeight: 600 }}>Log New Entry</p>
+            <div className="bg-fuchsia-50 rounded-xl p-3 mb-4">
+              <p className="text-xs text-fuchsia-700 mb-2" style={{ fontWeight: 600 }}>Log New Entry</p>
               <div className="grid grid-cols-2 gap-2">
                 <select value={newTimeline.type} onChange={(e: any) => setNewTimeline(p => ({ ...p, type: e.target.value as any }))}
-                  className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
                   {["food", "sleep", "play", "education", "medicine", "note"].map(t => <option key={t}>{t}</option>)}
                 </select>
                 <input value={newTimeline.time} onChange={(e: any) => setNewTimeline(p => ({ ...p, time: e.target.value }))}
-                  placeholder="Time" className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                  placeholder="Time" className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500" />
                 <input value={newTimeline.title} onChange={(e: any) => setNewTimeline(p => ({ ...p, title: e.target.value }))}
-                  placeholder="Title" className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                  placeholder="Title" className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500" />
                 <input value={newTimeline.detail} onChange={(e: any) => setNewTimeline(p => ({ ...p, detail: e.target.value }))}
-                  placeholder="Details" className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                  placeholder="Details" className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500" />
               </div>
               <div className="mt-2 flex justify-end">
                 <Btn size="sm" onClick={() => addTimelineEntry(selected.id)}><Plus size={12} /> Log Entry</Btn>
@@ -837,8 +837,8 @@ export function Children() {
 }
 
 // ── Tiny helper components ────────────────────────────────────────────────
-const INP = "border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full";
-const SEL = "border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full";
+const INP = "border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 w-full";
+const SEL = "border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 w-full";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (

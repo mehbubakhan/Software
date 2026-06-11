@@ -238,7 +238,7 @@ export function HealthMedicine() {
         <StatCard label="Active Alerts" value={emergencyCount} color="red" icon={<AlertTriangle size={20} />} />
         <StatCard label="High Temperature" value={highTemps} color="amber" icon={<Thermometer size={20} />} />
         <StatCard label="Pending Medicines" value={pendingMeds} color="blue" icon={<Pill size={20} />} />
-        <StatCard label="Overdue Vaccines" value={overdueVaccines} color="indigo" icon={<Syringe size={20} />} />
+        <StatCard label="Overdue Vaccines" value={overdueVaccines} color="fuchsia" icon={<Syringe size={20} />} />
       </div>
 
       {/* Emergency banner */}
@@ -271,12 +271,12 @@ export function HealthMedicine() {
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <SearchBar value={search} onChange={setSearch} placeholder="Search by child name…" />
         <select value={filterEmergency} onChange={(e: any) => setFilterEmergency(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
           <option value="All">All Status</option>
           {["Normal", "Watch", "Alert", "Emergency"].map(s => <option key={s}>{s}</option>)}
         </select>
         <select value={filterType} onChange={(e: any) => setFilterType(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
           <option value="All">All Record Types</option>
           {HEALTH_TYPES.map(t => <option key={t}>{t}</option>)}
         </select>
@@ -346,7 +346,7 @@ export function HealthMedicine() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1 flex-wrap">
                       <button onClick={() => { setSelected(p); setViewTab("overview"); setModal("view"); }} title="View Profile"
-                        className="p-1.5 rounded hover:bg-indigo-50 text-indigo-600 transition-colors"><ClipboardList size={14} /></button>
+                        className="p-1.5 rounded hover:bg-fuchsia-50 text-fuchsia-600 transition-colors"><ClipboardList size={14} /></button>
                       <button onClick={() => { setSelected(p); setForm({ ...emptyRecord, childName: p.childName, childId: p.childId }); setModal("addRecord"); }} title="Add Medical Report"
                         className="p-1.5 rounded hover:bg-blue-50 text-blue-600 transition-colors"><Plus size={14} /></button>
                       {p.medicines.filter(m => !m.givenToday).map(m => (
@@ -444,7 +444,7 @@ export function HealthMedicine() {
           <div className="flex gap-1 mb-4 border-b border-gray-200">
             {([["overview", "Overview"], ["medicines", "Medicines"], ["vaccinations", "Vaccinations"], ["growth", "Growth"]] as [ViewTab, string][]).map(([t, label]) => (
               <button key={t} onClick={() => setViewTab(t)}
-                className={`px-3 py-1.5 text-sm transition-colors ${viewTab === t ? "border-b-2 border-indigo-600 text-indigo-700" : "text-gray-500 hover:text-gray-700"}`}>
+                className={`px-3 py-1.5 text-sm transition-colors ${viewTab === t ? "border-b-2 border-fuchsia-600 text-fuchsia-700" : "text-gray-500 hover:text-gray-700"}`}>
                 {label}
               </button>
             ))}
@@ -474,7 +474,7 @@ export function HealthMedicine() {
                 </div>
                 <div className="flex gap-2 items-center">
                   <input type="number" step="0.1" value={tempEdit} onChange={(e: any) => setTempEdit(e.target.value)}
-                    placeholder="Enter new temp" className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm w-36 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                    placeholder="Enter new temp" className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm w-36 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" />
                   <Btn size="sm" onClick={() => { if (tempEdit) { updateTemperature(selected.childId, parseFloat(tempEdit)); setTempEdit(""); } }}>
                     Update
                   </Btn>
@@ -567,7 +567,7 @@ export function HealthMedicine() {
               {selected.growthRecords.length > 0 && (
                 <div className="grid grid-cols-3 gap-3 mb-4">
                   {[
-                    { label: "Weight", value: `${selected.growthRecords[0].weight} kg`, icon: <Weight size={16} />, color: "text-indigo-600 bg-indigo-50" },
+                    { label: "Weight", value: `${selected.growthRecords[0].weight} kg`, icon: <Weight size={16} />, color: "text-fuchsia-600 bg-fuchsia-50" },
                     { label: "Height", value: `${selected.growthRecords[0].height} cm`, icon: <Ruler size={16} />, color: "text-green-600 bg-green-50" },
                     { label: "BMI", value: selected.growthRecords[0].bmi || "—", icon: <Activity size={16} />, color: "text-amber-600 bg-amber-50" },
                   ].map(s => (
@@ -582,7 +582,7 @@ export function HealthMedicine() {
               <div className="space-y-2">
                 {selected.growthRecords.map((g, i) => (
                   <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100 text-sm">
-                    <TrendingUp size={14} className="text-indigo-400" />
+                    <TrendingUp size={14} className="text-fuchsia-400" />
                     <span className="text-gray-600">{g.date}</span>
                     <span style={{ fontWeight: 500 }}>{g.weight}kg</span>
                     <span style={{ fontWeight: 500 }}>{g.height}cm</span>
@@ -668,7 +668,7 @@ export function HealthMedicine() {
       {modal === "report" && selected && (
         <Modal title={`Health Report — ${selected.childName}`} onClose={() => setModal(null)} size="lg">
           <div className="space-y-4">
-            <div className="flex items-center gap-3 bg-indigo-50 rounded-xl p-4">
+            <div className="flex items-center gap-3 bg-fuchsia-50 rounded-xl p-4">
               <Avatar name={selected.childName} size="md" />
               <div>
                 <p style={{ fontWeight: 600 }}>{selected.childName}</p>

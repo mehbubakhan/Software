@@ -51,26 +51,26 @@ export default function AddChildModal({ isOpen, onClose, onSuccess, initialData 
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm">
-      <div className="bg-[#1A1D27] border border-[#2A2E3D] rounded-3xl w-full max-w-md overflow-hidden flex flex-col p-6 animate-in zoom-in duration-300 shadow-2xl">
+      <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md overflow-hidden flex flex-col p-6 animate-in zoom-in duration-300 shadow-2xl">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="font-bold text-white text-xl flex items-center gap-2"><span>👶</span> {initialData ? 'Edit Child' : 'Add Child'}</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-white transition">✕</button>
+          <h3 className="font-bold text-slate-800 text-xl flex items-center gap-2"><span>👶</span> {initialData ? 'Edit Child' : 'Add Child'}</h3>
+          <button onClick={onClose} className="text-slate-500 hover:text-slate-800 transition">✕</button>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-1">Child's Name</label>
+            <label className="block text-sm font-semibold text-slate-600 mb-1">Child's Name</label>
             <input 
               type="text" 
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-fuchsia-500 transition" 
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-fuchsia-500 transition" 
               placeholder="e.g. Emma" 
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-1">Age</label>
+            <label className="block text-sm font-semibold text-slate-600 mb-1">Age</label>
             <input 
               type="number" 
               required
@@ -78,17 +78,17 @@ export default function AddChildModal({ isOpen, onClose, onSuccess, initialData 
               max="18"
               value={age}
               onChange={(e) => setAge(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-fuchsia-500 transition" 
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-fuchsia-500 transition" 
               placeholder="e.g. 4" 
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-1">Gender</label>
+            <label className="block text-sm font-semibold text-slate-600 mb-1">Gender</label>
             <select 
               value={gender}
               onChange={(e) => setGender(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-fuchsia-500 transition appearance-none"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-fuchsia-500 transition appearance-none"
             >
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -97,23 +97,23 @@ export default function AddChildModal({ isOpen, onClose, onSuccess, initialData 
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-1">Current Daycare (Optional)</label>
+            <label className="block text-sm font-semibold text-slate-600 mb-1">Current Daycare (Optional)</label>
             <input 
               type="text" 
               value={currentDaycare}
               onChange={(e) => setCurrentDaycare(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-fuchsia-500 transition" 
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-fuchsia-500 transition" 
               placeholder="e.g. Sunshine Daycare" 
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-1">Health Status / Allergies (Optional)</label>
+            <label className="block text-sm font-semibold text-slate-600 mb-1">Health Status / Allergies (Optional)</label>
             <textarea 
               value={healthNotes}
               onChange={(e) => setHealthNotes(e.target.value)}
               rows="2"
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-fuchsia-500 transition resize-none" 
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-fuchsia-500 transition resize-none" 
               placeholder="e.g. Peanut allergy, all vaccinations up to date" 
             ></textarea>
           </div>
@@ -122,7 +122,7 @@ export default function AddChildModal({ isOpen, onClose, onSuccess, initialData 
             <button 
               type="button" 
               onClick={onClose}
-              className="flex-1 px-4 py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition font-semibold"
+              className="flex-1 px-4 py-3 bg-slate-50 text-slate-800 rounded-xl hover:bg-slate-700 transition font-semibold"
             >
               Cancel
             </button>
@@ -139,3 +139,6 @@ export default function AddChildModal({ isOpen, onClose, onSuccess, initialData 
     </div>
   );
 }
+
+
+

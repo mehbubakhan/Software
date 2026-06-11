@@ -15,7 +15,7 @@ export default function TransportManagement() {
           <h1 className="text-2xl font-bold mb-2">Transport Management</h1>
           <p className="text-slate-500">Manage drivers, GPS vans, and routes</p>
         </div>
-        <button className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition flex items-center gap-2">
+        <button className="px-6 py-2 bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-lg font-medium transition flex items-center gap-2">
           <span>+</span> Add Vehicle
         </button>
       </div>
@@ -53,7 +53,7 @@ export default function TransportManagement() {
             </div>
             
             <div className="mt-6 flex gap-3">
-              <button className="flex-1 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg text-sm font-bold transition flex justify-center items-center gap-2">
+              <button className="flex-1 py-2 bg-fuchsia-50 hover:bg-fuchsia-100 text-fuchsia-700 rounded-lg text-sm font-bold transition flex justify-center items-center gap-2">
                 📍 Live Track
               </button>
               <button className="flex-1 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-lg text-sm font-bold transition">

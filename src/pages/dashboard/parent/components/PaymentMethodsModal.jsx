@@ -36,34 +36,34 @@ export default function PaymentMethodsModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm">
-      <div className="bg-[#1A1D27] border border-[#2A2E3D] rounded-3xl w-full max-w-md overflow-hidden flex flex-col p-6 animate-in zoom-in duration-300 shadow-2xl">
+      <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md overflow-hidden flex flex-col p-6 animate-in zoom-in duration-300 shadow-2xl">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="font-bold text-white text-xl flex items-center gap-2"><span>💳</span> Payment Methods</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-white transition">✕</button>
+          <h3 className="font-bold text-slate-800 text-xl flex items-center gap-2"><span>💳</span> Payment Methods</h3>
+          <button onClick={onClose} className="text-slate-500 hover:text-slate-800 transition">✕</button>
         </div>
         
         <div className="space-y-4">
           {methods.map(method => (
             <div 
               key={method.key} 
-              className={`p-4 bg-slate-800/50 rounded-xl border transition ${editing === method.key ? method.borderClass : 'border-slate-700 hover:border-slate-600'}`}
+              className={`p-4 bg-slate-50/50 rounded-xl border transition ${editing === method.key ? method.borderClass : 'border-slate-200 hover:border-slate-300'}`}
             >
               <div 
                 className="flex items-center justify-between cursor-pointer" 
                 onClick={() => !editing && !savedAccounts[method.key] && handleEdit(method.key)}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 ${method.colorClass} rounded-full flex items-center justify-center text-white font-bold text-sm`}>{method.short}</div>
+                  <div className={`w-10 h-10 ${method.colorClass} rounded-full flex items-center justify-center text-slate-800 font-bold text-sm`}>{method.short}</div>
                   <div>
-                    <span className="font-semibold text-white block">{method.name}</span>
+                    <span className="font-semibold text-slate-800 block">{method.name}</span>
                     {savedAccounts[method.key] && editing !== method.key && (
-                      <span className="text-xs text-slate-400">{savedAccounts[method.key]}</span>
+                      <span className="text-xs text-slate-500">{savedAccounts[method.key]}</span>
                     )}
                   </div>
                 </div>
                 
                 {!editing && !savedAccounts[method.key] && (
-                  <span className="text-slate-400 text-sm font-semibold hover:text-white">Add +</span>
+                  <span className="text-slate-500 text-sm font-semibold hover:text-slate-800">Add +</span>
                 )}
                 
                 {savedAccounts[method.key] && editing !== method.key && (
@@ -75,24 +75,24 @@ export default function PaymentMethodsModal({ isOpen, onClose }) {
               </div>
               
               {editing === method.key && (
-                <div className="mt-4 pt-4 border-t border-slate-700/50 flex gap-2">
+                <div className="mt-4 pt-4 border-t border-slate-200/50 flex gap-2">
                   <input 
                     type="text" 
                     value={inputValue}
                     onChange={e => setInputValue(e.target.value)}
                     placeholder={`Enter ${method.name} number`}
-                    className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-fuchsia-500"
+                    className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-fuchsia-500"
                     autoFocus
                   />
                   <button 
                     onClick={() => setEditing(null)}
-                    className="px-4 py-2 bg-slate-700 text-white rounded-lg text-sm hover:bg-slate-600 transition font-semibold"
+                    className="px-4 py-2 bg-slate-700 text-slate-800 rounded-lg text-sm hover:bg-slate-600 transition font-semibold"
                   >
                     Cancel
                   </button>
                   <button 
                     onClick={() => handleSave(method.key)}
-                    className={`px-4 py-2 ${method.colorClass} ${method.buttonHover} text-white rounded-lg text-sm transition font-semibold`}
+                    className={`px-4 py-2 ${method.colorClass} ${method.buttonHover} text-slate-800 rounded-lg text-sm transition font-semibold`}
                   >
                     Save
                   </button>
@@ -104,7 +104,7 @@ export default function PaymentMethodsModal({ isOpen, onClose }) {
 
         <button 
           onClick={onClose}
-          className="mt-6 w-full px-4 py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition font-semibold"
+          className="mt-6 w-full px-4 py-3 bg-slate-50 text-slate-800 rounded-xl hover:bg-slate-700 transition font-semibold"
         >
           Done
         </button>
@@ -112,3 +112,6 @@ export default function PaymentMethodsModal({ isOpen, onClose }) {
     </div>
   );
 }
+
+
+

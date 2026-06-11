@@ -321,7 +321,7 @@ export function Admissions() {
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input value={search} onChange={(e: any) => setSearch(e.target.value)}
             placeholder="Search by name, ID or parent…"
-            className="pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg bg-white w-60 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            className="pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg bg-white w-60 focus:outline-none focus:ring-2 focus:ring-fuchsia-500" />
         </div>
         <Btn onClick={() => { setForm(EMPTY); setModal("add"); }}><Plus size={15} /> New Admission</Btn>
         <Btn variant="secondary" onClick={() => setModal("trial")}><Baby size={15} /> Trial / Visit</Btn>
@@ -342,7 +342,7 @@ export function Admissions() {
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-gray-700">Filter Admissions</h4>
             <button onClick={() => setFilters({ status: "All", package: "All", trial: "All", classroom: "All" })}
-              className="text-xs text-indigo-600 hover:underline flex items-center gap-1"><RefreshCw size={12} /> Reset</button>
+              className="text-xs text-fuchsia-600 hover:underline flex items-center gap-1"><RefreshCw size={12} /> Reset</button>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {([
@@ -354,7 +354,7 @@ export function Admissions() {
               <div key={f.key} className="flex flex-col gap-1">
                 <label className="text-xs text-gray-500">{f.label}</label>
                 <select value={(filters as any)[f.key]} onChange={(e: any) => filt(f.key as any, e.target.value)}
-                  className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
                   {f.opts.map(o => <option key={o}>{o}</option>)}
                 </select>
               </div>
@@ -369,7 +369,7 @@ export function Admissions() {
           <button key={p}
             onClick={() => filt("package", filters.package === p ? "All" : p)}
             className={`px-3 py-1 rounded-full text-xs border transition-all ${
-              filters.package === p ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-gray-600 border-gray-200 hover:border-indigo-300"
+              filters.package === p ? "bg-fuchsia-600 text-white border-fuchsia-600" : "bg-white text-gray-600 border-gray-200 hover:border-fuchsia-300"
             }`}>
             {p} · <span className="opacity-70">{PACKAGE_PRICES[p]}</span>
           </button>
@@ -392,7 +392,7 @@ export function Admissions() {
             </thead>
             <tbody>
               {filtered.map(a => (
-                <tr key={a.id} className={`border-b border-gray-50 hover:bg-gray-50 transition-colors ${selectedIds.has(a.id) ? "bg-indigo-50" : ""}`}>
+                <tr key={a.id} className={`border-b border-gray-50 hover:bg-gray-50 transition-colors ${selectedIds.has(a.id) ? "bg-fuchsia-50" : ""}`}>
                   <td className="px-4 py-3">
                     <input type="checkbox" checked={selectedIds.has(a.id)} onChange={() => toggleSelect(a.id)} className="rounded" />
                   </td>
@@ -416,7 +416,7 @@ export function Admissions() {
                     <p className="text-xs text-gray-400">{a.parentPhone}</p>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="bg-indigo-50 text-indigo-700 text-xs px-2 py-0.5 rounded-full">{a.package}</span>
+                    <span className="bg-fuchsia-50 text-fuchsia-700 text-xs px-2 py-0.5 rounded-full">{a.package}</span>
                     <p className="text-xs text-gray-400 mt-0.5">{PACKAGE_PRICES[a.package]}</p>
                   </td>
                   <td className="px-4 py-3 text-gray-600">{a.requestDate}</td>
@@ -437,7 +437,7 @@ export function Admissions() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-0.5">
-                      <button title="View Details" onClick={() => { setSelected(a); setDetailTab("parent"); setModal("view"); }} className="p-1.5 rounded hover:bg-indigo-50 text-indigo-500"><Eye size={14} /></button>
+                      <button title="View Details" onClick={() => { setSelected(a); setDetailTab("parent"); setModal("view"); }} className="p-1.5 rounded hover:bg-fuchsia-50 text-fuchsia-500"><Eye size={14} /></button>
                       <button title="Edit" onClick={() => { setSelected(a); setForm({ ...a }); setModal("edit"); }} className="p-1.5 rounded hover:bg-blue-50 text-blue-500"><Pencil size={14} /></button>
                       {a.status === "Pending" && <>
                         <button title="Approve" onClick={() => setStatus(a.id, "Approved")} className="p-1.5 rounded hover:bg-green-50 text-green-600"><CheckCircle size={14} /></button>
@@ -463,7 +463,7 @@ export function Admissions() {
         </div>
         <div className="px-4 py-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400">
           <span>Showing {filtered.length} of {admissions.length} admissions</span>
-          {selectedIds.size > 0 && <span className="text-indigo-600">{selectedIds.size} selected</span>}
+          {selectedIds.size > 0 && <span className="text-fuchsia-600">{selectedIds.size} selected</span>}
         </div>
       </Card>
 
@@ -504,7 +504,7 @@ export function Admissions() {
             <div className="flex gap-0.5 border-b border-gray-200 mb-5">
               {(["parent", "child", "package", "visit"] as DetailTab[]).map(t => (
                 <button key={t} onClick={() => setDetailTab(t)}
-                  className={`px-4 py-2 text-sm capitalize transition-colors ${detailTab === t ? "text-indigo-600 border-b-2 border-indigo-600" : "text-gray-500 hover:text-gray-700"}`}>
+                  className={`px-4 py-2 text-sm capitalize transition-colors ${detailTab === t ? "text-fuchsia-600 border-b-2 border-fuchsia-600" : "text-gray-500 hover:text-gray-700"}`}>
                   {t === "parent" ? "Parent Info" : t === "child" ? "Child Info" : t === "package" ? "Package" : "Visit"}
                 </button>
               ))}
@@ -562,9 +562,9 @@ export function Admissions() {
               <div className="space-y-4">
                 <div className="grid grid-cols-3 gap-3">
                   {PACKAGES.map(p => (
-                    <div key={p} className={`border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${selected.package === p ? "border-indigo-500 bg-indigo-50" : "border-gray-200 bg-gray-50"}`}>
+                    <div key={p} className={`border-2 rounded-xl p-4 text-center cursor-pointer transition-all ${selected.package === p ? "border-fuchsia-500 bg-fuchsia-50" : "border-gray-200 bg-gray-50"}`}>
                       <p className="text-sm" style={{ fontWeight: 700 }}>{p}</p>
-                      <p className="text-lg text-indigo-600 mt-1" style={{ fontWeight: 700 }}>{PACKAGE_PRICES[p]}</p>
+                      <p className="text-lg text-fuchsia-600 mt-1" style={{ fontWeight: 700 }}>{PACKAGE_PRICES[p]}</p>
                       {p === "Trial" && <p className="text-xs text-gray-400 mt-0.5">3 days</p>}
                     </div>
                   ))}
@@ -652,9 +652,9 @@ export function Admissions() {
             <div className="grid grid-cols-3 gap-2 mb-3">
               {PACKAGES.map(p => (
                 <div key={p} onClick={() => { ff("package", p); ff("packageEnd", calcEnd(form.packageStart, p)); ff("isTrial", p === "Trial"); }}
-                  className={`border-2 rounded-xl p-3 text-center cursor-pointer transition-all ${form.package === p ? "border-indigo-500 bg-indigo-50" : "border-gray-200 hover:border-indigo-300"}`}>
+                  className={`border-2 rounded-xl p-3 text-center cursor-pointer transition-all ${form.package === p ? "border-fuchsia-500 bg-fuchsia-50" : "border-gray-200 hover:border-fuchsia-300"}`}>
                   <p className="text-sm" style={{ fontWeight: 600 }}>{p}</p>
-                  <p className="text-xs text-indigo-600">{PACKAGE_PRICES[p]}</p>
+                  <p className="text-xs text-fuchsia-600">{PACKAGE_PRICES[p]}</p>
                 </div>
               ))}
             </div>
@@ -680,7 +680,7 @@ export function Admissions() {
       ═════════════════════════════════════════════════════════════════════ */}
       <Modal open={modal === "visit"} onClose={() => setModal(null)} title={`Schedule Visit — ${selected?.childName}`}>
         <div className="space-y-3">
-          <div className="bg-indigo-50 rounded-xl p-3 text-sm text-indigo-700">
+          <div className="bg-fuchsia-50 rounded-xl p-3 text-sm text-fuchsia-700">
             Scheduling a daycare visit for <strong>{selected?.parentName}</strong> to tour the facility with their child.
           </div>
           <F label="Visit Date"><input type="date" value={visitForm.date} onChange={(e: any) => setVisitForm(p => ({ ...p, date: e.target.value }))} className={INP} /></F>
@@ -703,7 +703,7 @@ export function Admissions() {
             <div className="grid grid-cols-2 gap-2">
               {CLASSROOMS.map(c => (
                 <div key={c} onClick={() => setAssignForm(p => ({ ...p, classroom: c }))}
-                  className={`border-2 rounded-xl p-3 cursor-pointer transition-all text-sm ${assignForm.classroom === c ? "border-indigo-500 bg-indigo-50 text-indigo-700" : "border-gray-200 hover:border-indigo-300"}`} style={{ fontWeight: assignForm.classroom === c ? 600 : 400 }}>
+                  className={`border-2 rounded-xl p-3 cursor-pointer transition-all text-sm ${assignForm.classroom === c ? "border-fuchsia-500 bg-fuchsia-50 text-fuchsia-700" : "border-gray-200 hover:border-fuchsia-300"}`} style={{ fontWeight: assignForm.classroom === c ? 600 : 400 }}>
                   {c}
                 </div>
               ))}
@@ -714,7 +714,7 @@ export function Admissions() {
             <div className="grid grid-cols-2 gap-2">
               {NANNIES.map(n => (
                 <div key={n} onClick={() => setAssignForm(p => ({ ...p, nanny: n }))}
-                  className={`border-2 rounded-xl p-3 cursor-pointer transition-all text-sm flex items-center gap-2 ${assignForm.nanny === n ? "border-indigo-500 bg-indigo-50" : "border-gray-200 hover:border-indigo-300"}`}>
+                  className={`border-2 rounded-xl p-3 cursor-pointer transition-all text-sm flex items-center gap-2 ${assignForm.nanny === n ? "border-fuchsia-500 bg-fuchsia-50" : "border-gray-200 hover:border-fuchsia-300"}`}>
                   <Avatar name={n} size="sm" />
                   <span style={{ fontWeight: assignForm.nanny === n ? 600 : 400 }}>{n}</span>
                 </div>
@@ -740,7 +740,7 @@ export function Admissions() {
           <div className="flex flex-wrap gap-2">
             {["Vaccination records", "Medical certificate", "Birth certificate", "Previous daycare records", "Doctor's note"].map(t => (
               <button key={t} onClick={() => setMoreInfoNote(p => p ? `${p}, ${t}` : t)}
-                className="text-xs px-2 py-1 bg-gray-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-full transition-colors">{t}</button>
+                className="text-xs px-2 py-1 bg-gray-100 hover:bg-fuchsia-50 hover:text-fuchsia-600 rounded-full transition-colors">{t}</button>
             ))}
           </div>
         </div>
@@ -797,8 +797,8 @@ export function Admissions() {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────
-const INP = "border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full";
-const SEL = "border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full";
+const INP = "border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 w-full";
+const SEL = "border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 w-full";
 
 function F({ label, children }: { label: string; children: React.ReactNode }) {
   return (

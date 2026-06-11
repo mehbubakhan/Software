@@ -216,7 +216,7 @@ export function Billing() {
         </div>
         <div className="bg-white rounded-xl border border-gray-200 p-4">
           <p className="text-gray-500 text-xs">Tax Collected</p>
-          <p className="text-2xl text-indigo-600 mt-1" style={{ fontWeight: 700 }}>${totalTax.toLocaleString()}</p>
+          <p className="text-2xl text-fuchsia-600 mt-1" style={{ fontWeight: 700 }}>${totalTax.toLocaleString()}</p>
           <p className="text-xs text-gray-400 mt-0.5">5% rate applied</p>
         </div>
       </div>
@@ -225,7 +225,7 @@ export function Billing() {
       <div className="flex gap-1 mb-5 border-b border-gray-200">
         {([["invoices", "Invoices"], ["payments", "Payment History"], ["reports", "Financial Report"]] as [MainTab, string][]).map(([t, label]) => (
           <button key={t} onClick={() => setMainTab(t)}
-            className={`px-4 py-2 text-sm transition-colors ${mainTab === t ? "border-b-2 border-indigo-600 text-indigo-700" : "text-gray-500 hover:text-gray-700"}`}>
+            className={`px-4 py-2 text-sm transition-colors ${mainTab === t ? "border-b-2 border-fuchsia-600 text-fuchsia-700" : "text-gray-500 hover:text-gray-700"}`}>
             {label}
           </button>
         ))}
@@ -237,12 +237,12 @@ export function Billing() {
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <SearchBar value={search} onChange={setSearch} placeholder="Search by parent, child, or invoice ID…" />
             <select value={filterStatus} onChange={(e: any) => setFilterStatus(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
               <option value="All">All Status</option>
               {["Paid", "Pending", "Overdue", "Cancelled"].map(s => <option key={s}>{s}</option>)}
             </select>
             <select value={filterType} onChange={(e: any) => setFilterType(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
               <option value="All">All Types</option>
               {["Admission", "Monthly", "Transport", "Miscellaneous"].map(t => <option key={t}>{t}</option>)}
             </select>
@@ -266,7 +266,7 @@ export function Billing() {
                   {filtered.map(inv => (
                     <tr key={inv.id} className={`border-b border-gray-50 hover:bg-gray-50 transition-colors ${inv.status === "Overdue" ? "bg-red-50/30" : ""}`}>
                       <td className="px-4 py-3">
-                        <p className="font-mono text-xs text-indigo-700" style={{ fontWeight: 600 }}>{inv.invoiceId}</p>
+                        <p className="font-mono text-xs text-fuchsia-700" style={{ fontWeight: 600 }}>{inv.invoiceId}</p>
                         <p className="text-xs text-gray-400">{inv.issueDate}</p>
                       </td>
                       <td className="px-4 py-3">
@@ -304,7 +304,7 @@ export function Billing() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1 flex-wrap">
                           <button onClick={() => { setSelected(inv); setModal("view"); }} title="View Invoice"
-                            className="p-1.5 rounded hover:bg-indigo-50 text-indigo-600 transition-colors"><Eye size={14} /></button>
+                            className="p-1.5 rounded hover:bg-fuchsia-50 text-fuchsia-600 transition-colors"><Eye size={14} /></button>
                           {inv.status !== "Paid" && inv.status !== "Cancelled" && (
                             <button onClick={() => { setSelected(inv); setVerifyMethod("Card"); setVerifyRef(""); setModal("verify"); }} title="Verify Payment"
                               className="p-1.5 rounded hover:bg-green-50 text-green-600 transition-colors"><CheckCircle size={14} /></button>
@@ -339,13 +339,13 @@ export function Billing() {
           {downloadProgress !== null && (
             <div className="fixed bottom-6 right-6 bg-white border border-gray-200 rounded-xl shadow-lg p-4 w-64">
               <div className="flex items-center gap-2 mb-2">
-                <Download size={16} className="text-indigo-500" />
+                <Download size={16} className="text-fuchsia-500" />
                 <p className="text-sm text-gray-700" style={{ fontWeight: 500 }}>Downloading receipt…</p>
               </div>
               <div className="bg-gray-100 rounded-full h-2">
-                <div className="bg-indigo-500 h-2 rounded-full transition-all" style={{ width: `${downloadProgress}%` }} />
+                <div className="bg-fuchsia-500 h-2 rounded-full transition-all" style={{ width: `${downloadProgress}%` }} />
               </div>
-              <p className="text-xs text-indigo-600 mt-1 text-right">{Math.round(downloadProgress)}%</p>
+              <p className="text-xs text-fuchsia-600 mt-1 text-right">{Math.round(downloadProgress)}%</p>
             </div>
           )}
         </>
@@ -374,7 +374,7 @@ export function Billing() {
                   date: i.paidDate ?? i.issueDate, transactionRef: `TXN-AUTO-${i.invoiceId}`,
                 }))].map(pt => (
                   <tr key={pt.id} className="border-b border-gray-50 hover:bg-gray-50">
-                    <td className="px-4 py-3 font-mono text-xs text-indigo-700">{pt.transactionRef}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-fuchsia-700">{pt.transactionRef}</td>
                     <td className="px-4 py-3 font-mono text-xs">{pt.invoiceId}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
@@ -407,7 +407,7 @@ export function Billing() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { label: "Monthly Revenue", value: `$${(totalCollected / 6).toFixed(0)}`, sub: "avg per month", color: "text-green-600 bg-green-50" },
-              { label: "Collection Rate", value: `${Math.round((invoices.filter(i => i.status === "Paid").length / invoices.length) * 100)}%`, sub: "of invoices paid", color: "text-indigo-600 bg-indigo-50" },
+              { label: "Collection Rate", value: `${Math.round((invoices.filter(i => i.status === "Paid").length / invoices.length) * 100)}%`, sub: "of invoices paid", color: "text-fuchsia-600 bg-fuchsia-50" },
               { label: "Outstanding", value: `$${(totalPending + totalOverdue).toLocaleString()}`, sub: "to be collected", color: "text-amber-600 bg-amber-50" },
               { label: "Total Tax", value: `$${totalTax.toLocaleString()}`, sub: "5% applied", color: "text-purple-600 bg-purple-50" },
             ].map(s => (
@@ -430,7 +430,7 @@ export function Billing() {
                   <div key={type} className="flex items-center gap-3">
                     <span className={`px-2 py-0.5 rounded-full text-xs w-24 text-center ${INVOICE_TYPE_COLORS[type]}`}>{type}</span>
                     <div className="flex-1 bg-gray-100 rounded-full h-2">
-                      <div className="h-2 rounded-full bg-indigo-400 transition-all" style={{ width: all > 0 ? `${(total / all) * 100}%` : "0%" }} />
+                      <div className="h-2 rounded-full bg-fuchsia-400 transition-all" style={{ width: all > 0 ? `${(total / all) * 100}%` : "0%" }} />
                     </div>
                     <span className="text-xs text-gray-500 w-20 text-right">${total.toLocaleString()} / ${all.toLocaleString()}</span>
                   </div>
@@ -487,7 +487,7 @@ export function Billing() {
               ))}
             </div>
             {selected.description && (
-              <div className="bg-indigo-50 rounded-lg p-3 text-sm text-indigo-700"><strong>Note:</strong> {selected.description}</div>
+              <div className="bg-fuchsia-50 rounded-lg p-3 text-sm text-fuchsia-700"><strong>Note:</strong> {selected.description}</div>
             )}
           </div>
           <div className="flex gap-2 mt-4">
@@ -510,7 +510,7 @@ export function Billing() {
               <div className="grid grid-cols-3 gap-2">
                 {(["Card", "Mobile Banking", "Bank Transfer", "Online Gateway", "Cash"] as PaymentMethod[]).map(m => (
                   <button key={m} onClick={() => setVerifyMethod(m)}
-                    className={`flex items-center gap-1.5 p-2.5 rounded-xl border text-xs transition-all ${verifyMethod === m ? "border-indigo-500 bg-indigo-50 text-indigo-700" : "border-gray-200 hover:border-gray-300"}`}>
+                    className={`flex items-center gap-1.5 p-2.5 rounded-xl border text-xs transition-all ${verifyMethod === m ? "border-fuchsia-500 bg-fuchsia-50 text-fuchsia-700" : "border-gray-200 hover:border-gray-300"}`}>
                     {PAYMENT_METHOD_ICONS[m]} {m}
                   </button>
                 ))}
@@ -539,7 +539,7 @@ export function Billing() {
               ))}
             </div>
             <textarea value={reminderMsg} onChange={(e: any) => setReminderMsg(e.target.value)} rows={3}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
               placeholder="Custom reminder message…" />
           </div>
           <div className="flex justify-end gap-2 mt-4">
@@ -557,7 +557,7 @@ export function Billing() {
               Processing a refund will mark this invoice as Cancelled. Amount: <strong>${selected.amount.toLocaleString()}</strong>
             </div>
             <textarea value={refundReason} onChange={(e: any) => setRefundReason(e.target.value)} rows={3}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
               placeholder="Reason for refund…" />
           </div>
           <div className="flex justify-end gap-2 mt-4">

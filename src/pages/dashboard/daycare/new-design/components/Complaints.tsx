@@ -277,12 +277,12 @@ export function Complaints() {
       {/* Type filter chips */}
       <div className="flex flex-wrap gap-2 mb-4">
         <button onClick={() => setFilterType("All")}
-          className={`px-3 py-1.5 rounded-full text-xs border transition-all ${filterType === "All" ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-gray-600 border-gray-200"}`}>
+          className={`px-3 py-1.5 rounded-full text-xs border transition-all ${filterType === "All" ? "bg-fuchsia-600 text-white border-fuchsia-600" : "bg-white text-gray-600 border-gray-200"}`}>
           All Types
         </button>
         {COMPLAINT_TYPES.map(t => (
           <button key={t} onClick={() => setFilterType(t)}
-            className={`px-3 py-1.5 rounded-full text-xs border transition-all ${filterType === t ? "bg-indigo-600 text-white border-indigo-600" : `${TYPE_COLORS[t]} border-transparent hover:opacity-80`}`}>
+            className={`px-3 py-1.5 rounded-full text-xs border transition-all ${filterType === t ? "bg-fuchsia-600 text-white border-fuchsia-600" : `${TYPE_COLORS[t]} border-transparent hover:opacity-80`}`}>
             {t}
           </button>
         ))}
@@ -292,12 +292,12 @@ export function Complaints() {
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <SearchBar value={search} onChange={setSearch} placeholder="Search by name, subject, ID…" />
         <select value={filterStatus} onChange={(e: any) => setFilterStatus(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
           <option value="All">All Status</option>
           {["Open", "In Progress", "Resolved", "Closed"].map(s => <option key={s}>{s}</option>)}
         </select>
         <select value={filterPriority} onChange={(e: any) => setFilterPriority(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
           <option value="All">All Priority</option>
           {["Low", "Medium", "High", "Critical"].map(p => <option key={p}>{p}</option>)}
         </select>
@@ -319,18 +319,18 @@ export function Complaints() {
                   </div>
                   <p className="text-xs text-gray-500 mb-1">{c.description}</p>
                   <div className="flex flex-wrap items-center gap-3 text-xs text-gray-400">
-                    <span className="font-mono text-indigo-600">{c.complaintId}</span>
+                    <span className="font-mono text-fuchsia-600">{c.complaintId}</span>
                     <span>From: {c.parentName}</span>
                     {c.childName && <span>Child: {c.childName}</span>}
                     {c.staffInvolved && <span>Staff: {c.staffInvolved}</span>}
                     <span>{c.date}</span>
-                    {c.evidence.length > 0 && <span className="text-indigo-500"><Camera size={10} className="inline" /> {c.evidence.length} evidence</span>}
+                    {c.evidence.length > 0 && <span className="text-fuchsia-500"><Camera size={10} className="inline" /> {c.evidence.length} evidence</span>}
                     {c.cctvRef && <span className="text-purple-500"><Camera size={10} className="inline" /> {c.cctvRef}</span>}
                   </div>
                   <div className="flex flex-wrap gap-1 mt-1.5">
                     {c.warnIssued && <span className="px-1.5 py-0.5 rounded text-xs bg-amber-100 text-amber-700">⚠️ Warned</span>}
                     {c.accessSuspended && <span className="px-1.5 py-0.5 rounded text-xs bg-red-100 text-red-700"><Lock size={9} className="inline" /> Access Suspended</span>}
-                    {c.forwardedToAdmin && <span className="px-1.5 py-0.5 rounded text-xs bg-indigo-100 text-indigo-700">→ Admin</span>}
+                    {c.forwardedToAdmin && <span className="px-1.5 py-0.5 rounded text-xs bg-fuchsia-100 text-fuchsia-700">→ Admin</span>}
                     {c.investigationRequested && <span className="px-1.5 py-0.5 rounded text-xs bg-purple-100 text-purple-700">🔍 Under Investigation</span>}
                   </div>
                 </div>
@@ -340,7 +340,7 @@ export function Complaints() {
                 <div className="flex items-center gap-1">
                   {c.status === "Open" && <Btn variant="secondary" size="sm" onClick={() => updateStatus(c.id, "In Progress")}>Work on it</Btn>}
                   {c.status === "In Progress" && <Btn variant="success" size="sm" onClick={() => updateStatus(c.id, "Resolved")}><CheckCircle size={12} /> Resolve</Btn>}
-                  <button onClick={() => { setSelected(c); setViewTab("details"); setModal("view"); }} className="p-1.5 rounded hover:bg-gray-100 text-indigo-500"><Eye size={14} /></button>
+                  <button onClick={() => { setSelected(c); setViewTab("details"); setModal("view"); }} className="p-1.5 rounded hover:bg-gray-100 text-fuchsia-500"><Eye size={14} /></button>
                   <button onClick={() => { setSelected(c); setForm({ ...emptyForm, parentName: c.parentName, subject: c.subject, description: c.description, date: c.date, status: c.status, priority: c.priority as Priority, assignedTo: c.assignedTo ?? "", complaintType: c.complaintType, childName: c.childName ?? "", staffInvolved: c.staffInvolved ?? "", reporterPhone: c.reporterPhone ?? "", cctvRef: c.cctvRef ?? "" }); setModal("edit"); }} className="p-1.5 rounded hover:bg-gray-100 text-blue-500"><Pencil size={14} /></button>
                   {!c.escalated && <button onClick={() => escalate(c.id)} title="Emergency Escalation" className="p-1.5 rounded hover:bg-red-50 text-red-500"><Zap size={14} /></button>}
                   <button onClick={() => remove(c.id)} className="p-1.5 rounded hover:bg-gray-100 text-red-400"><Trash2 size={14} /></button>
@@ -395,7 +395,7 @@ export function Complaints() {
           <div className="flex gap-1 mb-4 border-b border-gray-200">
             {([["details", "Details"], ["evidence", `Evidence (${selected.evidence.length})`], ["notes", `Staff Notes (${selected.staffNotes.length})`], ["actions", `Action History (${selected.actionHistory.length})`]] as [ViewTab, string][]).map(([t, label]) => (
               <button key={t} onClick={() => setViewTab(t)}
-                className={`px-3 py-1.5 text-xs transition-colors ${viewTab === t ? "border-b-2 border-indigo-600 text-indigo-700" : "text-gray-500 hover:text-gray-700"}`}>
+                className={`px-3 py-1.5 text-xs transition-colors ${viewTab === t ? "border-b-2 border-fuchsia-600 text-fuchsia-700" : "text-gray-500 hover:text-gray-700"}`}>
                 {label}
               </button>
             ))}
@@ -431,11 +431,11 @@ export function Complaints() {
               </div>
               <div className="space-y-2">
                 {selected.evidence.map(ev => (
-                  <div key={ev.id} className="flex items-start gap-3 p-3 bg-indigo-50 rounded-xl border border-indigo-100">
-                    <Camera size={14} className="text-indigo-500 mt-0.5 shrink-0" />
+                  <div key={ev.id} className="flex items-start gap-3 p-3 bg-fuchsia-50 rounded-xl border border-fuchsia-100">
+                    <Camera size={14} className="text-fuchsia-500 mt-0.5 shrink-0" />
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">{ev.type}</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-fuchsia-100 text-fuchsia-700">{ev.type}</span>
                         {ev.reference && <span className="text-xs text-gray-500">Ref: {ev.reference}</span>}
                       </div>
                       <p className="text-xs text-gray-600 mt-0.5">{ev.description}</p>
@@ -464,7 +464,7 @@ export function Complaints() {
               </div>
               <div className="flex gap-2">
                 <textarea value={noteText} onChange={(e: any) => setNoteText(e.target.value)} rows={2}
-                  className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
                   placeholder="Add staff note…" />
                 <Btn onClick={addNote} disabled={!noteText.trim()}><MessageSquare size={14} /> Add</Btn>
               </div>
@@ -475,7 +475,7 @@ export function Complaints() {
             <div className="space-y-2 max-h-60 overflow-y-auto">
               {selected.actionHistory.map(action => (
                 <div key={action.id} className="flex items-start gap-2 p-2.5 bg-gray-50 rounded-lg text-xs">
-                  <ChevronRight size={12} className="text-indigo-400 mt-0.5 shrink-0" />
+                  <ChevronRight size={12} className="text-fuchsia-400 mt-0.5 shrink-0" />
                   <div className="flex-1">
                     <p className="text-gray-700">{action.action}</p>
                     <p className="text-gray-400">{action.by} · {action.date}</p>
@@ -496,7 +496,7 @@ export function Complaints() {
               A formal warning will be logged in this staff member's record.
             </div>
             <textarea value={warnReason} onChange={(e: any) => setWarnReason(e.target.value)} rows={3}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
               placeholder="Reason for warning…" />
           </div>
           <div className="flex justify-end gap-2 mt-4">
@@ -514,7 +514,7 @@ export function Complaints() {
               This will restrict the user's access to the daycare system pending investigation.
             </div>
             <textarea value={suspendReason} onChange={(e: any) => setSuspendReason(e.target.value)} rows={3}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
               placeholder="Reason for suspension…" />
           </div>
           <div className="flex justify-end gap-2 mt-4">
@@ -528,11 +528,11 @@ export function Complaints() {
       {modal === "forward" && selected && (
         <Modal title="Forward to Admin" onClose={() => setModal("view")}>
           <div className="space-y-3">
-            <div className="bg-indigo-50 rounded-xl p-3 text-sm text-indigo-700">
+            <div className="bg-fuchsia-50 rounded-xl p-3 text-sm text-fuchsia-700">
               Complaint <strong>{selected.complaintId}</strong> will be escalated to the Admin for review.
             </div>
             <textarea value={forwardNote} onChange={(e: any) => setForwardNote(e.target.value)} rows={3}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
               placeholder="Notes for admin…" />
           </div>
           <div className="flex justify-end gap-2 mt-4">
@@ -550,7 +550,7 @@ export function Complaints() {
               A formal investigation will be opened for complaint <strong>{selected.complaintId}</strong>.
             </div>
             <textarea value={investigateNote} onChange={(e: any) => setInvestigateNote(e.target.value)} rows={3}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
               placeholder="Investigation scope and notes…" />
           </div>
           <div className="flex justify-end gap-2 mt-4">
@@ -569,7 +569,7 @@ export function Complaints() {
               <Input label="CCTV Reference" value={evidenceForm.reference} onChange={(v: any) => setEvidenceForm(p => ({ ...p, reference: v }))} placeholder="e.g. CAM-04 @ 10:35 AM" />
             )}
             <textarea value={evidenceForm.description} onChange={(e: any) => setEvidenceForm(p => ({ ...p, description: e.target.value }))} rows={3}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
               placeholder="Describe the evidence…" />
           </div>
           <div className="flex justify-end gap-2 mt-4">
@@ -596,7 +596,7 @@ export function Complaints() {
             <Select label="Status" value={form.status} onChange={(v: any) => setForm(p => ({ ...p, status: v as Complaint["status"] }))} options={["Open", "In Progress", "Resolved", "Closed"]} />
             <div className="col-span-2">
               <textarea value={form.description} onChange={(e: any) => setForm(p => ({ ...p, description: e.target.value }))} rows={3}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
                 placeholder="Describe the complaint in detail…" />
             </div>
           </div>

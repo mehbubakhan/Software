@@ -208,7 +208,7 @@ const catColor: Record<string, string> = {
   "Transportation": "bg-yellow-100 text-yellow-700",
   "Communication": "bg-pink-100 text-pink-700",
   "Activities": "bg-purple-100 text-purple-700",
-  "CCTV Monitoring": "bg-indigo-100 text-indigo-700",
+  "CCTV Monitoring": "bg-fuchsia-100 text-fuchsia-700",
 };
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -332,7 +332,7 @@ export function Reviews() {
           { label: "5-Star Reviews", value: fiveStarCount, color: "text-green-600", bg: "bg-green-50" },
           { label: "Pending Reviews", value: pendingCount, color: "text-orange-600", bg: "bg-orange-50" },
           { label: "Reported Reviews", value: reportedCount, color: "text-red-600", bg: "bg-red-50" },
-          { label: "Verified Reviews", value: verifiedCount, color: "text-indigo-600", bg: "bg-indigo-50" },
+          { label: "Verified Reviews", value: verifiedCount, color: "text-fuchsia-600", bg: "bg-fuchsia-50" },
         ].map(k => (
           <Card key={k.label} className={`p-4 ${k.bg}`}>
             <p className={`text-2xl ${k.color}`} style={{ fontWeight: 800 }}>{k.value}</p>
@@ -364,7 +364,7 @@ export function Reviews() {
           { id: "display" as const, label: "Frontend Display" },
         ].map(t => (
           <button key={t.id} onClick={() => setActiveTab(t.id)}
-            className={`px-4 py-2.5 text-sm whitespace-nowrap transition-colors ${activeTab === t.id ? "text-indigo-600 border-b-2 border-indigo-600" : "text-gray-500 hover:text-gray-700"}`}>
+            className={`px-4 py-2.5 text-sm whitespace-nowrap transition-colors ${activeTab === t.id ? "text-fuchsia-600 border-b-2 border-fuchsia-600" : "text-gray-500 hover:text-gray-700"}`}>
             {t.label}
           </button>
         ))}
@@ -392,7 +392,7 @@ export function Reviews() {
               <div className="mt-4 pt-3 border-t border-gray-100 space-y-1">
                 <div className="flex items-center gap-2">
                   <Award size={13} className="text-yellow-500" />
-                  <p className="text-xs text-gray-600">Most praised: <span className="text-indigo-600" style={{ fontWeight: 600 }}>Staff Behaviour</span></p>
+                  <p className="text-xs text-gray-600">Most praised: <span className="text-fuchsia-600" style={{ fontWeight: 600 }}>Staff Behaviour</span></p>
                 </div>
                 <div className="flex items-center gap-2">
                   <TrendingUp size={13} className="text-green-500" />
@@ -442,7 +442,7 @@ export function Reviews() {
               </div>
               {(["All", "Approved", "Pending", "Flagged", "Hidden"] as const).map(s => (
                 <button key={s} onClick={() => setFilterStatus(s as ReviewStatus | "All")}
-                  className={`px-3 py-1 rounded-lg text-xs transition-all ${filterStatus === s ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                  className={`px-3 py-1 rounded-lg text-xs transition-all ${filterStatus === s ? "bg-fuchsia-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
                   {s}
                 </button>
               ))}
@@ -453,12 +453,12 @@ export function Reviews() {
                 </button>
               ))}
               <select value={filterCategory} onChange={(e: any) => setFilterCategory(e.target.value)}
-                className="border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                className="border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
                 <option value="All">All Categories</option>
                 {ALL_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
               <select value={filterVerified} onChange={(e: any) => setFilterVerified(e.target.value as "All" | "Verified" | "Unverified")}
-                className="border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                className="border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
                 <option value="All">All Users</option>
                 <option value="Verified">Verified Only</option>
                 <option value="Unverified">Unverified Only</option>
@@ -481,7 +481,7 @@ export function Reviews() {
                 <Card key={r.id} className={`p-5 transition-all ${r.status === "Hidden" ? "opacity-60" : ""} ${r.featured ? "border-yellow-300 bg-yellow-50/30" : ""}`}>
                   {/* Header row */}
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 text-sm" style={{ fontWeight: 700 }}>
+                    <div className="w-10 h-10 rounded-full bg-fuchsia-100 text-fuchsia-700 flex items-center justify-center shrink-0 text-sm" style={{ fontWeight: 700 }}>
                       {r.parentName.split(" ").map(n => n[0]).join("")}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -524,9 +524,9 @@ export function Reviews() {
 
                   {/* Reply */}
                   {r.reply && (
-                    <div className="mt-3 pl-3 border-l-2 border-indigo-200 bg-indigo-50 rounded-r-lg p-3">
-                      <p className="text-xs text-indigo-600" style={{ fontWeight: 600 }}>TinySteps replied · {r.replyDate}</p>
-                      <p className="text-xs text-indigo-700 mt-0.5">{r.reply}</p>
+                    <div className="mt-3 pl-3 border-l-2 border-fuchsia-200 bg-fuchsia-50 rounded-r-lg p-3">
+                      <p className="text-xs text-fuchsia-600" style={{ fontWeight: 600 }}>TinySteps replied · {r.replyDate}</p>
+                      <p className="text-xs text-fuchsia-700 mt-0.5">{r.reply}</p>
                     </div>
                   )}
 
@@ -548,7 +548,7 @@ export function Reviews() {
                   {/* Action bar */}
                   <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-gray-100">
                     <button onClick={() => markHelpful(r.id)}
-                      className={`flex items-center gap-1 text-xs transition-colors ${helpfulVoted.has(r.id) ? "text-indigo-600" : "text-gray-400 hover:text-indigo-600"}`}>
+                      className={`flex items-center gap-1 text-xs transition-colors ${helpfulVoted.has(r.id) ? "text-fuchsia-600" : "text-gray-400 hover:text-fuchsia-600"}`}>
                       <ThumbsUp size={12} /> {r.helpful}
                     </button>
 
@@ -580,12 +580,12 @@ export function Reviews() {
                     </button>
                     {/* Display */}
                     <button onClick={() => setDisplayModal(r)}
-                      className="flex items-center gap-1 text-xs px-2.5 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors">
+                      className="flex items-center gap-1 text-xs px-2.5 py-1.5 bg-fuchsia-50 text-fuchsia-600 rounded-lg hover:bg-fuchsia-100 transition-colors">
                       <Share2 size={12} /> Display
                     </button>
                     {/* Reply */}
                     <button onClick={() => { setReplyModal(r); setReplyText(r.reply ?? ""); }}
-                      className="flex items-center gap-1 text-xs px-2.5 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                      className="flex items-center gap-1 text-xs px-2.5 py-1.5 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 transition-colors">
                       <MessageCircle size={12} /> {r.reply ? "Edit Reply" : "Reply"}
                     </button>
                     {/* Flag */}
@@ -633,7 +633,7 @@ export function Reviews() {
 
           <Card className="p-5">
             <div className="flex items-center gap-2 mb-4">
-              <Bot size={18} className="text-indigo-600" />
+              <Bot size={18} className="text-fuchsia-600" />
               <h3 className="text-gray-800">AI Review Monitor</h3>
               <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full ml-auto">Active</span>
             </div>
@@ -740,7 +740,7 @@ export function Reviews() {
             {DISPLAY_PAGES.map(page => {
               const count = reviews.filter(r => r.status === "Approved" && r.displayOn.includes(page)).length;
               const icons: Record<DisplayPage, React.ReactNode> = {
-                Homepage: <Home size={18} className="text-indigo-500" />,
+                Homepage: <Home size={18} className="text-fuchsia-500" />,
                 Profile: <Award size={18} className="text-blue-500" />,
                 Search: <Search size={18} className="text-green-500" />,
                 Landing: <Megaphone size={18} className="text-purple-500" />,
@@ -766,7 +766,7 @@ export function Reviews() {
               )}
               {reviews.filter(r => r.featured && r.status === "Approved").map(r => (
                 <div key={r.id} className="flex items-start gap-4 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
-                  <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 text-sm" style={{ fontWeight: 700 }}>
+                  <div className="w-10 h-10 rounded-full bg-fuchsia-100 text-fuchsia-700 flex items-center justify-center shrink-0 text-sm" style={{ fontWeight: 700 }}>
                     {r.parentName.split(" ").map(n => n[0]).join("")}
                   </div>
                   <div className="flex-1">
@@ -778,13 +778,13 @@ export function Reviews() {
                     <p className="text-sm text-gray-600">"{r.comment.slice(0, 120)}{r.comment.length > 120 ? "…" : ""}"</p>
                     <div className="flex flex-wrap gap-1 mt-2">
                       {r.displayOn.map(p => (
-                        <span key={p} className="text-xs px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full">{p}</span>
+                        <span key={p} className="text-xs px-2 py-0.5 bg-fuchsia-100 text-fuchsia-700 rounded-full">{p}</span>
                       ))}
                     </div>
                   </div>
                   <div className="flex gap-2 shrink-0">
                     <button onClick={() => setDisplayModal(r)}
-                      className="text-xs px-2.5 py-1.5 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-colors">
+                      className="text-xs px-2.5 py-1.5 bg-fuchsia-100 text-fuchsia-700 rounded-lg hover:bg-fuchsia-200 transition-colors">
                       <Share2 size={12} />
                     </button>
                     <button onClick={() => toggleFeatured(r.id)}
@@ -822,7 +822,7 @@ export function Reviews() {
                               : [...r.displayOn, page];
                             updateDisplay(r.id, newPages as DisplayPage[]);
                           }}
-                          className={`text-xs px-2 py-1 rounded-lg transition-all ${active ? "bg-indigo-600 text-white" : "bg-gray-200 text-gray-500 hover:bg-gray-300"}`}>
+                          className={`text-xs px-2 py-1 rounded-lg transition-all ${active ? "bg-fuchsia-600 text-white" : "bg-gray-200 text-gray-500 hover:bg-gray-300"}`}>
                           {page}
                         </button>
                       );
@@ -852,7 +852,7 @@ export function Reviews() {
               <label className="text-sm text-gray-600 mb-1 block">Your reply</label>
               <textarea rows={4} value={replyText} onChange={(e: any) => setReplyText(e.target.value)}
                 placeholder="Write a thoughtful, professional response to this parent's review..."
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 resize-none" />
               <p className="text-xs text-gray-400 mt-1">{replyText.length} characters · Tip: Thank the parent and address any concerns professionally.</p>
             </div>
             <div className="flex gap-2">
@@ -909,7 +909,7 @@ export function Reviews() {
                         updateDisplay(displayModal.id, newPages as DisplayPage[]);
                         setDisplayModal(prev => prev ? { ...prev, displayOn: newPages as DisplayPage[] } : null);
                       }}
-                      className={`p-3 rounded-xl border text-sm transition-all ${active ? "bg-indigo-600 text-white border-indigo-600" : "bg-gray-50 border-gray-200 text-gray-600 hover:bg-indigo-50 hover:border-indigo-300"}`}>
+                      className={`p-3 rounded-xl border text-sm transition-all ${active ? "bg-fuchsia-600 text-white border-fuchsia-600" : "bg-gray-50 border-gray-200 text-gray-600 hover:bg-fuchsia-50 hover:border-fuchsia-300"}`}>
                       {page}
                     </button>
                   );
@@ -927,7 +927,7 @@ export function Reviews() {
           <div className="space-y-5">
             <div className="grid grid-cols-3 gap-4">
               {[
-                { label: "Response Rate", value: `${Math.round((reviews.filter(r => r.reply).length / activeReviews.length) * 100)}%`, color: "text-indigo-600" },
+                { label: "Response Rate", value: `${Math.round((reviews.filter(r => r.reply).length / activeReviews.length) * 100)}%`, color: "text-fuchsia-600" },
                 { label: "Avg Response Time", value: "1.2 days", color: "text-blue-600" },
                 { label: "Positive Rate", value: `${Math.round((reviews.filter(r => r.sentiment === "Positive").length / activeReviews.length) * 100)}%`, color: "text-green-600" },
               ].map(s => (

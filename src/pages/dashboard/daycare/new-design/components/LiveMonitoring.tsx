@@ -64,7 +64,7 @@ const CAT_ICONS: Record<CameraCategory, React.ReactNode> = {
 };
 
 const CAT_COLORS: Record<CameraCategory, string> = {
-  "Classroom": "bg-indigo-100 text-indigo-700",
+  "Classroom": "bg-fuchsia-100 text-fuchsia-700",
   "Sleeping Room": "bg-purple-100 text-purple-700",
   "Playground": "bg-green-100 text-green-700",
   "Dining Area": "bg-amber-100 text-amber-700",
@@ -73,7 +73,7 @@ const CAT_COLORS: Record<CameraCategory, string> = {
 };
 
 const FEED_GRADIENTS = [
-  "from-indigo-950 to-indigo-800",
+  "from-fuchsia-950 to-fuchsia-800",
   "from-blue-950 to-blue-800",
   "from-purple-950 to-purple-800",
   "from-gray-900 to-gray-700",
@@ -243,7 +243,7 @@ export function LiveMonitoring() {
         {[
           { label: "Live Cameras", value: liveCams, icon: <Radio size={18} />, color: "text-green-600 bg-green-50 border-green-200" },
           { label: "Offline", value: cameras.filter(c => c.status === "Offline").length, icon: <WifiOff size={18} />, color: "text-red-600 bg-red-50 border-red-200" },
-          { label: "Children Visible", value: cameras.reduce((s, c) => s + c.children, 0), icon: <Baby size={18} />, color: "text-indigo-600 bg-indigo-50 border-indigo-200" },
+          { label: "Children Visible", value: cameras.reduce((s, c) => s + c.children, 0), icon: <Baby size={18} />, color: "text-fuchsia-600 bg-fuchsia-50 border-fuchsia-200" },
           { label: "Active Alerts", value: unacknowledged, icon: <AlertTriangle size={18} />, color: "text-amber-600 bg-amber-50 border-amber-200" },
         ].map(s => (
           <div key={s.label} className={`flex items-center gap-3 rounded-xl border p-3 ${s.color}`}>
@@ -260,7 +260,7 @@ export function LiveMonitoring() {
       <div className="flex gap-1 mb-5 border-b border-gray-200">
         {([["grid", "Camera Grid"], ["alerts", `AI Alerts ${unacknowledged > 0 ? `(${unacknowledged})` : ""}`], ["gps", "GPS Tracking"], ["parent", "Parent Access"]] as [typeof activeTab, string][]).map(([t, label]) => (
           <button key={t} onClick={() => setActiveTab(t)}
-            className={`px-4 py-2 text-sm transition-colors ${activeTab === t ? "border-b-2 border-indigo-600 text-indigo-700" : "text-gray-500 hover:text-gray-700"}`}>
+            className={`px-4 py-2 text-sm transition-colors ${activeTab === t ? "border-b-2 border-fuchsia-600 text-fuchsia-700" : "text-gray-500 hover:text-gray-700"}`}>
             {label}
           </button>
         ))}
@@ -272,12 +272,12 @@ export function LiveMonitoring() {
           {/* Category filter */}
           <div className="flex flex-wrap gap-2 mb-4">
             <button onClick={() => setFilterCat("All")}
-              className={`px-3 py-1.5 rounded-full text-xs border transition-all ${filterCat === "All" ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"}`}>
+              className={`px-3 py-1.5 rounded-full text-xs border transition-all ${filterCat === "All" ? "bg-fuchsia-600 text-white border-fuchsia-600" : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"}`}>
               All Cameras
             </button>
             {CATEGORIES.map(cat => (
               <button key={cat} onClick={() => setFilterCat(cat)}
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs border transition-all ${filterCat === cat ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"}`}>
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs border transition-all ${filterCat === cat ? "bg-fuchsia-600 text-white border-fuchsia-600" : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"}`}>
                 {CAT_ICONS[cat]} {cat}
               </button>
             ))}
@@ -339,13 +339,13 @@ export function LiveMonitoring() {
                         {cam.children > 0 ? `${cam.children} children` : "Empty"} · {cam.staff} staff
                       </p>
                     </div>
-                    {cam.parentAccessible && <span className="text-xs text-indigo-500" title="Parent accessible"><Eye size={12} /></span>}
+                    {cam.parentAccessible && <span className="text-xs text-fuchsia-500" title="Parent accessible"><Eye size={12} /></span>}
                   </div>
 
                   {/* Action buttons */}
                   <div className="flex gap-1">
                     <button onClick={() => openFullscreen(cam)} disabled={cam.status === "Offline"}
-                      className="flex-1 flex items-center justify-center gap-1 py-1 rounded-lg text-xs bg-indigo-50 text-indigo-600 hover:bg-indigo-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                      className="flex-1 flex items-center justify-center gap-1 py-1 rounded-lg text-xs bg-fuchsia-50 text-fuchsia-600 hover:bg-fuchsia-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
                       <Maximize2 size={11} /> Full
                     </button>
                     <button onClick={() => openPlayback(cam)} disabled={!cam.recording}
@@ -458,7 +458,7 @@ export function LiveMonitoring() {
                   const offset = { left: `calc(${pos.left} + ${(idx % 3) * 18 - 18}px)`, top: `calc(${pos.top} + ${Math.floor(idx / 3) * 18}px)` };
                   return (
                     <div key={child.id} className="absolute" style={offset} title={`${child.name} — ${child.zone}`}>
-                      <div className={`w-5 h-5 rounded-full flex items-center justify-center text-white text-xs border-2 border-white shadow-sm ${child.status === "Alert" ? "bg-red-500 animate-pulse" : child.status === "Pickup" ? "bg-amber-500" : "bg-indigo-500"}`}
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center text-white text-xs border-2 border-white shadow-sm ${child.status === "Alert" ? "bg-red-500 animate-pulse" : child.status === "Pickup" ? "bg-amber-500" : "bg-fuchsia-500"}`}
                         style={{ fontWeight: 700, fontSize: 9 }}>
                         {child.name[0]}
                       </div>
@@ -469,7 +469,7 @@ export function LiveMonitoring() {
                 {/* GPS trail animation */}
                 <div className="absolute bottom-2 right-2 flex flex-col items-end gap-1">
                   <div className="flex items-center gap-1 bg-white/90 rounded-full px-3 py-1 text-xs text-gray-700 shadow-sm border border-gray-200">
-                    <Navigation size={10} className="text-indigo-500 animate-spin" style={{ animationDuration: "3s" }} />
+                    <Navigation size={10} className="text-fuchsia-500 animate-spin" style={{ animationDuration: "3s" }} />
                     <span style={{ fontWeight: 600 }}>Your Live Admin Location</span>
                   </div>
                   {isTracking && (
@@ -492,7 +492,7 @@ export function LiveMonitoring() {
 
               {/* Zone legend */}
               <div className="flex flex-wrap gap-2 mt-3">
-                {[["Safe", "bg-indigo-500"], ["Pickup Ready", "bg-amber-500"], ["Alert", "bg-red-500"]].map(([label, color]) => (
+                {[["Safe", "bg-fuchsia-500"], ["Pickup Ready", "bg-amber-500"], ["Alert", "bg-red-500"]].map(([label, color]) => (
                   <span key={label} className="flex items-center gap-1.5 text-xs text-gray-500">
                     <span className={`w-2.5 h-2.5 rounded-full ${color}`} /> {label}
                   </span>
@@ -508,7 +508,7 @@ export function LiveMonitoring() {
               <div className="space-y-2">
                 {locations.map(child => (
                   <div key={child.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${child.status === "Alert" ? "bg-red-50 border-red-200" : child.status === "Pickup" ? "bg-amber-50 border-amber-200" : "bg-gray-50 border-gray-200"}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs border-2 ${child.status === "Alert" ? "bg-red-500 border-red-300" : child.status === "Pickup" ? "bg-amber-500 border-amber-300" : "bg-indigo-500 border-indigo-300"}`}
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs border-2 ${child.status === "Alert" ? "bg-red-500 border-red-300" : child.status === "Pickup" ? "bg-amber-500 border-amber-300" : "bg-fuchsia-500 border-fuchsia-300"}`}
                       style={{ fontWeight: 700 }}>
                       {child.name.split(" ").map(n => n[0]).join("")}
                     </div>
@@ -537,7 +537,7 @@ export function LiveMonitoring() {
                     <div key={zone} className="flex items-center gap-3 text-sm">
                       <span className="text-gray-600 w-28 text-xs truncate">{zone}</span>
                       <div className="flex-1 bg-gray-100 rounded-full h-1.5">
-                        <div className="h-1.5 rounded-full bg-indigo-400 transition-all" style={{ width: `${Math.min(100, (count / max) * 100)}%` }} />
+                        <div className="h-1.5 rounded-full bg-fuchsia-400 transition-all" style={{ width: `${Math.min(100, (count / max) * 100)}%` }} />
                       </div>
                       <span className="text-xs text-gray-500 w-12 text-right">{count}/{max}</span>
                     </div>
@@ -552,9 +552,9 @@ export function LiveMonitoring() {
       {/* ── Parent Access Tab ── */}
       {activeTab === "parent" && (
         <div className="space-y-4">
-          <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-sm text-indigo-700">
+          <div className="bg-fuchsia-50 border border-fuchsia-200 rounded-xl p-4 text-sm text-fuchsia-700">
             <p style={{ fontWeight: 600 }} className="mb-1">Parent CCTV Access Policy</p>
-            <p className="text-xs text-indigo-600">Parents can only view cameras in rooms where their child is currently assigned. Access is time-limited (30 min per session) and logged for security compliance.</p>
+            <p className="text-xs text-fuchsia-600">Parents can only view cameras in rooms where their child is currently assigned. Access is time-limited (30 min per session) and logged for security compliance.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -601,7 +601,7 @@ export function LiveMonitoring() {
                     <p style={{ fontWeight: 500 }}>{log.parent}</p>
                     <p className="text-xs text-gray-400">{log.camera} · {log.time} · {log.duration}</p>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-indigo-50 text-indigo-600">{log.action}</span>
+                  <span className="px-2 py-0.5 rounded-full text-xs bg-fuchsia-50 text-fuchsia-600">{log.action}</span>
                 </div>
               ))}
             </div>
@@ -686,7 +686,7 @@ export function LiveMonitoring() {
             <div className="flex gap-1 flex-wrap">
               {playbackSlots.map(slot => (
                 <button key={slot.time} onClick={() => { if (slot.hasRecording) setPlaybackTime(slot.time); }}
-                  className={`px-2 py-1 rounded text-xs transition-all ${slot.time === playbackTime ? "bg-indigo-600 text-white" : slot.hasRecording ? "bg-indigo-50 text-indigo-700 hover:bg-indigo-100" : "bg-gray-100 text-gray-300 cursor-not-allowed"}`}>
+                  className={`px-2 py-1 rounded text-xs transition-all ${slot.time === playbackTime ? "bg-fuchsia-600 text-white" : slot.hasRecording ? "bg-fuchsia-50 text-fuchsia-700 hover:bg-fuchsia-100" : "bg-gray-100 text-gray-300 cursor-not-allowed"}`}>
                   {slot.time}
                 </button>
               ))}
@@ -706,14 +706,14 @@ export function LiveMonitoring() {
       {modal === "download" && selectedCam && (
         <Modal title="Downloading Recording" onClose={() => { if (timerRef.current) clearInterval(timerRef.current); setModal(null); }}>
           <div className="text-center py-4">
-            <Download size={36} className="text-indigo-500 mx-auto mb-3" />
+            <Download size={36} className="text-fuchsia-500 mx-auto mb-3" />
             <p className="text-sm text-gray-700 mb-1" style={{ fontWeight: 500 }}>{selectedCam.name}</p>
             <p className="text-xs text-gray-400 mb-5">Encrypting and preparing download…</p>
             <div className="bg-gray-100 rounded-full h-3 mb-2">
-              <div className="bg-indigo-500 h-3 rounded-full transition-all duration-300"
+              <div className="bg-fuchsia-500 h-3 rounded-full transition-all duration-300"
                 style={{ width: `${downloadProgress ?? 0}%` }} />
             </div>
-            <p className="text-sm text-indigo-600" style={{ fontWeight: 600 }}>{Math.round(downloadProgress ?? 0)}%</p>
+            <p className="text-sm text-fuchsia-600" style={{ fontWeight: 600 }}>{Math.round(downloadProgress ?? 0)}%</p>
           </div>
         </Modal>
       )}

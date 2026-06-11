@@ -91,7 +91,7 @@ export default function App() {
               <input
                 type="text"
                 placeholder="Quick search…"
-                className="pl-8 pr-4 py-1.5 text-sm border border-gray-200 rounded-lg bg-gray-50 w-52 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="pl-8 pr-4 py-1.5 text-sm border border-gray-200 rounded-lg bg-gray-50 w-52 focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
               />
             </div>
             <button
@@ -105,7 +105,7 @@ export default function App() {
               onClick={() => setSection("profile")}
               className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
             >
-              <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs" style={{ fontWeight: 700 }}>
+              <div className="w-7 h-7 rounded-full bg-fuchsia-600 flex items-center justify-center text-white text-xs" style={{ fontWeight: 700 }}>
                 PL
               </div>
               <div className="text-left hidden sm:block">

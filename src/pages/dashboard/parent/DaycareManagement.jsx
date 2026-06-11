@@ -102,11 +102,11 @@ export default function DaycareManagement() {
   return (
     <div className="space-y-6">
       <div>
-        <button onClick={() => navigate(-1)} className="text-slate-400 hover:text-white flex items-center gap-2 mb-4 transition text-sm">
+        <button onClick={() => navigate(-1)} className="text-slate-500 hover:text-slate-700 bg-white border border-slate-200 px-4 py-2 rounded-full shadow-sm flex items-center gap-2 mb-6 transition text-sm font-semibold w-max">
           <span>←</span> Back to Dashboard
         </button>
-        <h1 className="text-3xl font-bold text-white">Daycare Management</h1>
-        <p className="text-slate-300 mt-2">Manage daycare enrollment and track daily activities</p>
+        <h1 className="text-3xl font-bold text-slate-900">Daycare Management</h1>
+        <p className="text-slate-600 mt-2">Manage daycare enrollment and track daily activities</p>
       </div>
 
       {/* Tabs */}
@@ -115,8 +115,8 @@ export default function DaycareManagement() {
           onClick={() => setActiveTab('browse')}
           className={`px-4 py-2 font-semibold transition whitespace-nowrap ${
             activeTab === 'browse'
-              ? 'text-fuchsia-400 border-b-2 border-fuchsia-400'
-              : 'text-slate-400 hover:text-white'
+              ? 'text-fuchsia-600 border-b-2 border-fuchsia-600'
+              : 'text-slate-500 hover:text-slate-900'
           }`}
         >
           🏫 Browse Daycares
@@ -125,8 +125,8 @@ export default function DaycareManagement() {
           onClick={() => setActiveTab('admission')}
           className={`px-4 py-2 font-semibold transition whitespace-nowrap ${
             activeTab === 'admission'
-              ? 'text-fuchsia-400 border-b-2 border-fuchsia-400'
-              : 'text-slate-400 hover:text-white'
+              ? 'text-fuchsia-600 border-b-2 border-fuchsia-600'
+              : 'text-slate-500 hover:text-slate-900'
           }`}
         >
           📋 My Admissions
@@ -135,8 +135,8 @@ export default function DaycareManagement() {
           onClick={() => setActiveTab('reports')}
           className={`px-4 py-2 font-semibold transition whitespace-nowrap ${
             activeTab === 'reports'
-              ? 'text-fuchsia-400 border-b-2 border-fuchsia-400'
-              : 'text-slate-400 hover:text-white'
+              ? 'text-fuchsia-600 border-b-2 border-fuchsia-600'
+              : 'text-slate-500 hover:text-slate-900'
           }`}
         >
           📊 Daily Reports
@@ -370,3 +370,4 @@ export default function DaycareManagement() {
     </div>
   )
 }
+

@@ -66,22 +66,22 @@ export default function AdoptionSystem() {
 
   return (
     <div className="space-y-6">
-      <button onClick={() => navigate(-1)} className="text-slate-400 hover:text-white flex items-center gap-2 mb-2 transition text-sm">
+      <button onClick={() => navigate(-1)} className="text-slate-500 hover:text-slate-800 flex items-center gap-2 mb-2 transition text-sm">
         <span>←</span> Back to Dashboard
       </button>
       <div>
-        <h1 className="text-3xl font-bold text-white">Adoption Services</h1>
-        <p className="text-slate-300 mt-2">Find and adopt a child - Build your family</p>
+        <h1 className="text-3xl font-bold text-slate-800">Adoption Services</h1>
+        <p className="text-slate-600 mt-2">Find and adopt a child - Build your family</p>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-slate-700 overflow-x-auto">
+      <div className="flex gap-2 border-b border-slate-200 overflow-x-auto">
         <button
           onClick={() => setActiveTab('browse')}
           className={`px-4 py-2 font-semibold transition whitespace-nowrap ${
             activeTab === 'browse'
               ? 'text-fuchsia-400 border-b-2 border-fuchsia-400'
-              : 'text-slate-400 hover:text-white'
+              : 'text-slate-500 hover:text-slate-800'
           }`}
         >
           👶 Browse Children
@@ -91,7 +91,7 @@ export default function AdoptionSystem() {
           className={`px-4 py-2 font-semibold transition whitespace-nowrap ${
             activeTab === 'application'
               ? 'text-fuchsia-400 border-b-2 border-fuchsia-400'
-              : 'text-slate-400 hover:text-white'
+              : 'text-slate-500 hover:text-slate-800'
           }`}
         >
           📋 My Applications
@@ -101,7 +101,7 @@ export default function AdoptionSystem() {
           className={`px-4 py-2 font-semibold transition whitespace-nowrap ${
             activeTab === 'meetups'
               ? 'text-fuchsia-400 border-b-2 border-fuchsia-400'
-              : 'text-slate-400 hover:text-white'
+              : 'text-slate-500 hover:text-slate-800'
           }`}
         >
           📅 Scheduled Meetups
@@ -258,7 +258,7 @@ export default function AdoptionSystem() {
               <h2 className="text-2xl font-bold text-slate-900">Adoption Application</h2>
               <button
                 onClick={() => setShowApplicationForm(false)}
-                className="text-2xl text-slate-400 hover:text-slate-600"
+                className="text-2xl text-slate-500 hover:text-slate-600"
               >
                 ✕
               </button>
@@ -315,7 +315,7 @@ export default function AdoptionSystem() {
           <div className="bg-white rounded-lg p-6 max-w-lg w-full my-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-slate-900">Application Details</h2>
-              <button onClick={() => setViewingApplication(null)} className="text-2xl text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setViewingApplication(null)} className="text-2xl text-slate-500 hover:text-slate-600">✕</button>
             </div>
             <div className="space-y-4">
               <p className="text-slate-700"><span className="font-semibold text-slate-900">Child Name:</span> {viewingApplication.childName}</p>
@@ -338,7 +338,7 @@ export default function AdoptionSystem() {
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full my-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-slate-900">Update Application - {updatingApplication.childName}</h2>
-              <button onClick={() => setUpdatingApplication(null)} className="text-2xl text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setUpdatingApplication(null)} className="text-2xl text-slate-500 hover:text-slate-600">✕</button>
             </div>
             <form onSubmit={(e) => { e.preventDefault(); alert('Application updated!'); setUpdatingApplication(null); }} className="space-y-4">
               <input type="email" placeholder="Update Email" defaultValue="parent@example.com" className="w-full px-3 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-500" required />
@@ -355,3 +355,6 @@ export default function AdoptionSystem() {
     </div>
   )
 }
+
+
+
