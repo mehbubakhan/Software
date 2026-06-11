@@ -20,3 +20,4 @@ app.get('/', (req, res) => res.json({ ok: true, msg: 'Daycare API running' }))
 app.listen(port, () => console.log(`Server listening on ${port}`))
 
 module.exports = app;
+ 

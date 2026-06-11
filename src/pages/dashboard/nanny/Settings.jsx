@@ -16,24 +16,58 @@ import {
   Download,
   Trash2,
   VolumeX,
-  PhoneCall
+  PhoneCall,
+  Camera
 } from 'lucide-react';
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState('profile');
   const [savedStatus, setSavedStatus] = useState('');
 
-  const [profileData, setProfileData] = useState({ experience: '', workType: '', skills: '' });
+  const [profileData, setProfileData] = useState({ 
+    name: '',
+    experience: '', 
+    workType: '', 
+    skills: '',
+    phone: '',
+    dob: '',
+    nationalId: '',
+    nationality: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    gender: '',
+    workPreference: '',
+    languagesSpoken: [],
+    photo_url: '',
+    bio: ''
+  });
 
   useEffect(() => {
     const loadData = async () => {
       try {
         const res = await api.get('/nanny/profile');
         if (res.data?.data) {
+          const d = res.data.data;
           setProfileData({
-            experience: res.data.data.experience || '',
+            name: d.name || '',
+            experience: d.experience || '',
             workType: '', // Not in schema, ignore or store in bio
-            skills: res.data.data.skills ? JSON.parse(res.data.data.skills).join(', ') : ''
+            skills: d.skills ? (Array.isArray(d.skills) ? d.skills.join(', ') : d.skills) : '',
+            phone: d.phone || '',
+            dob: d.dob || '',
+            nationalId: d.nationalId || '',
+            nationality: d.nationality || '',
+            address: d.address || '',
+            city: d.city || '',
+            state: d.state || '',
+            zipCode: d.zipCode || '',
+            gender: d.gender || '',
+            workPreference: d.workPreference || '',
+            languagesSpoken: d.languagesSpoken || [],
+            photo_url: d.photo_url || '',
+            bio: d.bio || ''
           });
         }
       } catch (err) {
@@ -43,6 +77,17 @@ export default function Settings() {
     loadData();
   }, []);
 
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileData(prev => ({ ...prev, photo_url: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
     setSavedStatus('Saving...');
@@ -50,8 +95,8 @@ export default function Settings() {
       if (activeTab === 'profile') {
         const skillsArray = profileData.skills.split(',').map(s => s.trim()).filter(Boolean);
         await api.post('/nanny/profile', {
-          experience: profileData.experience,
-          skills: JSON.stringify(skillsArray)
+          ...profileData,
+          skills: skillsArray
         });
       }
       setSavedStatus('Saved successfully!');
@@ -130,24 +175,86 @@ export default function Settings() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">
+                  {/* Photo Upload Section */}
+                  <div className="col-span-2 flex items-center gap-6 mb-4">
+                    <div className="relative">
+                      <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg bg-slate-100 flex items-center justify-center overflow-hidden">
+                        {profileData.photo_url ? (
+                          <img src={profileData.photo_url} alt="Profile" className="w-full h-full object-cover" />
+                        ) : (
+                          <User className="w-10 h-10 text-slate-400" />
+                        )}
+                      </div>
+                      <label className="absolute bottom-0 right-0 w-8 h-8 bg-blue-600 rounded-full border-2 border-white flex items-center justify-center cursor-pointer hover:bg-blue-700 transition shadow-sm">
+                        <Camera className="w-4 h-4 text-white" />
+                        <input type="file" className="hidden" accept="image/*" onChange={handlePhotoUpload} />
+                      </label>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-slate-900">Profile Photo</h3>
+                      <p className="text-sm text-slate-500">Upload a clear picture of yourself. JPG or PNG.</p>
+                    </div>
+                  </div>
+
                   <div className="col-span-2">
                     <h3 className="font-bold text-slate-900 mb-4 border-b pb-2">Basic Info</h3>
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-slate-700 mb-2">Full Name</label>
-                    <input type="text" defaultValue="Sarah Johnson" className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500" />
+                    <input type="text" value={profileData.name} onChange={e => setProfileData({...profileData, name: e.target.value})} className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500" />
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-slate-700 mb-2">Phone Number</label>
-                    <input type="tel" defaultValue="+880 1711 000000" className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500" />
+                    <input type="tel" value={profileData.phone} onChange={e => setProfileData({...profileData, phone: e.target.value})} className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Date of Birth</label>
+                    <input type="date" value={profileData.dob} onChange={e => setProfileData({...profileData, dob: e.target.value})} className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">National ID No</label>
+                    <input type="text" value={profileData.nationalId} onChange={e => setProfileData({...profileData, nationalId: e.target.value})} className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Nationality</label>
+                    <input type="text" value={profileData.nationality} onChange={e => setProfileData({...profileData, nationality: e.target.value})} className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Gender</label>
+                    <select value={profileData.gender} onChange={e => setProfileData({...profileData, gender: e.target.value})} className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 bg-white">
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  
+                  <div className="col-span-2 mt-4">
+                    <h3 className="font-bold text-slate-900 mb-4 border-b pb-2">Location Info</h3>
                   </div>
                   <div className="col-span-2">
                     <label className="block text-sm font-bold text-slate-700 mb-2">Address</label>
-                    <input type="text" defaultValue="Gulshan 2, Dhaka" className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500" />
+                    <input type="text" value={profileData.address} onChange={e => setProfileData({...profileData, address: e.target.value})} className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">City</label>
+                    <input type="text" value={profileData.city} onChange={e => setProfileData({...profileData, city: e.target.value})} className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">State</label>
+                    <input type="text" value={profileData.state} onChange={e => setProfileData({...profileData, state: e.target.value})} className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Zip Code</label>
+                    <input type="text" value={profileData.zipCode} onChange={e => setProfileData({...profileData, zipCode: e.target.value})} className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500" />
                   </div>
 
                   <div className="col-span-2 mt-4">
                     <h3 className="font-bold text-slate-900 mb-4 border-b pb-2">Professional Info</h3>
+                  </div>
+                  <div className="col-span-2">
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Bio / About Me</label>
+                    <textarea value={profileData.bio} onChange={e => setProfileData({...profileData, bio: e.target.value})} className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 h-24 resize-none" placeholder="Write a short bio about yourself..." />
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-slate-700 mb-2">Experience Level</label>
@@ -155,11 +262,28 @@ export default function Settings() {
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-slate-700 mb-2">Work Type Preference</label>
-                    <select className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500">
-                      <option>Full-time Live-out</option>
-                      <option>Part-time</option>
-                      <option>Live-in</option>
+                    <select value={profileData.workPreference} onChange={e => setProfileData({...profileData, workPreference: e.target.value})} className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 bg-white">
+                      <option value="">Select Work Preference</option>
+                      <option value="live_in">Live-in</option>
+                      <option value="live_out">Live-out</option>
+                      <option value="both">Both</option>
                     </select>
+                  </div>
+                  <div className="col-span-2">
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Languages Spoken</label>
+                    <div className="flex flex-wrap gap-4 mt-2">
+                      {['Bangla', 'English', 'Hindi', 'Arabic', 'Other'].map(lang => (
+                        <label key={lang} className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+                          <input type="checkbox" checked={profileData.languagesSpoken.includes(lang)} onChange={(e) => {
+                            const newLangs = e.target.checked 
+                              ? [...profileData.languagesSpoken, lang] 
+                              : profileData.languagesSpoken.filter(l => l !== lang);
+                            setProfileData({...profileData, languagesSpoken: newLangs});
+                          }} className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500" />
+                          {lang}
+                        </label>
+                      ))}
+                    </div>
                   </div>
                   <div className="col-span-2">
                     <label className="block text-sm font-bold text-slate-700 mb-2">Skills (comma separated)</label>

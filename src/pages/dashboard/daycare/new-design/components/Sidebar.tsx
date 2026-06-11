@@ -47,37 +47,37 @@ export function Sidebar({ active, onSelect }: SidebarProps) {
 
   return (
     <aside
-      className={`flex flex-col h-screen bg-[#19163f] text-white transition-all duration-300 shrink-0 ${collapsed ? "w-16" : "w-60"}`}
+      className={`flex flex-col h-screen bg-white text-slate-800 transition-all duration-300 shrink-0 border-r border-slate-200 ${collapsed ? "w-16" : "w-60"}`}
     >
       {/* Logo */}
-      <div className="flex items-center gap-3 px-4 py-4 border-b border-white/10">
-        <div className="w-8 h-8 rounded-lg bg-[#6366f1] flex items-center justify-center shrink-0">
+      <div className="flex items-center gap-3 px-4 py-4 border-b border-slate-100">
+        <div className="w-8 h-8 rounded-lg bg-fuchsia-600 flex items-center justify-center shrink-0">
           <Baby size={18} className="text-white" />
         </div>
         {!collapsed && (
           <div>
-            <p className="text-white text-sm leading-tight" style={{ fontWeight: 700 }}>TinySteps</p>
-            <p className="text-white/50 text-xs">Daycare Admin</p>
+            <p className="text-slate-900 text-sm leading-tight font-black">TinySteps</p>
+            <p className="text-slate-500 text-xs font-medium">Daycare Admin</p>
           </div>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="ml-auto text-white/40 hover:text-white transition-colors"
+          className="ml-auto text-slate-400 hover:text-slate-600 transition-colors"
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto py-2 scrollbar-thin">
+      <nav className="flex-1 overflow-y-auto py-2 scrollbar-thin px-2 space-y-1">
         {navItems.map((item) => (
           <button
             key={item.id}
             onClick={() => onSelect(item.id)}
-            className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all relative group rounded-lg ${
+            className={`w-full flex items-center gap-3 px-3 py-2.5 text-left transition-all relative group rounded-xl ${
               active === item.id
-                ? "bg-[#4f46e5] text-white shadow-sm"
-                : "text-white/70 hover:bg-white/10 hover:text-white"
+                ? "bg-fuchsia-50 text-fuchsia-600 font-bold"
+                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium"
             }`}
           >
             <span className="shrink-0">{item.icon}</span>
@@ -85,17 +85,17 @@ export function Sidebar({ active, onSelect }: SidebarProps) {
               <>
                 <span className="text-sm truncate">{item.label}</span>
                 {item.badge && (
-                  <span className="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center shrink-0">
+                  <span className="ml-auto bg-fuchsia-600 text-white text-xs rounded-full px-2 py-0.5 flex items-center justify-center shrink-0">
                     {item.badge}
                   </span>
                 )}
               </>
             )}
             {collapsed && item.badge && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-fuchsia-600 rounded-full" />
             )}
             {collapsed && (
-              <div className="absolute left-full ml-2 px-2 py-1 bg-slate-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+              <div className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
                 {item.label}
               </div>
             )}
@@ -104,10 +104,10 @@ export function Sidebar({ active, onSelect }: SidebarProps) {
       </nav>
 
       {/* Logout */}
-      <div className="border-t border-white/10 p-3">
+      <div className="border-t border-slate-100 p-3">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors font-medium"
           aria-label="Logout"
         >
           <LogOut size={18} className="shrink-0" />

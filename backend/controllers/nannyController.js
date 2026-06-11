@@ -1,19 +1,42 @@
 const { upsertProfile, findByNanny } = require('../models/NannyProfile')
 const { setAvailability, getAvailability } = require('../models/Availability')
+const fs = require('fs');
+const path = require('path');
+
+const mockFilePath = path.join(__dirname, '../mockNannyProfiles.json');
 
 let mockNannyProfiles = {}
 let mockNannyAvailability = {}
 
+try {
+  if (fs.existsSync(mockFilePath)) {
+    mockNannyProfiles = JSON.parse(fs.readFileSync(mockFilePath, 'utf8'));
+  }
+} catch (e) {
+  console.error('Failed to load mockNannyProfiles.json', e);
+}
+
+const saveMockProfiles = () => {
+  try {
+    fs.writeFileSync(mockFilePath, JSON.stringify(mockNannyProfiles, null, 2));
+  } catch (e) {
+    console.error('Failed to save mockNannyProfiles.json', e);
+  }
+};
+
 const saveProfile = async (req, res) => {
   try{
     const nanny_id = req.user.id
-    const { bio, experience, skills, photo_url } = req.body
-    const r = await upsertProfile({ nanny_id, bio, experience, skills, photo_url, verified: false })
+    const { name, bio, experience, skills, photo_url, phone, dob, nationalId, nationality, address, city, state, zipCode, gender, workPreference, languagesSpoken } = req.body
+    const profileData = { nanny_id, name, bio, experience, skills, photo_url, phone, dob, nationalId, nationality, address, city, state, zipCode, gender, workPreference, languagesSpoken, verified: false }
+    const r = await upsertProfile(profileData)
     return res.json({ ok:true, data: r })
   }catch(err){ 
     const nanny_id = req.user.id
-    const { bio, experience, skills, photo_url } = req.body
-    mockNannyProfiles[nanny_id] = { nanny_id, bio, experience, skills, photo_url, verified: false }
+    const { name, bio, experience, skills, photo_url, phone, dob, nationalId, nationality, address, city, state, zipCode, gender, workPreference, languagesSpoken } = req.body
+    const profileData = { nanny_id, name, bio, experience, skills, photo_url, phone, dob, nationalId, nationality, address, city, state, zipCode, gender, workPreference, languagesSpoken, verified: false }
+    mockNannyProfiles[nanny_id] = profileData
+    saveMockProfiles();
     return res.json({ ok:true, data: mockNannyProfiles[nanny_id], mock: true }) 
   }
 }
@@ -281,5 +304,6 @@ module.exports = {
   getAgencies, getIndividualNannies, getFeaturedNannies, 
   getNannyDetails, getPayments,
   postNannyJob, getNannyJobs, startNannyShift, endNannyShift,
-  safetyCheckin, triggerSos, getWellnessTools
+  safetyCheckin, triggerSos, getWellnessTools,
+  mockNannyProfiles, saveMockProfiles
 }

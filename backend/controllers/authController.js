@@ -36,6 +36,42 @@ const signup = async (req, res) => {
       const db = require('../config/db');
       await db.query(`INSERT INTO seller_profiles (user_id, business_name, status) VALUES (?, ?, 'Active')`, [user.id, name + ' Store']);
     }
+    if (role === 'nanny') {
+      const { upsertProfile } = require('../models/NannyProfile');
+      const { phone, nationalId, nationality, address, city, state, zipCode, gender, workPreference, languagesSpoken } = req.body;
+      const profileData = {
+        nanny_id: user.id,
+        name: name || '',
+        phone: phone || '',
+        dob: dob || '',
+        nationalId: nationalId || '',
+        nationality: nationality || '',
+        address: address || '',
+        city: city || '',
+        state: state || '',
+        zipCode: zipCode || '',
+        gender: gender || '',
+        workPreference: workPreference || '',
+        languagesSpoken: languagesSpoken || [],
+        bio: '',
+        experience: '',
+        skills: [],
+        photo_url: '',
+        verified: false
+      };
+      try {
+        await upsertProfile(profileData);
+      } catch (err) {
+        // Fallback to storing in mock if DB is down. Since we are in authController, we'll just require the nanny controller module and update its mock map.
+        const nannyController = require('./nannyController');
+        if (nannyController.mockNannyProfiles) {
+           nannyController.mockNannyProfiles[user.id] = profileData;
+           if (nannyController.saveMockProfiles) {
+             nannyController.saveMockProfiles();
+           }
+        }
+      }
+    }
     console.log('User created:', user.id)
     return res.json({ ok:true, user })
   }catch(err){ 
