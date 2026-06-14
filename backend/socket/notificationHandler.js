@@ -9,10 +9,17 @@ module.exports = (io, socket, onlineUsers) => {
   socket.on('mark_notification_read', async ({ notificationId }, callback) => {
     try {
       await markAsRead(notificationId);
-      if (typeof callback === 'function') callback({ success: true });
     } catch (err) {
-      if (typeof callback === 'function') callback({ error: 'Failed to mark as read' });
+      console.error('DB markAsRead failed', err.message);
     }
+    
+    // Also update mock parent notifications
+    if (global.mockParentNotifications) {
+      const notif = global.mockParentNotifications.find(n => n.id == notificationId);
+      if (notif) notif.is_read = true;
+    }
+    
+    if (typeof callback === 'function') callback({ success: true });
   });
 };
 

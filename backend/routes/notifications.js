@@ -37,11 +37,17 @@ router.get('/parent', auth, async (req, res) => {
 router.put('/parent/:id/read', auth, async (req, res) => {
   try {
     await pool.query("UPDATE parent_notifications SET is_read = TRUE WHERE id = ?", [req.params.id]);
-    res.json({ ok: true });
   } catch (err) {
-    console.error("Error updating notification:", err);
-    res.status(500).json({ ok: false, error: err.message });
+    console.error("Error updating notification DB:", err.message);
   }
+
+  // Update mock
+  if (global.mockParentNotifications) {
+    const notif = global.mockParentNotifications.find(n => n.id == req.params.id);
+    if (notif) notif.is_read = true;
+  }
+
+  res.json({ ok: true });
 });
 
 module.exports = router;

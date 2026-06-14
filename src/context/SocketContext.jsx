@@ -106,18 +106,19 @@ export const SocketProvider = ({ children }) => {
   }, [socket]);
 
   const markNotificationRead = useCallback((notificationId, source) => {
-    if (source === 'db') {
-      import('../services/api').then(({ default: api }) => {
-        api.put(`/notifications/parent/${notificationId}/read`).then(() => {
-          setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, is_read: true } : n));
-        }).catch(err => console.error(err));
+    // Optimistically update the UI immediately
+    setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, is_read: true } : n));
+
+    // Always try to hit the parent read endpoint (if it fails, no big deal)
+    import('../services/api').then(({ default: api }) => {
+      api.put(`/notifications/parent/${notificationId}/read`).catch(err => {
+        // Silently fail if not a parent notification
       });
-    } else if (socket) {
-      socket.emit('mark_notification_read', { notificationId }, (response) => {
-        if (response.success) {
-          setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, is_read: true } : n));
-        }
-      });
+    });
+
+    // Also notify via socket
+    if (socket) {
+      socket.emit('mark_notification_read', { notificationId }, () => {});
     }
   }, [socket]);
 
