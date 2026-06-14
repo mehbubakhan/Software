@@ -182,6 +182,23 @@ const MarketplaceModel = {
     return order;
   },
 
+  getUserOrders: async (userId) => {
+    const query = `SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC`;
+    const [rows] = await db.query(query, [userId]);
+    for (let i = 0; i < rows.length; i++) {
+      const order = rows[i];
+      const itemsQuery = `
+        SELECT oi.*, p.name, p.image_url 
+        FROM order_items oi
+        JOIN products p ON oi.product_id = p.id
+        WHERE oi.order_id = ?
+      `;
+      const [items] = await db.query(itemsQuery, [order.id]);
+      order.items = items;
+    }
+    return rows;
+  },
+
   updateOrderStatus: async (sellerId, orderId, status) => {
     // In a real app we'd verify the seller owns a product in the order.
     await db.query('UPDATE orders SET status = ? WHERE id = ?', [status, orderId]);

@@ -145,15 +145,34 @@ const getParentOverview = async (req, res) => {
     }
 
     // 7. Fetch Recent Orders
-    const [dbOrders] = await pool.query("SELECT id, tracking_number, status, total_amount, created_at FROM orders WHERE user_id = ? ORDER BY created_at DESC LIMIT 3", [parent_id]);
-    const recentOrders = dbOrders.map(o => ({
-      id: o.id,
-      orderId: o.tracking_number,
-      status: o.status,
-      item: 'Marketplace Order', // Join with order_items if needed
-      date: new Date(o.created_at).toLocaleDateString(),
-      price: '$' + parseFloat(o.total_amount).toFixed(2)
-    }));
+    let recentOrders = [];
+    try {
+      const [dbOrders] = await pool.query("SELECT id, tracking_number, status, total_amount, created_at FROM orders WHERE user_id = ? ORDER BY created_at DESC LIMIT 3", [parent_id]);
+      recentOrders = dbOrders.map(o => ({
+        id: o.id,
+        orderId: o.tracking_number,
+        status: o.status,
+        item: 'Marketplace Order',
+        date: new Date(o.created_at).toLocaleDateString(),
+        price: '$' + parseFloat(o.total_amount).toFixed(2),
+        items: [] // In a real scenario we'd query order_items
+      }));
+    } catch (e) {
+      console.warn('DB Orders error, skipping db orders in overview', e.message);
+    }
+
+    if (global.mockOrders) {
+      const parentMockOrders = global.mockOrders.filter(o => o.user_id == parent_id).map(o => ({
+        id: o.id,
+        orderId: o.tracking_number,
+        status: o.status || 'Pending',
+        item: o.items && o.items[0] ? o.items[0].name || 'Marketplace Order' : 'Marketplace Order',
+        date: new Date(o.created_at || Date.now()).toLocaleDateString(),
+        price: '$' + parseFloat(o.total_amount).toFixed(2),
+        items: o.items || []
+      }));
+      recentOrders = [...parentMockOrders.reverse(), ...recentOrders].slice(0, 3);
+    }
 
     const currentMockProfiles = getMockProfiles();
     const mockProfile = currentMockProfiles[parent_id] || {};

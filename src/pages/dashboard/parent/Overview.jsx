@@ -14,6 +14,7 @@ export default function Overview() {
   const [showMessageModal, setShowMessageModal] = useState(false)
   const [showAddChild, setShowAddChild] = useState(false)
   const [editingChild, setEditingChild] = useState(null)
+  const [expandedOrderId, setExpandedOrderId] = useState(null)
   const navigate = useNavigate()
 
   const notifications = Array.from(new Map(rawNotifications.map(item => [item.id, item])).values())
@@ -47,7 +48,7 @@ export default function Overview() {
   }
 
   const { children, stats, nannyBookings, daycareUpdates, upcomingSchedule, recentActivities, recentOrders } = data
-  
+
   // Use real notifications count if available
   const unreadCount = notifications.filter(n => !n.is_read).length;
   const displayNotifCount = notifications.length > 0 ? unreadCount : stats.notifications;
@@ -76,7 +77,7 @@ export default function Overview() {
     { title: 'Saved Videos (5)', items: [{ name: 'Childcare Tips', path: '#' }, { name: 'Healthy Recipes', path: '#' }, { name: 'Activity Ideas', path: '#' }, { name: 'Potty Training', path: '#' }, { name: 'Sleep Training', path: '#' }] },
     { title: 'Saved Products (8)', items: [{ name: 'Baby Monitor', path: '#' }, { name: 'Stroller', path: '#' }, { name: 'Educational Toys', path: '#' }, { name: 'Diapers', path: '#' }] },
   ]
-  
+
   const handleStatClick = (label) => {
     if (label === 'Messages') setShowMessageModal(true);
     if (label === 'Notifications') setShowNotificationModal(true);
@@ -93,7 +94,7 @@ export default function Overview() {
           </h1>
           <p className="text-slate-500 mt-2">Here's what's happening with your children today</p>
         </div>
-        <button 
+        <button
           onClick={() => navigate('/dashboard/child')}
           className="relative z-10 shrink-0 rounded-2xl bg-gradient-to-r from-fuchsia-600 to-pink-500 px-8 py-4 font-bold text-white shadow-[0_0_20px_rgba(192,38,211,0.5)] transition hover:scale-105 hover:shadow-[0_0_30px_rgba(192,38,211,0.7)] flex flex-col items-center gap-1"
         >
@@ -117,7 +118,7 @@ export default function Overview() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <button 
+                <button
                   onClick={() => {
                     setEditingChild(child)
                     setShowAddChild(true)
@@ -160,9 +161,9 @@ export default function Overview() {
             </Link>
           </div>
         ))}
-        
+
         {/* Add Child Card */}
-        <div 
+        <div
           onClick={() => {
             setEditingChild(null)
             setShowAddChild(true)
@@ -205,7 +206,7 @@ export default function Overview() {
           <div className="bg-white border border-slate-200 rounded-3xl p-5">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-bold text-slate-900">Nanny Bookings</h3>
-              <a href="#" className="text-xs text-slate-500 hover:text-slate-900">View All</a>
+              <Link to="/dashboard/parent/hire-nanny" className="text-xs text-slate-500 hover:text-slate-900">View All</Link>
             </div>
             <div className="space-y-3">
               {nannyBookings.map((booking) => (
@@ -229,22 +230,28 @@ export default function Overview() {
           <div className="bg-white border border-slate-200 rounded-3xl p-5">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-bold text-slate-900">Daycare Updates</h3>
-              <a href="#" className="text-xs text-slate-500 hover:text-slate-900">View All</a>
+              {daycareUpdates && daycareUpdates.length > 0 && (
+                <Link to="/dashboard/parent/daycare" className="text-xs text-slate-500 hover:text-slate-900">View All</Link>
+              )}
             </div>
             <div className="space-y-3">
-              {daycareUpdates.map((update) => (
-                <div key={update.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 cursor-pointer">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-lg bg-${update.color}-500/20 text-${update.color}-400 flex items-center justify-center`}>{update.icon}</div>
-                    <div>
-                      <p className="text-sm font-semibold text-slate-900">{update.title}</p>
-                      <p className="text-xs text-slate-500">{update.location}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{update.time}</p>
+              {!daycareUpdates || daycareUpdates.length === 0 ? (
+                <div className="text-slate-500 text-sm text-center py-4">Your child is not admitted into any daycare.</div>
+              ) : (
+                daycareUpdates.map((update) => (
+                  <div key={update.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 cursor-pointer">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-lg bg-${update.color}-500/20 text-${update.color}-400 flex items-center justify-center`}>{update.icon}</div>
+                      <div>
+                        <p className="text-sm font-semibold text-slate-900">{update.title}</p>
+                        <p className="text-xs text-slate-500">{update.location}</p>
+                        <p className="text-xs text-slate-500 mt-0.5">{update.time}</p>
+                      </div>
                     </div>
+                    <span className="text-slate-500">›</span>
                   </div>
-                  <span className="text-slate-500">›</span>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
 
@@ -252,7 +259,7 @@ export default function Overview() {
           <div className="bg-white border border-slate-200 rounded-3xl p-5">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-bold text-slate-900">Recent Activities</h3>
-              <a href="#" className="text-xs text-slate-500 hover:text-slate-900">See All</a>
+              <Link to="/dashboard/parent/reports" className="text-xs text-slate-500 hover:text-slate-900">See All</Link>
             </div>
             <div className="space-y-3">
               {recentActivities.map((activity) => (
@@ -297,20 +304,46 @@ export default function Overview() {
           <div className="bg-white border border-slate-200 rounded-3xl p-5">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-bold text-slate-900">Recent Orders</h3>
-              <a href="#" className="text-xs text-slate-500 hover:text-slate-900">View All</a>
+              <Link to="/dashboard/marketplace" className="text-xs text-slate-500 hover:text-slate-900">Shop Marketplace</Link>
             </div>
             <div className="space-y-4">
-              {recentOrders.map((order) => (
-                <div key={order.id} className="flex justify-between items-center pb-3 border-b border-slate-200 last:border-0 last:pb-0">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-slate-500">{order.orderId}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded ${order.status === 'Delivered' ? 'bg-green-500/20 text-green-400' : order.status === 'In Transit' ? 'bg-blue-500/20 text-blue-400' : 'bg-yellow-500/20 text-yellow-400'}`}>{order.status}</span>
+              {!recentOrders || recentOrders.length === 0 ? (
+                <div className="text-slate-500 text-sm text-center py-4">No recent orders.</div>
+              ) : recentOrders.map((order) => (
+                <div key={order.id} className="pb-3 border-b border-slate-200 last:border-0 last:pb-0">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-slate-500">{order.orderId}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded ${order.status === 'Delivered' ? 'bg-green-500/20 text-green-400' : order.status === 'In Transit' ? 'bg-blue-500/20 text-blue-400' : 'bg-yellow-500/20 text-yellow-400'}`}>{order.status}</span>
+                      </div>
+                      <p className="text-sm font-semibold text-slate-900 mt-1">{order.item}</p>
+                      <p className="text-xs text-slate-500">{order.date}</p>
                     </div>
-                    <p className="text-sm font-semibold text-slate-900 mt-1">{order.item}</p>
-                    <p className="text-xs text-slate-500">{order.date}</p>
+                    <div className="flex flex-col items-end gap-1">
+                      <span className="font-bold text-slate-900">{order.price}</span>
+                      <button 
+                        onClick={() => setExpandedOrderId(expandedOrderId === order.id ? null : order.id)}
+                        className="text-[10px] text-fuchsia-600 hover:text-fuchsia-800 font-semibold uppercase tracking-wider"
+                      >
+                        {expandedOrderId === order.id ? 'Hide Details' : 'View Details'}
+                      </button>
+                    </div>
                   </div>
-                  <span className="font-bold text-slate-900">{order.price}</span>
+                  
+                  {expandedOrderId === order.id && order.items && order.items.length > 0 && (
+                    <div className="mt-3 pl-3 pr-3 pt-3 pb-2 bg-slate-50 rounded-lg border border-slate-100">
+                      <h4 className="text-xs font-bold text-slate-700 mb-2">Order Items:</h4>
+                      <ul className="space-y-2">
+                        {order.items.map((item, idx) => (
+                          <li key={idx} className="flex justify-between text-xs text-slate-600">
+                            <span className="flex-1 truncate pr-2">{item.quantity}x {item.name || 'Product'}</span>
+                            <span className="font-medium">${(item.price * item.quantity).toFixed(2)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -408,8 +441,8 @@ export default function Overview() {
                 <div className="text-center text-slate-500 py-10">No new notifications</div>
               ) : (
                 notifications.map((notif) => (
-                  <div 
-                    key={notif.id} 
+                  <div
+                    key={notif.id}
                     onClick={() => !notif.is_read && markNotificationRead(notif.id, notif.source)}
                     className={`p-3 rounded-xl border transition cursor-pointer ${notif.is_read ? 'bg-slate-50 border-slate-100' : 'bg-white border-fuchsia-200 shadow-sm'}`}
                   >
@@ -430,14 +463,14 @@ export default function Overview() {
       )}
 
       {/* Add/Edit Child Modal */}
-      <AddChildModal 
-        isOpen={showAddChild} 
+      <AddChildModal
+        isOpen={showAddChild}
         initialData={editingChild}
         onClose={() => {
           setShowAddChild(false)
           setEditingChild(null)
-        }} 
-        onSuccess={fetchOverview} 
+        }}
+        onSuccess={fetchOverview}
       />
 
     </div>

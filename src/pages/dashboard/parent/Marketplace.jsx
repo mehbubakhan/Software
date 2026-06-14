@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../../services/api'
+import { jsPDF } from "jspdf"
 
 export default function Marketplace() {
   const navigate = useNavigate()
@@ -14,31 +15,31 @@ export default function Marketplace() {
   const [lastOrder, setLastOrder] = useState(null)
   const [showCart, setShowCart] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
-  const [orderHistory, setOrderHistory] = useState([
-    {
-      id: 1700000000000,
-      transactionId: 'TXN84729104',
-      paymentMethod: 'bKash',
-      date: '5/10/2026',
-      status: 'Delivered',
-      total: 43.98,
-      items: [
-        { name: 'Organic Baby Formula', quantity: 1, price: 24.99 },
-        { name: 'Baby Cotton Onesie', quantity: 1, price: 18.99 }
-      ]
-    },
-    {
-      id: 1690000000000,
-      transactionId: 'TXN39201844',
-      paymentMethod: 'Credit Card',
-      date: '4/22/2026',
-      status: 'Delivered',
-      total: 34.99,
-      items: [
-        { name: 'First Aid Kit', quantity: 1, price: 34.99 }
-      ]
+  const [orderHistory, setOrderHistory] = useState([])
+
+  const fetchOrderHistory = async () => {
+    try {
+      const res = await api.get('/marketplace/orders');
+      if (res.data && Array.isArray(res.data)) {
+        const formattedHistory = res.data.map(o => ({
+          id: o.id,
+          transactionId: o.tracking_number,
+          paymentMethod: o.payment_method || 'Checkout',
+          date: new Date(o.created_at).toLocaleDateString(),
+          status: o.status,
+          total: parseFloat(o.total_amount),
+          items: o.items || []
+        }));
+        setOrderHistory(formattedHistory);
+      }
+    } catch (err) {
+      console.error('Failed to load order history', err);
     }
-  ])
+  };
+
+  useEffect(() => {
+    fetchOrderHistory();
+  }, []);
 
   const categories = ['All', 'Baby Food', 'Toys', 'Clothes', 'Health', 'Educational']
 
@@ -150,67 +151,60 @@ export default function Marketplace() {
   const handleCheckout = async () => {
     setIsProcessingPayment(true)
     try {
-      await api.post('/marketplace/checkout', {
+      const res = await api.post('/marketplace/checkout', {
         items: cart,
-        total: total
+        total: total,
+        shipping_address: 'Provided in Checkout'
       })
-      setTimeout(() => {
-        setIsProcessingPayment(false)
-        const txnId = 'TXN' + Math.random().toString().slice(2, 10);
-        setTransactionId(txnId)
-        const order = { id: Date.now(), items: [...cart], total: total, date: new Date().toLocaleDateString(), transactionId: txnId, paymentMethod }
-        setOrderHistory([order, ...orderHistory])
-        setLastOrder(order)
-        setCart([])
-        setCheckoutStep(4) // Success step
-      }, 2000)
+      const txnId = res.data.tracking_number || ('TXN' + Math.random().toString().slice(2, 10));
+      setTransactionId(txnId)
+      const order = { id: res.data.orderId || Date.now(), items: [...cart], total: total, date: new Date().toLocaleDateString(), transactionId: txnId, paymentMethod, status: 'Pending' }
+      setOrderHistory([order, ...orderHistory])
+      setLastOrder(order)
+      setCart([])
+      setCheckoutStep(4) // Success step
     } catch (error) {
-      setTimeout(() => {
-        setIsProcessingPayment(false)
-        const txnId = 'TXN' + Math.random().toString().slice(2, 10);
-        setTransactionId(txnId)
-        const order = { id: Date.now(), items: [...cart], total: total, date: new Date().toLocaleDateString(), transactionId: txnId, paymentMethod }
-        setOrderHistory([order, ...orderHistory])
-        setLastOrder(order)
-        setCart([])
-        setCheckoutStep(4) // Success step
-      }, 2000)
+      console.error(error)
+      alert('Checkout failed. Please try again later.')
+    } finally {
+      setIsProcessingPayment(false)
     }
   }
 
   const handleDownloadReceipt = () => {
     if (!lastOrder) return;
-    const receiptText = `=================================
-      SMART NANNY MARKETPLACE     
-          ORDER RECEIPT           
-=================================
-Transaction ID: ${lastOrder.transactionId}
-Payment Method: ${lastOrder.paymentMethod}
-Date: ${lastOrder.date}
-Items: ${lastOrder.items.length} item(s)
----------------------------------
-Total Paid: $${lastOrder.total.toFixed(2)}
-=================================
-Thank you for shopping with us!`;
-
-    const element = document.createElement("a");
-    const file = new Blob([receiptText], {type: 'text/plain'});
-    element.href = URL.createObjectURL(file);
-    element.download = `Marketplace_Receipt_${lastOrder.transactionId}.txt`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+    
+    const doc = new jsPDF();
+    
+    doc.setFontSize(16);
+    doc.text("SMART NANNY MARKETPLACE", 20, 20);
+    doc.setFontSize(14);
+    doc.text("ORDER RECEIPT", 20, 30);
+    
+    doc.setFontSize(12);
+    doc.text(`Transaction ID: ${lastOrder.transactionId}`, 20, 50);
+    doc.text(`Payment Method: ${lastOrder.paymentMethod}`, 20, 60);
+    doc.text(`Date: ${lastOrder.date}`, 20, 70);
+    doc.text(`Items: ${lastOrder.items.length} item(s)`, 20, 80);
+    
+    doc.text("---------------------------------------------------------", 20, 90);
+    doc.text(`Total Paid: $${lastOrder.total.toFixed(2)}`, 20, 100);
+    doc.text("---------------------------------------------------------", 20, 110);
+    
+    doc.text("Thank you for shopping with us!", 20, 130);
+    
+    doc.save(`Marketplace_Receipt_${lastOrder.transactionId}.pdf`);
   }
 
   return (
     <div className="space-y-6">
-      <button onClick={() => navigate(-1)} className="text-slate-400 hover:text-white flex items-center gap-2 mb-2 transition text-sm">
+      <button onClick={() => navigate(-1)} className="text-slate-500 hover:text-fuchsia-600 flex items-center gap-2 mb-2 transition text-sm">
         <span>←</span> Back to Dashboard
       </button>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Baby Product Marketplace</h1>
-          <p className="text-slate-300 mt-2">Quality products for your little ones</p>
+          <h1 className="text-3xl font-bold text-slate-900">Baby Product Marketplace</h1>
+          <p className="text-slate-500 mt-2">Quality products for your little ones</p>
         </div>
         <div className="flex gap-3 relative">
           <button onClick={() => setShowHistory(true)} className="px-4 py-2 bg-slate-800 text-white border border-slate-700 rounded-lg hover:bg-slate-700 transition">

@@ -24,6 +24,7 @@ router.delete('/wishlist/:wishlist_id', marketplaceController.removeFromWishlist
 
 // Checkout
 router.post('/checkout', marketplaceController.checkout);
+router.get('/orders', marketplaceController.getUserOrders);
 
 // Seller routes
 router.get('/seller/products', permit('marketplace_seller', 'seller', 'admin'), marketplaceController.getSellerProducts);

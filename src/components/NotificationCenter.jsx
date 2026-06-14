@@ -1,16 +1,54 @@
 import React, { useState } from 'react';
 import { useSocket } from '../context/SocketContext';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function NotificationCenter() {
   const { notifications, markNotificationRead, isConnected } = useSocket() || { notifications: [] };
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Filter out duplicate IDs if any exist
   const uniqueNotifications = Array.from(new Map(notifications.map(item => [item.id, item])).values())
     .sort((a, b) => new Date(b.created_at || Date.now()) - new Date(a.created_at || Date.now()));
 
   const unreadCount = uniqueNotifications.filter(n => !n.is_read).length;
+
+  const handleNotificationClick = (notif) => {
+    if (!notif.is_read) markNotificationRead(notif.id, notif.source);
+    
+    const title = (notif.title || '').toLowerCase();
+    const message = (notif.message || '').toLowerCase();
+    const content = title + ' ' + message;
+    const role = user?.role || 'parent';
+    
+    if (content.includes('child')) {
+      if (role === 'admin') navigate('/dashboard/admin/child-monitoring');
+      else if (role === 'nanny') navigate('/dashboard/nanny/children');
+      else navigate('/dashboard/parent');
+    } else if (content.includes('product')) {
+      if (role === 'admin') navigate('/dashboard/admin/marketplace');
+      else if (role === 'marketplace_seller') navigate('/dashboard/marketplace-seller');
+      else navigate('/dashboard/parent/marketplace');
+    } else if (content.includes('order')) {
+      if (role === 'marketplace_seller') navigate('/dashboard/marketplace-seller/orders');
+      else navigate('/dashboard/parent/marketplace');
+    } else if (content.includes('nanny')) {
+      if (role === 'admin') navigate('/dashboard/admin/nannies');
+      else navigate('/dashboard/parent/hire-nanny');
+    } else if (content.includes('daycare')) {
+      if (role === 'admin') navigate('/dashboard/admin/daycares');
+      else navigate('/dashboard/parent/daycare');
+    } else if (content.includes('adoption')) {
+      if (role === 'admin') navigate('/dashboard/admin/adoption');
+      else navigate('/dashboard/parent/adoption');
+    } else if (content.includes('message')) {
+      navigate('/dashboard/messages');
+    }
+
+    setIsOpen(false);
+  };
 
   return (
     <div className="relative">
@@ -51,9 +89,7 @@ export default function NotificationCenter() {
                   <li 
                     key={notif.id} 
                     className={`p-4 hover:bg-slate-50 transition-colors cursor-pointer flex gap-3 ${!notif.is_read ? 'bg-fuchsia-50/30' : ''}`}
-                    onClick={() => {
-                      if (!notif.is_read) markNotificationRead(notif.id, notif.source);
-                    }}
+                    onClick={() => handleNotificationClick(notif)}
                   >
                     <div className={`w-2 h-2 mt-2 rounded-full shrink-0 ${!notif.is_read ? 'bg-fuchsia-500' : 'bg-transparent'}`}></div>
                     <div>
