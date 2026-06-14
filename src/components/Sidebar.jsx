@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useSocket } from '../context/SocketContext'
 
 export default function Sidebar({ items = [], variant = 'default' }){
   const navigate = useNavigate()
@@ -10,8 +11,11 @@ export default function Sidebar({ items = [], variant = 'default' }){
   })
   
   const { isChildMode, toggleChildMode } = useAuth() || {}
+  const { notifications } = useSocket() || { notifications: [] }
   const [showPinModal, setShowPinModal] = useState(false)
   const [pin, setPin] = useState('')
+
+  const unreadCount = Array.from(new Map(notifications.map(item => [item.id, item])).values()).filter(n => !n.is_read).length;
 
   const handlePinSubmit = () => {
     if (pin === '1234') { // Hardcoded prototype PIN
@@ -74,7 +78,12 @@ const renderIcon = (iconName) => {
                   }
                 >
                   {renderIcon(i.icon)}
-                  {i.label}
+                  <span className="flex-1 text-left">{i.label}</span>
+                  {i.label === 'Notifications' && unreadCount > 0 && (
+                    <span className="inline-flex items-center justify-center rounded-full bg-fuchsia-600 px-2 py-0.5 text-xs font-bold text-white shadow-sm">
+                      {unreadCount}
+                    </span>
+                  )}
                 </NavLink>
               </li>
             ))}

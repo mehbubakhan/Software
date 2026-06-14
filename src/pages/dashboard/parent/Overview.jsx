@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../../../services/api'
 import { useAuth } from '../../../context/AuthContext'
+import { useSocket } from '../../../context/SocketContext'
 import AddChildModal from './components/AddChildModal'
 
 export default function Overview() {
   const { user } = useAuth()
+  const { notifications: rawNotifications, markNotificationRead } = useSocket() || { notifications: [] }
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [expandedWishlist, setExpandedWishlist] = useState(null)
@@ -14,6 +16,11 @@ export default function Overview() {
   const [editingChild, setEditingChild] = useState(null)
   const navigate = useNavigate()
 
+  const notifications = Array.from(new Map(rawNotifications.map(item => [item.id, item])).values())
+    .sort((a, b) => new Date(b.created_at || Date.now()) - new Date(a.created_at || Date.now()));
+
+  const [showNotificationModal, setShowNotificationModal] = useState(false)
+
   const fetchOverview = async () => {
     try {
       const res = await api.get('/dashboard/parent/overview')
@@ -21,7 +28,7 @@ export default function Overview() {
         setData(res.data.data)
       }
     } catch (error) {
-      console.error('Failed to fetch parent overview:', error)
+      console.error('Failed to fetch parent overview or notifications:', error)
     } finally {
       setLoading(false)
     }
@@ -40,11 +47,15 @@ export default function Overview() {
   }
 
   const { children, stats, nannyBookings, daycareUpdates, upcomingSchedule, recentActivities, recentOrders } = data
+  
+  // Use real notifications count if available
+  const unreadCount = notifications.filter(n => !n.is_read).length;
+  const displayNotifCount = notifications.length > 0 ? unreadCount : stats.notifications;
 
   const statCards = [
     { value: stats.activeBookings, label: 'Active Bookings', color: 'text-green-400', bg: 'bg-green-400/20', icon: '👩‍🍼' },
     { value: stats.messages, label: 'Messages', color: 'text-pink-400', bg: 'bg-pink-400/20', icon: '✉️' },
-    { value: stats.notifications, label: 'Notifications', color: 'text-green-400', bg: 'bg-green-400/20', icon: '🔔' },
+    { value: displayNotifCount, label: 'Notifications', color: 'text-green-400', bg: 'bg-green-400/20', icon: '🔔' },
     { value: stats.weeklyHours, label: 'Weekly Hours', color: 'text-blue-400', bg: 'bg-blue-400/20', icon: '⏱️' },
     { value: stats.nanniesHired, label: 'Nannies Hired', color: 'text-blue-400', bg: 'bg-blue-400/20', icon: '👤' },
     { value: stats.daycareAdmins, label: 'Daycare Admins', color: 'text-yellow-400', bg: 'bg-yellow-400/20', icon: '📁' },
@@ -65,6 +76,11 @@ export default function Overview() {
     { title: 'Saved Videos (5)', items: [{ name: 'Childcare Tips', path: '#' }, { name: 'Healthy Recipes', path: '#' }, { name: 'Activity Ideas', path: '#' }, { name: 'Potty Training', path: '#' }, { name: 'Sleep Training', path: '#' }] },
     { title: 'Saved Products (8)', items: [{ name: 'Baby Monitor', path: '#' }, { name: 'Stroller', path: '#' }, { name: 'Educational Toys', path: '#' }, { name: 'Diapers', path: '#' }] },
   ]
+  
+  const handleStatClick = (label) => {
+    if (label === 'Messages') setShowMessageModal(true);
+    if (label === 'Notifications') setShowNotificationModal(true);
+  }
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-10">
@@ -168,8 +184,8 @@ export default function Overview() {
         {statCards.map((stat, idx) => (
           <div
             key={idx}
-            onClick={() => stat.label === 'Messages' ? setShowMessageModal(true) : null}
-            className={`bg-white border border-slate-200 rounded-2xl p-4 flex flex-col justify-between ${stat.label === 'Messages' ? 'cursor-pointer hover:border-pink-500/50 transition' : ''}`}
+            onClick={() => handleStatClick(stat.label)}
+            className={`bg-white border border-slate-200 rounded-2xl p-4 flex flex-col justify-between ${(stat.label === 'Messages' || stat.label === 'Notifications') ? 'cursor-pointer hover:border-pink-500/50 transition' : ''}`}
           >
             <div className={`w-8 h-8 rounded-lg ${stat.bg} ${stat.color} flex items-center justify-center mb-3`}>
               {stat.icon}
@@ -374,6 +390,40 @@ export default function Overview() {
             <div className="p-4 border-t border-slate-200 flex gap-2">
               <input type="text" placeholder="Type a message..." className="flex-1 bg-white border border-slate-200 rounded-full px-4 text-sm text-slate-900 focus:outline-none focus:border-fuchsia-500" />
               <button className="w-10 h-10 rounded-full bg-fuchsia-600 text-white flex items-center justify-center hover:bg-fuchsia-700 transition">↑</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Notification Modal */}
+      {showNotificationModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md overflow-hidden flex flex-col h-[500px]">
+            <div className="bg-fuchsia-50 p-4 flex justify-between items-center border-b border-fuchsia-100">
+              <h3 className="font-bold text-slate-900 flex items-center gap-2"><span>🔔</span> Notifications</h3>
+              <button onClick={() => setShowNotificationModal(false)} className="text-slate-500 hover:text-fuchsia-600">✕</button>
+            </div>
+            <div className="flex-1 p-4 overflow-y-auto space-y-4">
+              {notifications.length === 0 ? (
+                <div className="text-center text-slate-500 py-10">No new notifications</div>
+              ) : (
+                notifications.map((notif) => (
+                  <div 
+                    key={notif.id} 
+                    onClick={() => !notif.is_read && markNotificationRead(notif.id, notif.source)}
+                    className={`p-3 rounded-xl border transition cursor-pointer ${notif.is_read ? 'bg-slate-50 border-slate-100' : 'bg-white border-fuchsia-200 shadow-sm'}`}
+                  >
+                    <div className="flex justify-between items-start">
+                      <h4 className={`font-bold text-sm ${notif.is_read ? 'text-slate-600' : 'text-slate-900'}`}>{notif.title}</h4>
+                      {!notif.is_read && <span className="w-2 h-2 bg-fuchsia-500 rounded-full"></span>}
+                    </div>
+                    <p className={`text-xs mt-1 ${notif.is_read ? 'text-slate-500' : 'text-slate-700'}`}>{notif.message}</p>
+                    <p className="text-[10px] text-slate-400 mt-2">
+                      {new Date(notif.created_at).toLocaleString()} • {notif.sender_role}
+                    </p>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

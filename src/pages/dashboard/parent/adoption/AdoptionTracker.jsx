@@ -26,9 +26,10 @@ export default function AdoptionTracker() {
     const formData = new FormData();
     formData.append('document', file);
     formData.append('document_name', docName);
+    formData.append('application_id', appId);
 
     try {
-      await api.post(`/adoption/applications/${appId}/documents`, formData, {
+      await api.post(`/adoption/documents`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

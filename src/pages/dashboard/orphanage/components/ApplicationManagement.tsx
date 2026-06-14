@@ -1,5 +1,5 @@
 import { exportToCSV } from '../../../../utils/exportUtils';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Filter,
   Download,
@@ -53,152 +53,52 @@ export default function ApplicationManagement() {
     dateRange: ''
   });
 
-  const [applications, setApplications] = useState<Application[]>([
-    {
-      id: 'APP-2024-001',
-      parentName: 'John & Mary Smith',
-      childName: 'Emily Rose',
-      childId: 'CH001',
-      applicationDate: '2024-05-15',
-      status: 'Pending Initial Review',
-      compatibilityScore: 92,
-      priority: 'High',
-      parentAge: 35,
-      occupation: 'Software Engineer & Teacher',
-      income: 125000,
-      maritalStatus: 'Married',
-      address: '123 Oak Street, Springfield, IL 62701',
-      familyMembers: 2,
-      previousAdoptions: 0,
-      phone: '+1 (555) 123-4567',
-      email: 'john.smith@email.com',
-      houseOwnership: 'Owned',
-      livingSpace: '2500 sq ft, 4 bedrooms',
-      motivation: 'We have always dreamed of having a family and want to provide a loving home to a child in need.',
-      parentingExperience: 'No biological children, but extensive experience with nieces and nephews.',
-      familySupport: 'Strong family support from both sides, grandparents eager to help.'
-    },
-    {
-      id: 'APP-2024-002',
-      parentName: 'David & Sarah Williams',
-      childName: 'Michael James',
-      childId: 'CH002',
-      applicationDate: '2024-05-20',
-      status: 'Interview Scheduled',
-      compatibilityScore: 88,
-      priority: 'High',
-      parentAge: 38,
-      occupation: 'Doctor & Nurse',
-      income: 185000,
-      maritalStatus: 'Married',
-      address: '456 Maple Avenue, Chicago, IL 60601',
-      familyMembers: 3,
-      previousAdoptions: 0,
-      phone: '+1 (555) 234-5678',
-      email: 'david.williams@email.com',
-      houseOwnership: 'Owned',
-      livingSpace: '3000 sq ft, 5 bedrooms',
-      motivation: 'We want to expand our family and give a child the opportunity for a better life.',
-      parentingExperience: 'We have one biological child (age 8) and are experienced parents.',
-      familySupport: 'Excellent support network including family and close friends.'
-    },
-    {
-      id: 'APP-2024-003',
-      parentName: 'Robert & Lisa Martinez',
-      childName: 'Sarah Ann',
-      childId: 'CH003',
-      applicationDate: '2024-05-25',
-      status: 'Counselling Phase',
-      compatibilityScore: 95,
-      priority: 'High',
-      parentAge: 40,
-      occupation: 'Business Owner & Accountant',
-      income: 150000,
-      maritalStatus: 'Married',
-      address: '789 Pine Road, Boston, MA 02101',
-      familyMembers: 2,
-      previousAdoptions: 1,
-      phone: '+1 (555) 345-6789',
-      email: 'robert.martinez@email.com',
-      houseOwnership: 'Owned',
-      livingSpace: '2800 sq ft, 4 bedrooms',
-      motivation: 'After successfully adopting our first child, we want to provide the same opportunity to another child.',
-      parentingExperience: 'Experienced adoptive parents with one adopted child (age 6).',
-      familySupport: 'Very strong support system, experienced with adoption process.'
-    },
-    {
-      id: 'APP-2024-004',
-      parentName: 'James & Patricia Brown',
-      childName: 'David Lee',
-      childId: 'CH004',
-      applicationDate: '2024-06-01',
-      status: 'Document Verification',
-      compatibilityScore: 85,
-      priority: 'Medium',
-      parentAge: 42,
-      occupation: 'Engineer & Lawyer',
-      income: 200000,
-      maritalStatus: 'Married',
-      address: '321 Elm Street, Seattle, WA 98101',
-      familyMembers: 2,
-      previousAdoptions: 0,
-      phone: '+1 (555) 456-7890',
-      email: 'james.brown@email.com',
-      houseOwnership: 'Owned',
-      livingSpace: '3500 sq ft, 5 bedrooms',
-      motivation: 'We are unable to have biological children and wish to build our family through adoption.',
-      parentingExperience: 'No children yet, but have completed parenting courses and workshops.',
-      familySupport: 'Strong family support, financially stable.'
-    },
-    {
-      id: 'APP-2024-005',
-      parentName: 'Michael & Jennifer Davis',
-      childName: 'Olivia Grace',
-      childId: 'CH005',
-      applicationDate: '2024-06-02',
-      status: 'Rejected',
-      compatibilityScore: 65,
-      priority: 'Low',
-      parentAge: 28,
-      occupation: 'Retail Manager & Sales',
-      income: 55000,
-      maritalStatus: 'Married',
-      address: '654 Birch Lane, Denver, CO 80201',
-      familyMembers: 2,
-      previousAdoptions: 0,
-      phone: '+1 (555) 567-8901',
-      email: 'michael.davis@email.com',
-      houseOwnership: 'Rented',
-      livingSpace: '1200 sq ft, 2 bedrooms',
-      motivation: 'We want to start a family.',
-      parentingExperience: 'No experience with children.',
-      familySupport: 'Limited family support.'
-    },
-    {
-      id: 'APP-2024-006',
-      parentName: 'Thomas & Emily Anderson',
-      childName: 'Jacob Thomas',
-      childId: 'CH006',
-      applicationDate: '2024-05-28',
-      status: 'Approved - Trial Bonding',
-      compatibilityScore: 97,
-      priority: 'High',
-      parentAge: 36,
-      occupation: 'Professor & Therapist',
-      income: 140000,
-      maritalStatus: 'Married',
-      address: '987 Cedar Court, Portland, OR 97201',
-      familyMembers: 2,
-      previousAdoptions: 0,
-      phone: '+1 (555) 678-9012',
-      email: 'thomas.anderson@email.com',
-      houseOwnership: 'Owned',
-      livingSpace: '2600 sq ft, 4 bedrooms',
-      motivation: 'We have a deep desire to provide a nurturing home and excellent education to a child.',
-      parentingExperience: 'Both work with children professionally and have completed foster care training.',
-      familySupport: 'Excellent support from extended family and professional network.'
-    }
-  ]);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const { default: api } = await import('../../../../services/api');
+        const res = await api.get('/adoption/applications');
+        if (res.data && res.data.ok) {
+          const backendApps = res.data.data.map((app: any) => ({
+            id: app.id.toString(),
+            parentName: app.parent_name || `Parent #${app.parent_id}`,
+            childName: app.child_name || `Child #${app.child_id}`,
+            childId: app.child_id?.toString(),
+            applicationDate: new Date(app.created_at || Date.now()).toISOString().split('T')[0],
+            status: app.application_status === 'under_review' ? 'Pending Initial Review' : 
+                    app.application_status === 'approved' ? 'Approved - Initial Review' : 
+                    app.application_status === 'rejected' ? 'Rejected' : 'Document Verification',
+            compatibilityScore: app.compatibility_score || 0,
+            priority: app.compatibility_score >= 90 ? 'High' : app.compatibility_score >= 75 ? 'Medium' : 'Low',
+            parentAge: app.form_data?.parentAge || 0,
+            occupation: app.form_data?.occupation || 'Not specified',
+            income: app.form_data?.income || 0,
+            maritalStatus: app.form_data?.maritalStatus || 'Not specified',
+            address: app.form_data?.address || 'Not specified',
+            familyMembers: app.form_data?.familyMembers || 0,
+            previousAdoptions: app.form_data?.previousAdoptions || 0,
+            phone: app.form_data?.phone || 'Not specified',
+            email: app.form_data?.email || 'Not specified',
+            houseOwnership: app.form_data?.houseOwnership || 'Not specified',
+            livingSpace: app.form_data?.livingSpace || 'Not specified',
+            motivation: app.form_data?.motivation || 'Not specified',
+            parentingExperience: app.form_data?.parentingExperience || 'Not specified',
+            familySupport: app.form_data?.familySupport || 'Not specified'
+          }));
+          setApplications(backendApps);
+        }
+      } catch (err) {
+        console.error('Failed to fetch applications', err);
+        toast.error('Failed to load applications');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchApplications();
+  }, []);
 
   const filteredApplications = applications.filter(app => {
     const matchesSearch =

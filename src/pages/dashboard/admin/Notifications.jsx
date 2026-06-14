@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Bell, Send, CheckCircle2 } from 'lucide-react';
+import { Bell, Send, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { useSocket } from '../../../context/SocketContext';
 
 export default function Notifications() {
   const [success, setSuccess] = useState(false);
+  const { notifications } = useSocket() || { notifications: [] };
 
   const handleSend = (e) => {
     e.preventDefault();
@@ -57,9 +59,22 @@ export default function Notifications() {
         </div>
 
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-8">
-          <h2 className="text-xl font-black text-slate-900 mb-6">Recent Broadcasts</h2>
+          <h2 className="text-xl font-black text-slate-900 mb-6">Recent Broadcasts & Alerts</h2>
           
           <div className="space-y-4">
+            {notifications && notifications.length > 0 && notifications.map((notif, idx) => (
+              <div key={notif.id || idx} className="p-4 rounded-xl border border-red-200 bg-red-50 animate-in fade-in slide-in-from-top-2">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] uppercase font-black tracking-wider text-red-600 bg-red-100 px-2 py-0.5 rounded flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" /> System Alert
+                  </span>
+                  <span className="text-xs text-slate-500 font-medium">Just now</span>
+                </div>
+                <h4 className="font-bold text-slate-900">{notif.title}</h4>
+                <p className="text-sm text-slate-700 mt-1">{notif.message}</p>
+              </div>
+            ))}
+
             <div className="p-4 rounded-xl border border-slate-100 bg-slate-50">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-[10px] uppercase font-black tracking-wider text-blue-600 bg-blue-100 px-2 py-0.5 rounded">All Users</span>

@@ -38,196 +38,138 @@ export default function ChildManagement({ children: propChildren, onAddChild, on
     adoptionStatus: ''
   });
 
-  // Initialize children with mock data
-  const [children, setChildren] = useState(propChildren || [
-    {
-      id: 'CH001',
-      photo: '👧',
-      name: 'Emily Rose',
-      nickname: 'Emmy',
-      age: 8,
-      gender: 'Female',
-      healthStatus: 'Excellent',
-      education: 'Grade 3',
-      availability: 'Available',
-      adoptionStatus: 'Ready',
-      createdDate: '2024-01-15',
-      bloodGroup: 'O+',
-      religion: 'Christian',
-      nationality: 'American',
-      language: 'English, Spanish',
-      vaccinations: 'Up to date',
-      medicalConditions: 'None',
-      allergies: 'Peanuts',
-      disabilities: 'None',
-      school: 'Lincoln Elementary',
-      educationLevel: 'Grade 3',
-      interests: 'Drawing, Reading, Music',
-      personalityType: 'Cheerful, Outgoing',
-      socialBehavior: 'Excellent social skills'
-    },
-    {
-      id: 'CH002',
-      photo: '👦',
-      name: 'Michael James',
-      nickname: 'Mike',
-      age: 6,
-      gender: 'Male',
-      healthStatus: 'Good',
-      education: 'Grade 1',
-      availability: 'Available',
-      adoptionStatus: 'Ready',
-      createdDate: '2024-02-20',
-      bloodGroup: 'A+',
-      religion: 'Christian',
-      nationality: 'American',
-      language: 'English',
-      vaccinations: 'Up to date',
-      medicalConditions: 'Asthma (Mild)',
-      allergies: 'None',
-      disabilities: 'None',
-      school: 'Riverside Elementary',
-      educationLevel: 'Grade 1',
-      interests: 'Sports, Lego, Video games',
-      personalityType: 'Energetic, Curious',
-      socialBehavior: 'Good with peers'
-    },
-    {
-      id: 'CH003',
-      photo: '👧',
-      name: 'Sarah Ann',
-      nickname: 'Sarah',
-      age: 10,
-      gender: 'Female',
-      healthStatus: 'Good',
-      education: 'Grade 5',
-      availability: 'In Process',
-      adoptionStatus: 'Application Pending',
-      createdDate: '2023-11-10',
-      bloodGroup: 'B+',
-      religion: 'Christian',
-      nationality: 'American',
-      language: 'English, French',
-      vaccinations: 'Up to date',
-      medicalConditions: 'None',
-      allergies: 'Lactose intolerant',
-      disabilities: 'None',
-      school: 'Greenwood School',
-      educationLevel: 'Grade 5',
-      interests: 'Dance, Painting, Science',
-      personalityType: 'Creative, Thoughtful',
-      socialBehavior: 'Reserved but friendly'
-    },
-    {
-      id: 'CH004',
-      photo: '👦',
-      name: 'David Lee',
-      nickname: 'Dave',
-      age: 12,
-      gender: 'Male',
-      healthStatus: 'Fair',
-      education: 'Grade 7',
-      availability: 'Available',
-      adoptionStatus: 'Ready',
-      createdDate: '2023-08-05',
-      bloodGroup: 'AB+',
-      religion: 'Buddhist',
-      nationality: 'American',
-      language: 'English, Korean',
-      vaccinations: 'Up to date',
-      medicalConditions: 'ADHD',
-      allergies: 'None',
-      disabilities: 'None',
-      school: 'Central Middle School',
-      educationLevel: 'Grade 7',
-      interests: 'Basketball, Gaming, Music',
-      personalityType: 'Active, Friendly',
-      socialBehavior: 'Good leadership skills'
-    },
-    {
-      id: 'CH005',
-      photo: '👧',
-      name: 'Olivia Grace',
-      nickname: 'Liv',
-      age: 5,
-      gender: 'Female',
-      healthStatus: 'Excellent',
-      education: 'Kindergarten',
-      availability: 'Available',
-      adoptionStatus: 'Ready',
-      createdDate: '2024-03-12',
-      bloodGroup: 'O-',
-      religion: 'Christian',
-      nationality: 'American',
-      language: 'English',
-      vaccinations: 'Up to date',
-      medicalConditions: 'None',
-      allergies: 'None',
-      disabilities: 'None',
-      school: 'Little Stars Kindergarten',
-      educationLevel: 'Kindergarten',
-      interests: 'Coloring, Singing, Playing',
-      personalityType: 'Sweet, Playful',
-      socialBehavior: 'Very social and friendly'
-    },
-    {
-      id: 'CH006',
-      photo: '👦',
-      name: 'Jacob Thomas',
-      nickname: 'Jake',
-      age: 9,
-      gender: 'Male',
-      healthStatus: 'Good',
-      education: 'Grade 4',
-      availability: 'Trial Bonding',
-      adoptionStatus: 'Trial Period',
-      createdDate: '2023-12-01',
-      bloodGroup: 'A-',
-      religion: 'Christian',
-      nationality: 'American',
-      language: 'English',
-      vaccinations: 'Up to date',
-      medicalConditions: 'None',
-      allergies: 'Pollen',
-      disabilities: 'None',
-      school: 'Oak Valley Elementary',
-      educationLevel: 'Grade 4',
-      interests: 'Reading, Chess, Robotics',
-      personalityType: 'Intelligent, Calm',
-      socialBehavior: 'Good with adults and children'
+  // Initialize children state
+  const [children, setChildren] = useState(propChildren || []);
+  const [loading, setLoading] = useState(true);
+
+  const fetchChildren = async () => {
+    try {
+      const { default: api } = await import('../../../../../services/api');
+      const res = await api.get('/adoption/children');
+      if (res.data && res.data.ok) {
+        // Map backend extra_details back into the main object for the frontend
+        const backendChildren = res.data.data.map(child => {
+          return {
+            id: child.id,
+            photo: child.profile_image || '🧸',
+            name: child.child_name,
+            nickname: child.extra_details?.nickname || '',
+            age: child.age,
+            gender: child.gender,
+            healthStatus: child.health_condition || 'Good',
+            education: child.extra_details?.education || '',
+            availability: child.extra_details?.availability || 'Available',
+            adoptionStatus: child.adoption_status || 'Ready',
+            createdDate: new Date(child.created_at || Date.now()).toISOString().split('T')[0],
+            ...child.extra_details
+          };
+        });
+        setChildren(backendChildren);
+      }
+    } catch (err) {
+      console.error('Failed to fetch children', err);
+      toast.error('Failed to load children from server');
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
 
   useEffect(() => {
     if (propChildren) {
       setChildren(propChildren);
+      setLoading(false);
+    } else {
+      fetchChildren();
     }
   }, [propChildren]);
 
-  const handleAddChild = (childData) => {
+  const handleAddChild = async (childData) => {
     if (onAddChild) {
       onAddChild(childData);
     } else {
-      setChildren([childData, ...children]);
-      toast.success(`Child ${childData.name} added successfully!`);
+      try {
+        const { default: api } = await import('../../../../../services/api');
+        
+        // Map frontend fields to backend
+        const backendPayload = {
+          child_name: childData.name,
+          age: childData.age,
+          gender: childData.gender,
+          health_condition: childData.healthStatus,
+          interests: childData.interests,
+          short_description: childData.personalityType,
+          adoption_status: childData.adoptionStatus,
+          profile_image: childData.photo,
+          // Extra details will be grabbed dynamically from the rest of childData
+          ...childData
+        };
+
+        const res = await api.post('/adoption/children', backendPayload);
+        if (res.data && res.data.ok) {
+          toast.success(`Child ${childData.name} added successfully!`);
+          fetchChildren(); // refresh the list
+          setShowAddModal(false);
+        } else {
+          throw new Error(res.data.error || 'Failed to add child');
+        }
+      } catch (err) {
+        console.error('Add child error', err);
+        toast.error(err.response?.data?.error || err.message || 'Error adding child');
+      }
     }
   };
 
-  const handleRemoveChild = (childId, reason) => {
+  const handleRemoveChild = async (childId, reason) => {
     if (onRemoveChild) {
       onRemoveChild(childId, reason);
     } else {
-      setChildren(children.filter(child => child.id !== childId));
-      toast.success(`Child removed: ${reason}`);
+      try {
+        const { default: api } = await import('../../../../../services/api');
+        const res = await api.delete(`/adoption/children/${childId}`);
+        if (res.data && res.data.ok) {
+          toast.success(`Child removed: ${reason}`);
+          fetchChildren();
+        } else {
+          throw new Error('Failed to delete');
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error('Failed to remove child');
+      }
     }
   };
 
-  const handleUpdateChild = (updatedChild) => {
+  const handleUpdateChild = async (updatedChild) => {
     if (onUpdateChild) {
       onUpdateChild(updatedChild);
     } else {
-      setChildren(children.map(child => child.id === updatedChild.id ? updatedChild : child));
-      toast.success('Child profile updated successfully!');
+      try {
+        const { default: api } = await import('../../../../../services/api');
+        
+        const backendPayload = {
+          child_name: updatedChild.name,
+          age: updatedChild.age,
+          gender: updatedChild.gender,
+          health_condition: updatedChild.healthStatus,
+          interests: updatedChild.interests,
+          short_description: updatedChild.personalityType,
+          adoption_status: updatedChild.adoptionStatus,
+          profile_image: updatedChild.photo,
+          ...updatedChild
+        };
+
+        const res = await api.put(`/adoption/children/${updatedChild.id}`, backendPayload);
+        if (res.data && res.data.ok) {
+          toast.success('Child profile updated successfully!');
+          fetchChildren();
+          setSelectedChild(null);
+        } else {
+          throw new Error('Failed to update');
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error('Failed to update child profile');
+      }
     }
   };
 

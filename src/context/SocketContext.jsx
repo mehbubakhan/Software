@@ -55,6 +55,28 @@ export const SocketProvider = ({ children }) => {
         toastApi.warning(`Announcement from ${announcement.sender}: ${announcement.title}`);
       });
       
+      // Fetch DB notifications for parents
+      if (user.role === 'parent') {
+        import('../services/api').then(({ default: api }) => {
+          api.get('/notifications/parent').then(res => {
+            if (res.data && res.data.ok) {
+              setNotifications(prev => {
+                const dbNotifs = res.data.data.map(n => ({
+                  id: n.id,
+                  title: n.title,
+                  message: n.message,
+                  is_read: n.is_read,
+                  created_at: n.created_at,
+                  source: 'db'
+                }));
+                // Merge without duplicates if any exist
+                return [...prev, ...dbNotifs];
+              });
+            }
+          }).catch(err => console.error("Error fetching notifications:", err));
+        });
+      }
+
     } else {
       socketService.disconnect();
       setSocket(null);
@@ -83,8 +105,14 @@ export const SocketProvider = ({ children }) => {
     });
   }, [socket]);
 
-  const markNotificationRead = useCallback((notificationId) => {
-    if (socket) {
+  const markNotificationRead = useCallback((notificationId, source) => {
+    if (source === 'db') {
+      import('../services/api').then(({ default: api }) => {
+        api.put(`/notifications/parent/${notificationId}/read`).then(() => {
+          setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, is_read: true } : n));
+        }).catch(err => console.error(err));
+      });
+    } else if (socket) {
       socket.emit('mark_notification_read', { notificationId }, (response) => {
         if (response.success) {
           setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, is_read: true } : n));

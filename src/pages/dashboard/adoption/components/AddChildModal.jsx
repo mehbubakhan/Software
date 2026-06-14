@@ -46,10 +46,14 @@ export default function AddChildModal({ onClose, onSubmit }) {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Generate unique child ID
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    // Generate unique child ID (not used by backend, but kept for consistency)
     const childId = `CH${String(Math.floor(Math.random() * 9000) + 1000)}`;
 
     const newChild = {
@@ -63,8 +67,14 @@ export default function AddChildModal({ onClose, onSubmit }) {
       videos: selectedVideos
     };
 
-    onSubmit(newChild);
-    onClose();
+    try {
+      await onSubmit(newChild);
+      // Let the parent close the modal, or close if no error thrown
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const nextStep = () => {
@@ -459,10 +469,15 @@ export default function AddChildModal({ onClose, onSubmit }) {
             ) : (
               <button
                 type="submit"
-                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
               >
-                <Plus className="w-4 h-4" />
-                Add Child
+                {isSubmitting ? (
+                  <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                ) : (
+                  <Plus className="w-4 h-4" />
+                )}
+                {isSubmitting ? 'Adding...' : 'Add Child'}
               </button>
             )}
           </div>

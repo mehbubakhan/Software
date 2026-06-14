@@ -70,7 +70,9 @@
     "start": "react-scripts start",
     "start:backend": "npm run start --prefix backend",
     "start:frontend": "npm run start --prefix .",
-    "dev": "concurrently \"npm run start --prefix backend\" \"npm run start --prefix .\"",
+    "start:https": "set HTTPS=true&&npm run start:frontend",
+    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run start --prefix .\"",
+    "dev:https": "concurrently \"npm run dev --prefix backend\" \"npm run start:https\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

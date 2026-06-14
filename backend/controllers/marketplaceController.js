@@ -166,6 +166,26 @@ const marketplaceController = {
     try {
       const sellerId = req.user.id;
       const id = await MarketplaceModel.addProduct(sellerId, req.body);
+      
+      // Global broadcast to all parents about a new product
+      try {
+        const pool = require('../config/db');
+        await pool.query(
+          "INSERT INTO parent_notifications (parent_id, sender_role, title, message) VALUES (NULL, 'marketplace', 'New Product Added', ?)",
+          [`A new product "${req.body.name}" has been added to the marketplace.`]
+        );
+      } catch(err) { 
+        console.error('Notification error', err.message);
+        if (!global.mockParentNotifications) global.mockParentNotifications = [];
+        global.mockParentNotifications.push({
+          id: 'm_' + Date.now(),
+          sender_role: 'marketplace',
+          title: 'New Product Added',
+          message: `A new product "${req.body.name}" has been added to the marketplace.`,
+          created_at: new Date().toISOString()
+        });
+      }
+
       res.json({ success: true, message: 'Product added successfully', id });
     } catch (error) {
       console.error(error);

@@ -23,4 +23,5 @@ router.use('/child', require('./childModeRoutes'))
 router.use('/upload', require('./upload'))
 router.use('/ai', require('./ai'))
 router.use('/gps', require('./gps'))
+router.use('/notifications', require('./notifications'))
 module.exports = router

@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { useSocket } from '../context/SocketContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function NotificationCenter() {
   const { notifications, markNotificationRead, isConnected } = useSocket() || { notifications: [] };
   const [isOpen, setIsOpen] = useState(false);
 
-  const unreadCount = notifications.filter(n => !n.is_read).length;
+  // Filter out duplicate IDs if any exist
+  const uniqueNotifications = Array.from(new Map(notifications.map(item => [item.id, item])).values())
+    .sort((a, b) => new Date(b.created_at || Date.now()) - new Date(a.created_at || Date.now()));
+
+  const unreadCount = uniqueNotifications.filter(n => !n.is_read).length;
 
   return (
     <div className="relative">
@@ -35,19 +40,19 @@ export default function NotificationCenter() {
           </div>
           
           <div className="max-h-96 overflow-y-auto">
-            {notifications.length === 0 ? (
+            {uniqueNotifications.length === 0 ? (
               <div className="p-8 text-center text-slate-500">
                 <span className="text-4xl mb-2 block opacity-50">📭</span>
                 <p className="text-sm">You're all caught up!</p>
               </div>
             ) : (
               <ul className="divide-y divide-slate-100">
-                {notifications.map(notif => (
+                {uniqueNotifications.map(notif => (
                   <li 
                     key={notif.id} 
                     className={`p-4 hover:bg-slate-50 transition-colors cursor-pointer flex gap-3 ${!notif.is_read ? 'bg-fuchsia-50/30' : ''}`}
                     onClick={() => {
-                      if (!notif.is_read) markNotificationRead(notif.id);
+                      if (!notif.is_read) markNotificationRead(notif.id, notif.source);
                     }}
                   >
                     <div className={`w-2 h-2 mt-2 rounded-full shrink-0 ${!notif.is_read ? 'bg-fuchsia-500' : 'bg-transparent'}`}></div>
@@ -66,7 +71,7 @@ export default function NotificationCenter() {
             )}
           </div>
           
-          {notifications.length > 0 && (
+          {uniqueNotifications.length > 0 && (
             <div className="p-3 border-t border-slate-100 bg-slate-50 text-center">
               <button className="text-xs text-fuchsia-600 hover:text-fuchsia-700 font-medium">
                 View all notifications

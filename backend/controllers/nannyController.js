@@ -30,6 +30,16 @@ const saveProfile = async (req, res) => {
     const { name, bio, experience, skills, photo_url, phone, dob, nationalId, nationality, address, city, state, zipCode, gender, workPreference, languagesSpoken } = req.body
     const profileData = { nanny_id, name, bio, experience, skills, photo_url, phone, dob, nationalId, nationality, address, city, state, zipCode, gender, workPreference, languagesSpoken, verified: false }
     const r = await upsertProfile(profileData)
+    
+    // Send global notification
+    try {
+      const pool = require('../config/db');
+      await pool.query(
+        "INSERT INTO parent_notifications (sender_role, title, message) VALUES (?, ?, ?)",
+        ['nanny', 'New Nanny Profile', `${name} just joined and created a nanny profile.`]
+      );
+    } catch(err) { console.error('Notification error', err) }
+
     return res.json({ ok:true, data: r })
   }catch(err){ 
     const nanny_id = req.user.id
@@ -37,6 +47,26 @@ const saveProfile = async (req, res) => {
     const profileData = { nanny_id, name, bio, experience, skills, photo_url, phone, dob, nationalId, nationality, address, city, state, zipCode, gender, workPreference, languagesSpoken, verified: false }
     mockNannyProfiles[nanny_id] = profileData
     saveMockProfiles();
+
+    // Send global notification
+    try {
+      const pool = require('../config/db');
+      await pool.query(
+        "INSERT INTO parent_notifications (sender_role, title, message) VALUES (?, ?, ?)",
+        ['nanny', 'New Nanny Profile', `${name} just joined and created a nanny profile.`]
+      );
+    } catch(err) { 
+      console.error('Notification error', err.message);
+      if (!global.mockParentNotifications) global.mockParentNotifications = [];
+      global.mockParentNotifications.push({
+        id: 'm_' + Date.now(),
+        sender_role: 'nanny',
+        title: 'New Nanny Profile',
+        message: `${name} just joined and created a nanny profile.`,
+        created_at: new Date().toISOString()
+      });
+    }
+
     return res.json({ ok:true, data: mockNannyProfiles[nanny_id], mock: true }) 
   }
 }
@@ -125,7 +155,7 @@ const getIndividualNannies = async (req, res) => {
   // Combine mock profiles created in memory
   let mockProfilesList = Object.values(mockNannyProfiles).map((p, idx) => ({
     id: p.nanny_id,
-    name: 'Nanny User ' + p.nanny_id, // We don't have the real name in mockNannyProfiles
+    name: p.name || 'Nanny User ' + p.nanny_id, 
     photo: p.photo_url || '👩',
     experience: p.experience || 'New',
     rating: 5.0,

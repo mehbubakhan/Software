@@ -3,6 +3,7 @@ const router = express.Router();
 const adoptionController = require('../controllers/adoptionController');
 const { permit } = require('../middleware/roles');
 const auth = require('../middleware/auth'); // default export
+const upload = require('../middleware/upload');
 
 // Public/Parent reading
 router.get('/orphanages', auth, adoptionController.getOrphanages);
@@ -35,7 +36,7 @@ router.get('/applications/:id/meetups', auth, adoptionController.getApplicationM
 router.post('/qa', auth, adoptionController.submitQA);
 
 // Documents
-router.post('/documents', auth, permit('parent', 'admin'), adoptionController.uploadDocument);
+router.post('/documents', auth, permit('parent', 'admin'), upload.single('document'), adoptionController.uploadDocument);
 router.get('/applications/:id/documents', auth, adoptionController.getApplicationDocuments);
 
 module.exports = router;

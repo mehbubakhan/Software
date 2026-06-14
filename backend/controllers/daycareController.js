@@ -467,6 +467,19 @@ const getDailyReports = async (req, res) => {
 const addDailyReport = async (req, res) => {
   try {
     const id = await DaycareModel.addDailyReport(req.daycare.id, req.body)
+    
+    // Add notification for the specific child's parent
+    try {
+      const pool = require('../config/db');
+      const [child] = await pool.query('SELECT parent_id, name FROM children WHERE id = ?', [req.body.child_id || req.body.childId]);
+      if (child.length > 0) {
+        await pool.query(
+          "INSERT INTO parent_notifications (parent_id, sender_role, title, message) VALUES (?, ?, ?, ?)",
+          [child[0].parent_id, 'daycare', 'New Daycare Report', `A new daily report has been added for ${child[0].name}.`]
+        );
+      }
+    } catch(err) { console.error('Notification error', err) }
+
     res.json({ success: true, message: 'Daily report added successfully', id })
   } catch (err) {
     res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })

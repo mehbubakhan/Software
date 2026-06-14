@@ -28,17 +28,31 @@ const normalizeOrphanage = (data = {}) => ({
   created_by: data.created_by,
 })
 
-const normalizeChild = (data = {}) => ({
-  orphanage_id: data.orphanage_id,
-  child_name: data.child_name || data.name || 'Unnamed Child',
-  age: data.age || null,
-  gender: data.gender || null,
-  health_condition: data.health_condition || null,
-  interests: data.interests || null,
-  short_description: data.short_description || data.description || null,
-  profile_image: data.profile_image || null,
-  adoption_status: data.adoption_status || 'available',
-})
+const normalizeChild = (data = {}) => {
+  // Extract known columns
+  const knownKeys = ['orphanage_id', 'child_name', 'name', 'age', 'gender', 'health_condition', 'interests', 'short_description', 'description', 'profile_image', 'adoption_status'];
+  
+  // Put everything else in extra_details
+  const extra_details = {};
+  for (const key in data) {
+    if (!knownKeys.includes(key) && key !== 'id') {
+      extra_details[key] = data[key];
+    }
+  }
+
+  return {
+    orphanage_id: data.orphanage_id,
+    child_name: data.child_name || data.name || 'Unnamed Child',
+    age: data.age || null,
+    gender: data.gender || null,
+    health_condition: data.health_condition || null,
+    interests: data.interests || null,
+    short_description: data.short_description || data.description || null,
+    profile_image: data.profile_image || null,
+    adoption_status: data.adoption_status || 'available',
+    extra_details: toJson(extra_details)
+  };
+}
 
 const normalizeApplication = (data = {}, parentId) => ({
   parent_id: data.parent_id || parentId,
@@ -56,6 +70,7 @@ const mapChildRow = (row) => ({
   ...row,
   interests: row.interests || '',
   profile_image: row.profile_image || null,
+  extra_details: fromJson(row.extra_details) || {},
 })
 
 const mapApplicationRow = (row) => ({
@@ -106,8 +121,8 @@ const Child = {
   create: async (data) => {
     const payload = normalizeChild(data)
     const [result] = await db.query(
-      'INSERT INTO adoption_children (orphanage_id, child_name, age, gender, health_condition, interests, short_description, profile_image, adoption_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [payload.orphanage_id, payload.child_name, payload.age, payload.gender, payload.health_condition, payload.interests, payload.short_description, payload.profile_image, payload.adoption_status]
+      'INSERT INTO adoption_children (orphanage_id, child_name, age, gender, health_condition, interests, short_description, profile_image, adoption_status, extra_details) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [payload.orphanage_id, payload.child_name, payload.age, payload.gender, payload.health_condition, payload.interests, payload.short_description, payload.profile_image, payload.adoption_status, payload.extra_details]
     )
     return result.insertId
   },
@@ -139,8 +154,8 @@ const Child = {
   update: async (id, data) => {
     const payload = normalizeChild(data)
     await db.query(
-      'UPDATE adoption_children SET child_name = ?, age = ?, gender = ?, health_condition = ?, interests = ?, short_description = ?, profile_image = ?, adoption_status = ? WHERE id = ?',
-      [payload.child_name, payload.age, payload.gender, payload.health_condition, payload.interests, payload.short_description, payload.profile_image, payload.adoption_status, id]
+      'UPDATE adoption_children SET child_name = ?, age = ?, gender = ?, health_condition = ?, interests = ?, short_description = ?, profile_image = ?, adoption_status = ?, extra_details = ? WHERE id = ?',
+      [payload.child_name, payload.age, payload.gender, payload.health_condition, payload.interests, payload.short_description, payload.profile_image, payload.adoption_status, payload.extra_details, id]
     )
   },
 
@@ -157,6 +172,11 @@ const Application = {
       [payload.parent_id, payload.child_id, payload.orphanage_id, payload.application_status, payload.submitted_documents, payload.form_data, payload.meetup_count, payload.compatibility_score, payload.final_decision]
     )
     return result.insertId
+  },
+
+  findById: async (id) => {
+    const [rows] = await db.query('SELECT * FROM adoption_applications WHERE id = ?', [id])
+    return rows[0] ? mapApplicationRow(rows[0]) : null
   },
 
   findByParent: async (parentId) => {
