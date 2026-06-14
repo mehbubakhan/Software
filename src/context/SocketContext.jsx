@@ -69,11 +69,28 @@ export const SocketProvider = ({ children }) => {
                   created_at: n.created_at,
                   source: 'db'
                 }));
-                // Merge without duplicates if any exist
                 return [...prev, ...dbNotifs];
               });
             }
           }).catch(err => console.error("Error fetching notifications:", err));
+        });
+      } else if (user.role === 'admin') {
+        import('../services/api').then(({ default: api }) => {
+          api.get('/notifications/admin').then(res => {
+            if (res.data && res.data.ok) {
+              setNotifications(prev => {
+                const dbNotifs = res.data.data.map(n => ({
+                  id: 'admin_' + n.id,
+                  title: n.title,
+                  message: n.message,
+                  is_read: n.is_read,
+                  created_at: n.created_at,
+                  source: 'admin_db'
+                }));
+                return [...prev, ...dbNotifs];
+              });
+            }
+          }).catch(err => console.error("Error fetching admin notifications:", err));
         });
       }
 
@@ -109,11 +126,14 @@ export const SocketProvider = ({ children }) => {
     // Optimistically update the UI immediately
     setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, is_read: true } : n));
 
-    // Always try to hit the parent read endpoint (if it fails, no big deal)
+    // Always try to hit the appropriate read endpoint
     import('../services/api').then(({ default: api }) => {
-      api.put(`/notifications/parent/${notificationId}/read`).catch(err => {
-        // Silently fail if not a parent notification
-      });
+      if (source === 'admin_db' || String(notificationId).startsWith('admin_')) {
+        const id = String(notificationId).replace('admin_', '');
+        api.put(`/notifications/admin/${id}/read`).catch(err => {});
+      } else {
+        api.put(`/notifications/parent/${notificationId}/read`).catch(err => {});
+      }
     });
 
     // Also notify via socket

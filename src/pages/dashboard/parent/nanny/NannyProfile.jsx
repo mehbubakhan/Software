@@ -34,11 +34,17 @@ export default function NannyProfile() {
     setNewMessage('');
   }
 
-  const handleSendJobRequest = (e) => {
+  const handleSendJobRequest = async (e) => {
     e.preventDefault();
-    alert(`Job request successfully sent to ${profile.name}! They will review it and get back to you shortly.`);
-    setShowJobRequestModal(false);
-    setJobRequest({ date: '', time: '', description: '' });
+    try {
+      await api.post(`/nanny/${id}/request`, jobRequest);
+      alert(`Job request successfully sent to ${profile.name}! They will review it and get back to you shortly.`);
+      setShowJobRequestModal(false);
+      setJobRequest({ date: '', time: '', description: '' });
+    } catch (err) {
+      console.error('Error sending job request:', err);
+      alert('Failed to send job request. Please try again.');
+    }
   }
 
   useEffect(() => {

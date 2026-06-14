@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ChevronLeft } from 'lucide-react'
 import api from '../../../services/api'
 
 export default function Payments(){
+  const navigate = useNavigate()
   const [payments, setPayments] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -30,6 +33,12 @@ export default function Payments(){
   return (
     <div className="space-y-5">
       <div>
+        <button 
+          onClick={() => navigate(-1)}
+          className="mb-4 flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" /> Back to Dashboard
+        </button>
         <h3 className="text-xl font-black text-slate-950">Payments</h3>
         <p className="mt-1 text-sm text-slate-600">Optional salary tracking, payment summaries, gateway status, and history.</p>
       </div>

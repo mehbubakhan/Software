@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   ClipboardList, 
   MapPin, 
@@ -9,11 +10,30 @@ import {
   MoreVertical,
   CheckCircle2,
   Clock3,
-  CalendarDays
+  CalendarDays,
+  X,
+  Send,
+  FileText,
+  Download,
+  Check
 } from 'lucide-react';
 
 export default function Applications() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('All');
+  const [chatModalApp, setChatModalApp] = useState(null);
+  const [chatMessage, setChatMessage] = useState('');
+  const [chatHistory, setChatHistory] = useState([
+    { text: "Hi! We reviewed your profile and we're really excited for our interview tomorrow.", sender: "family" }
+  ]);
+  const [contractModalApp, setContractModalApp] = useState(null);
+
+  const handleSendChat = (e) => {
+    e.preventDefault();
+    if(!chatMessage) return;
+    setChatHistory(prev => [...prev, { text: chatMessage, sender: "nanny" }]);
+    setChatMessage('');
+  };
 
   const tabs = ['All', 'Pending', 'Shortlisted', 'Interview', 'Accepted', 'Rejected'];
 
@@ -234,18 +254,27 @@ export default function Applications() {
               <div className="flex items-center gap-2 w-full sm:w-auto">
                 {app.status === 'Interview' && (
                   <>
-                    <button className="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2">
+                    <button 
+                      onClick={() => alert(`Joining video call with ${app.family}...`)}
+                      className="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2"
+                    >
                       <Video className="w-4 h-4" /> Join Call
                     </button>
-                    <button className="flex-1 sm:flex-none bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2">
+                    <button 
+                      onClick={() => setChatModalApp(app)}
+                      className="flex-1 sm:flex-none bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2"
+                    >
                       <MessageCircle className="w-4 h-4" /> Chat
                     </button>
                   </>
                 )}
                 
                 {app.status === 'Accepted' && (
-                  <button className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2">
-                    View Contract
+                  <button 
+                    onClick={() => setContractModalApp(app)}
+                    className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2"
+                  >
+                    <FileText className="w-4 h-4" /> View Contract
                   </button>
                 )}
 
@@ -271,6 +300,120 @@ export default function Applications() {
           </div>
         )}
       </div>
+
+      {/* Chat Modal */}
+      {chatModalApp && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col h-[500px]">
+            <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-[#1a56db] text-white">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center font-black">
+                  {chatModalApp.family.charAt(0)}
+                </div>
+                <div>
+                  <h3 className="font-bold leading-tight">{chatModalApp.family}</h3>
+                  <p className="text-xs text-blue-200">Online</p>
+                </div>
+              </div>
+              <button onClick={() => setChatModalApp(null)} className="hover:bg-blue-700 p-1.5 rounded-full transition-colors"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="flex-1 p-6 overflow-y-auto bg-slate-50 flex flex-col justify-end gap-3">
+              <div className="text-center text-xs text-slate-400 font-medium mb-2">Today, 9:41 AM</div>
+              {chatHistory.map((msg, idx) => (
+                <div 
+                  key={idx} 
+                  className={`p-3 rounded-2xl max-w-[85%] shadow-sm text-[15px] ${
+                    msg.sender === 'family' 
+                      ? 'bg-white border border-slate-200 text-slate-700 rounded-tl-none self-start' 
+                      : 'bg-[#1a56db] text-white rounded-tr-none self-end'
+                  }`}
+                >
+                  {msg.text}
+                </div>
+              ))}
+            </div>
+            <div className="p-4 bg-white border-t border-slate-200">
+              <form onSubmit={handleSendChat} className="flex gap-2">
+                <input 
+                  type="text" 
+                  value={chatMessage}
+                  onChange={e => setChatMessage(e.target.value)}
+                  placeholder="Type your message..." 
+                  className="flex-1 border border-slate-200 bg-slate-50 rounded-xl px-4 py-2.5 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors"
+                />
+                <button type="submit" className="bg-[#1a56db] text-white px-5 py-2.5 rounded-xl hover:bg-blue-700 transition-colors shadow-sm">
+                  <Send className="w-5 h-5" />
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Contract Modal */}
+      {contractModalApp && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-green-600 text-white">
+              <h3 className="font-black text-xl flex items-center gap-2">
+                <FileText className="w-6 h-6" /> Employment Contract
+              </h3>
+              <button onClick={() => setContractModalApp(null)} className="hover:bg-green-700 p-1.5 rounded-full transition-colors"><X className="w-6 h-6" /></button>
+            </div>
+            <div className="flex-1 p-8 overflow-y-auto bg-slate-50">
+              <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm space-y-6">
+                <div className="text-center pb-6 border-b border-slate-100">
+                  <h4 className="text-2xl font-black text-slate-900 mb-1">{contractModalApp.role}</h4>
+                  <p className="text-slate-500 font-medium">{contractModalApp.family} • {contractModalApp.location}</p>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <h5 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Compensation</h5>
+                    <p className="text-lg font-black text-green-600">{contractModalApp.salary}</p>
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Start Date</h5>
+                    <p className="text-lg font-bold text-slate-900">June 20, 2026</p>
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Working Hours</h5>
+                    <p className="text-[15px] font-medium text-slate-700">9:00 AM - 5:00 PM (Mon-Fri)</p>
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Benefits</h5>
+                    <p className="text-[15px] font-medium text-slate-700">Meals included, Paid sick leave</p>
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-slate-100">
+                  <h5 className="font-bold text-slate-900 mb-2">Terms & Conditions</h5>
+                  <ul className="space-y-2 text-sm text-slate-600 list-disc pl-5">
+                    <li>This agreement is bound by the labor laws of Bangladesh.</li>
+                    <li>A 30-day notice period is required for termination by either party.</li>
+                    <li>Payments will be processed on the 1st of every month via Minimate Escrow.</li>
+                    <li>Confidentiality regarding family matters is strictly required.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="p-6 bg-white border-t border-slate-100 flex gap-4">
+              <button className="flex-1 bg-white border-2 border-slate-200 text-slate-700 font-bold py-3.5 rounded-xl hover:bg-slate-50 transition-colors flex items-center justify-center gap-2">
+                <Download className="w-5 h-5" /> Download PDF
+              </button>
+              <button 
+                onClick={() => {
+                  alert("Contract successfully signed!");
+                  setContractModalApp(null);
+                }}
+                className="flex-[2] bg-green-600 text-white font-bold py-3.5 rounded-xl hover:bg-green-700 transition-colors shadow-lg shadow-green-600/20 flex items-center justify-center gap-2"
+              >
+                <Check className="w-5 h-5 stroke-[3]" /> Accept & Sign Contract
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

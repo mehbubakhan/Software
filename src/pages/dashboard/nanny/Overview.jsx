@@ -28,11 +28,6 @@ export default function Overview() {
           <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-2">Good morning, Sarah! ☀️</h1>
           <p className="text-slate-500 text-lg font-medium">Your nanny dashboard and childcare command center.</p>
         </div>
-        <div className="flex gap-4">
-          <button className="bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-xl font-bold shadow-sm flex items-center gap-2 hover:bg-slate-50 transition-colors">
-            <Bell className="w-5 h-5" /> Notifications <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">3</span>
-          </button>
-        </div>
       </div>
 
       {/* Top Summary Cards (4 Cards) */}

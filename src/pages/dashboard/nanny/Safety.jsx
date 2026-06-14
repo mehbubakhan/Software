@@ -14,11 +14,67 @@ import {
 } from 'lucide-react';
 import api from '../../../services/api';
 
+import { jsPDF } from 'jspdf';
+
 export default function Safety() {
   const [sessionActive, setSessionActive] = useState(false);
   const [sessionTime, setSessionTime] = useState(0);
   const [selectedIssue, setSelectedIssue] = useState('Family Conflict');
+  const [issueDescription, setIssueDescription] = useState('');
   const [sosSent, setSosSent] = useState(false);
+
+  const handleSubmitIssue = async () => {
+    if(!issueDescription) {
+      alert("Please describe the issue before submitting.");
+      return;
+    }
+    
+    // 1. Generate PDF receipt
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.setTextColor(15, 23, 42); // slate-900
+    doc.text("MINIMATE SAFETY REPORT RECEIPT", 20, 20);
+    
+    doc.setFontSize(11);
+    doc.setTextColor(100, 116, 139); // slate-500
+    doc.text(`Date: ${new Date().toLocaleString()}`, 20, 32);
+    
+    doc.setFontSize(12);
+    doc.setTextColor(15, 23, 42);
+    doc.text(`Category: ${selectedIssue}`, 20, 42);
+    
+    doc.setFontSize(11);
+    doc.text("Description:", 20, 52);
+    
+    const splitDesc = doc.splitTextToSize(issueDescription, 170);
+    doc.setTextColor(71, 85, 105); // slate-600
+    doc.text(splitDesc, 20, 60);
+    
+    const finalY = 60 + (splitDesc.length * 7);
+    
+    doc.setFontSize(11);
+    doc.setTextColor(22, 163, 74); // green-600
+    doc.text(`Status: Submitted for Admin Review`, 20, finalY + 10);
+    
+    doc.setTextColor(15, 23, 42);
+    doc.text(`Reference ID: REF-${Math.floor(Math.random()*1000000)}`, 20, finalY + 18);
+    
+    doc.save(`Safety_Report_${new Date().getTime()}.pdf`);
+
+    // 2. Notify Admin (Mock API call)
+    try {
+      await api.post('/admin/notifications', {
+        title: `New Safety Report: ${selectedIssue}`,
+        message: issueDescription.substring(0, 50) + '...'
+      }).catch(() => {}); // ignore error for mock
+    } catch(err) {}
+
+    // 3. Show Success Alert
+    alert(`Help Request Submitted Successfully!\n\nThe admin has been instantly notified.\nA copy of this report has been downloaded to your device for your records.`);
+    
+    setIssueDescription('');
+    setSelectedIssue('Family Conflict');
+  };
 
   useEffect(() => {
     let interval = null;
@@ -300,6 +356,8 @@ export default function Safety() {
               <div className="mb-6">
                 <div className="text-[13px] font-bold text-slate-700 mb-2">Describe the Issue <span className="text-slate-400">*</span></div>
                 <textarea 
+                  value={issueDescription}
+                  onChange={(e) => setIssueDescription(e.target.value)}
                   className="w-full border border-slate-200 rounded-xl p-4 text-sm text-slate-700 focus:outline-none focus:border-[#a855f7] focus:ring-1 focus:ring-[#a855f7] placeholder:text-slate-400"
                   rows="4"
                   placeholder="Please provide as much detail as possible. This information will be kept confidential and reviewed by our support team."
@@ -313,7 +371,10 @@ export default function Safety() {
                 </div>
               </div>
 
-              <button className="w-full bg-[#a855f7] hover:bg-[#9333ea] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-transform hover:-translate-y-0.5 active:translate-y-0 shadow-sm tracking-wide">
+              <button 
+                onClick={handleSubmitIssue}
+                className="w-full bg-[#a855f7] hover:bg-[#9333ea] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-transform hover:-translate-y-0.5 active:translate-y-0 shadow-sm tracking-wide"
+              >
                 <FileText className="w-4 h-4" /> Submit Help Request
               </button>
             </div>

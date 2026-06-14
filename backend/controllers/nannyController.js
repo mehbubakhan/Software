@@ -487,12 +487,63 @@ const getWellnessTools = async (req, res) => {
   };
   return res.json({ ok: true, data: wellnessData });
 }
+const requestNannyJob = async (req, res) => {
+  try {
+    const parentId = req.user.id;
+    const parentName = req.user.name || 'A parent';
+    const nannyId = req.params.id;
+    const { date, time, description } = req.body;
+
+    const { createNotification } = require('../models/Notification');
+    const { getIo } = require('../socket');
+    const pool = require('../config/db');
+    
+    // Notify the Nanny
+    const notifObj = await createNotification({
+      userId: nannyId,
+      title: 'New Job Request',
+      message: `${parentName} sent you a job request for ${date} at ${time}.`,
+      type: 'job_request'
+    });
+
+    try {
+      const io = getIo();
+      io.to(String(nannyId)).emit('notification', notifObj);
+    } catch(e) {
+      console.error('Socket emit error in requestNannyJob:', e);
+    }
+
+    // Notify the Admin
+    try {
+      await pool.query(
+        "INSERT INTO admin_notifications (title, message) VALUES (?, ?)",
+        ['New Job Request', `Parent ${parentName} sent a job request to Nanny ID ${nannyId} for ${date} at ${time}.`]
+      );
+      
+      try {
+        const io = getIo();
+        io.emit('admin_notification', {
+          title: 'New Job Request',
+          message: `Parent ${parentName} sent a job request to Nanny ID ${nannyId} for ${date} at ${time}.`,
+          created_at: new Date().toISOString()
+        });
+      } catch(e) {}
+    } catch (e) {
+      console.error('Failed to save admin notification:', e);
+    }
+
+    return res.json({ ok: true, message: 'Job request sent successfully' });
+  } catch (err) {
+    console.error('Error in requestNannyJob:', err);
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+}
 
 module.exports = { 
   saveProfile, getProfile, saveAvailability, getAvail, 
   getAgencies, getIndividualNannies, getFeaturedNannies, 
   getNannyDetails, getPayments,
   postNannyJob, getNannyJobs, startNannyShift, endNannyShift,
-  safetyCheckin, triggerSos, getWellnessTools,
+  safetyCheckin, triggerSos, getWellnessTools, requestNannyJob,
   mockNannyProfiles, saveMockProfiles
 }

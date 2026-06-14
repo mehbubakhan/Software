@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   CheckCircle, 
   Shield, 
@@ -7,11 +8,13 @@ import {
   Award, 
   Camera,
   AlertTriangle,
-  Lock
+  Lock,
+  ChevronLeft
 } from 'lucide-react';
 import api from '../../../services/api';
 
 export default function Verification() {
+  const navigate = useNavigate();
   const [docsUploaded, setDocsUploaded] = useState({
     id: false,
     address: false,
@@ -52,6 +55,12 @@ export default function Verification() {
     <div className="max-w-4xl mx-auto space-y-8 pb-12">
       {/* Header */}
       <div>
+        <button 
+          onClick={() => navigate(-1)}
+          className="mb-4 flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" /> Back to Dashboard
+        </button>
         <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3">
           Verification & Trust <Shield className="w-8 h-8 text-emerald-500" />
         </h1>

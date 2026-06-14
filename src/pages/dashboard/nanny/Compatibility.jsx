@@ -1,7 +1,11 @@
-import React from 'react';
-import { HeartHandshake, Sparkles, Brain, CheckCircle, Activity, Star } from 'lucide-react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { HeartHandshake, Sparkles, Brain, CheckCircle, Activity, Star, X, FileText, MapPin, Clock, DollarSign, Calendar } from 'lucide-react';
 
 export default function Compatibility() {
+  const navigate = useNavigate();
+  const [showJobDetails, setShowJobDetails] = useState(false);
+
   return (
     <div className="max-w-6xl mx-auto pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       
@@ -59,7 +63,10 @@ export default function Compatibility() {
               </div>
             </div>
 
-            <button className="w-full mt-8 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold py-3 rounded-xl transition-colors border border-slate-200 text-sm">
+            <button 
+              onClick={() => alert('Starting the comprehensive personality assessment... Please allow 15 minutes to complete the test.')}
+              className="w-full mt-8 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold py-3 rounded-xl transition-colors border border-slate-200 text-sm"
+            >
               Retake Personality Test
             </button>
           </div>
@@ -86,7 +93,10 @@ export default function Compatibility() {
                 </div>
               </div>
               <div>
-                <button className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-sm">
+                <button 
+                  onClick={() => navigate('/dashboard/nanny/apply')}
+                  className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-sm"
+                >
                   Apply Now
                 </button>
               </div>
@@ -106,7 +116,10 @@ export default function Compatibility() {
                 </div>
               </div>
               <div>
-                <button className="bg-white border-2 border-slate-200 hover:border-slate-300 text-slate-700 px-6 py-3 rounded-xl font-bold transition-all">
+                <button 
+                  onClick={() => setShowJobDetails(true)}
+                  className="bg-white border-2 border-slate-200 hover:border-slate-300 text-slate-700 px-6 py-3 rounded-xl font-bold transition-all"
+                >
                   View Details
                 </button>
               </div>
@@ -115,6 +128,112 @@ export default function Compatibility() {
           </div>
         </div>
       </div>
+
+      {/* Job Details Modal */}
+      {showJobDetails && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-[#1e1b4b] text-white">
+              <h3 className="font-black text-xl flex items-center gap-2">
+                <FileText className="w-6 h-6 text-indigo-400" /> Job Details: The Smith Family
+              </h3>
+              <button onClick={() => setShowJobDetails(false)} className="hover:bg-indigo-900 p-1.5 rounded-full transition-colors"><X className="w-6 h-6" /></button>
+            </div>
+            
+            <div className="flex-1 p-8 overflow-y-auto bg-slate-50">
+              <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm space-y-8">
+                
+                {/* Header Info */}
+                <div className="text-center pb-6 border-b border-slate-100">
+                  <h4 className="text-3xl font-black text-slate-900 mb-2">Newborn Care</h4>
+                  <p className="text-slate-500 font-medium text-lg">Looking for an experienced and calm nanny for our 3-month-old.</p>
+                </div>
+                
+                {/* Key Details Grid */}
+                <div className="grid grid-cols-2 gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                  <div className="flex items-start gap-3">
+                    <DollarSign className="w-5 h-5 text-emerald-600 mt-0.5" />
+                    <div>
+                      <h5 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Salary</h5>
+                      <p className="font-black text-slate-900">22,000 BDT/month</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <MapPin className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <div>
+                      <h5 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Location</h5>
+                      <p className="font-bold text-slate-900">Banani, Dhaka</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Clock className="w-5 h-5 text-purple-600 mt-0.5" />
+                    <div>
+                      <h5 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Schedule</h5>
+                      <p className="font-bold text-slate-900">Full-time (Live-out)</p>
+                      <p className="text-sm text-slate-500">9:00 AM - 6:00 PM</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Calendar className="w-5 h-5 text-orange-600 mt-0.5" />
+                    <div>
+                      <h5 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Start Date</h5>
+                      <p className="font-bold text-slate-900">Immediate Start</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Requirements */}
+                <div>
+                  <h5 className="font-black text-slate-900 mb-4 text-lg">Job Requirements & Duties</h5>
+                  <ul className="space-y-3 text-slate-600">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-5 h-5 text-indigo-500 shrink-0" />
+                      <span>At least 2 years of proven experience caring for newborns (0-6 months).</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-5 h-5 text-indigo-500 shrink-0" />
+                      <span>Establish and maintain a healthy sleep and feeding routine.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-5 h-5 text-indigo-500 shrink-0" />
+                      <span>Light housekeeping related directly to the baby (laundry, bottle sterilization).</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-5 h-5 text-indigo-500 shrink-0" />
+                      <span>Must be CPR certified (or willing to get certified immediately).</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                {/* AI Match Context */}
+                <div className="bg-indigo-50 rounded-2xl p-5 border border-indigo-100 flex items-start gap-4">
+                  <Brain className="w-8 h-8 text-indigo-600 shrink-0 mt-1" />
+                  <div>
+                    <h5 className="font-bold text-indigo-900 mb-1">Why you're an 85% Match</h5>
+                    <p className="text-sm text-indigo-800/80">Your "Gentle" communication style and high patience align perfectly with the parents' preference for a calm, structured environment for their newborn. Your moderate energy level is well-suited for newborn care over high-activity toddler care.</p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            
+            <div className="p-6 bg-white border-t border-slate-100 flex gap-4">
+              <button 
+                onClick={() => setShowJobDetails(false)}
+                className="flex-1 bg-white border-2 border-slate-200 text-slate-700 font-bold py-3.5 rounded-xl hover:bg-slate-50 transition-colors"
+              >
+                Close
+              </button>
+              <button 
+                onClick={() => navigate('/dashboard/nanny/apply')}
+                className="flex-[2] bg-indigo-600 text-white font-bold py-3.5 rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/20"
+              >
+                Apply for this Position
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

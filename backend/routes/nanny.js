@@ -7,7 +7,7 @@ const {
   getAgencies, getIndividualNannies, getFeaturedNannies, 
   getNannyDetails, getPayments,
   postNannyJob, getNannyJobs, startNannyShift, endNannyShift,
-  safetyCheckin, triggerSos, getWellnessTools
+  safetyCheckin, triggerSos, getWellnessTools, requestNannyJob
 } = require('../controllers/nannyController')
 
 router.post('/profile', auth, permit('nanny'), saveProfile)
@@ -30,5 +30,8 @@ router.get('/agencies', auth, getAgencies)
 router.get('/individuals', auth, getIndividualNannies)
 router.get('/featured', auth, getFeaturedNannies)
 router.get('/:id', auth, getNannyDetails)
+
+// Parent requesting a nanny job
+router.post('/:id/request', auth, permit('parent'), requestNannyJob)
 
 module.exports = router

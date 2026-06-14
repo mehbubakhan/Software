@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Shield, 
   TrendingUp, 
@@ -11,16 +12,24 @@ import {
   Check,
   Award,
   Mail,
-  X
+  X,
+  ChevronLeft
 } from 'lucide-react';
 
 export default function Reviews() {
+  const navigate = useNavigate();
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   return (
     <div className="space-y-8 pb-12 relative">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div>
+          <button 
+            onClick={() => navigate(-1)}
+            className="mb-4 flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" /> Back to Dashboard
+          </button>
           <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3">
             Reputation <span className="text-2xl">🏆</span>
           </h1>

@@ -201,13 +201,22 @@ export default function GlobalMessages() {
   });
 
   const filteredMerged = mergedList.filter(c => {
-    const matchesSearch = c.name?.toLowerCase().includes(searchQuery.toLowerCase()) || c.role?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesRole = roleFilter === 'all' || c.role === roleFilter;
+    // 1. Search filter
+    const safeName = (c.name || '').toLowerCase().trim();
+    const safeRole = (c.role || '').toLowerCase().trim();
+    const query = (searchQuery || '').toLowerCase().trim();
+    
+    const matchesSearch = query === '' || safeName.includes(query) || safeRole.includes(query);
+                         
+    // 2. Role filter
+    const currentFilter = (roleFilter || 'all').toLowerCase().trim();
+    const matchesRole = currentFilter === 'all' || safeRole === currentFilter;
+    
     return matchesSearch && matchesRole;
   });
 
-  // Get unique roles for the filter dropdown
-  const uniqueRoles = ['all', ...new Set(mergedList.map(c => c.role))];
+  // Get unique roles for the filter dropdown, normalized to lowercase
+  const uniqueRoles = ['all', ...new Set(mergedList.map(c => (c.role || 'unknown').toLowerCase().trim()))].filter(Boolean);
 
   return (
     <div className="flex h-[calc(100vh-100px)] max-w-6xl mx-auto my-6 bg-white rounded-3xl shadow-xl shadow-fuchsia-900/5 border border-slate-100 overflow-hidden text-slate-800">

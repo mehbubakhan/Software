@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Play, 
   Square, 
@@ -13,11 +14,13 @@ import {
   CalendarDays,
   X,
   Send,
-  Video
+  Video,
+  ChevronLeft
 } from 'lucide-react';
 import { useRealGPS } from '../../../hooks/useRealGPS';
 
 export default function ActiveJobs() {
+  const navigate = useNavigate();
   const [sessionActive, setSessionActive] = useState(false);
   const [sessionTime, setSessionTime] = useState(0);
   const [mood, setMood] = useState(null);
@@ -26,6 +29,9 @@ export default function ActiveJobs() {
   // Interactive Modals
   const [showChat, setShowChat] = useState(false);
   const [chatMessage, setChatMessage] = useState('');
+  const [chatHistory, setChatHistory] = useState([
+    { text: "Hi Sarah, is Ayaan taking his nap yet?", sender: "family" }
+  ]);
   const [callActive, setCallActive] = useState(false);
   const [callPerson, setCallPerson] = useState('');
 
@@ -66,9 +72,8 @@ export default function ActiveJobs() {
   const handleSendChat = (e) => {
     e.preventDefault();
     if(!chatMessage) return;
-    alert(`Message sent to parents: "${chatMessage}"`);
+    setChatHistory(prev => [...prev, { text: chatMessage, sender: "nanny" }]);
     setChatMessage('');
-    setShowChat(false);
   };
 
   const startCall = (person) => {
@@ -79,8 +84,14 @@ export default function ActiveJobs() {
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-12">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div>
+          <button 
+            onClick={() => navigate(-1)}
+            className="mb-4 flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" /> Back to Dashboard
+          </button>
           <h1 className="text-3xl font-black text-slate-900">Active Work Mode</h1>
           <p className="text-slate-500 mt-1">Manage your current active job session with the Ahmed Family.</p>
         </div>
@@ -272,25 +283,45 @@ export default function ActiveJobs() {
       {/* Chat Modal */}
       {showChat && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col h-[500px]">
             <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-[#1a56db] text-white">
-              <h3 className="font-bold">Chat with Ahmed Family</h3>
-              <button onClick={() => setShowChat(false)} className="hover:bg-blue-700 p-1 rounded transition-colors"><X className="w-5 h-5" /></button>
-            </div>
-            <div className="p-6">
-              <div className="bg-slate-100 p-3 rounded-xl rounded-tl-none text-slate-700 text-sm mb-4 max-w-[80%]">
-                Hi Sarah, is Ayaan taking his nap yet?
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center font-black">
+                  A
+                </div>
+                <div>
+                  <h3 className="font-bold leading-tight">Ahmed Family</h3>
+                  <p className="text-xs text-blue-200">Online</p>
+                </div>
               </div>
+              <button onClick={() => setShowChat(false)} className="hover:bg-blue-700 p-1.5 rounded-full transition-colors"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="flex-1 p-6 overflow-y-auto bg-slate-50 flex flex-col justify-end gap-3">
+              <div className="text-center text-xs text-slate-400 font-medium mb-2">Today, 9:41 AM</div>
+              {chatHistory.map((msg, idx) => (
+                <div 
+                  key={idx} 
+                  className={`p-3 rounded-2xl max-w-[85%] shadow-sm text-[15px] ${
+                    msg.sender === 'family' 
+                      ? 'bg-white border border-slate-200 text-slate-700 rounded-tl-none self-start' 
+                      : 'bg-[#1a56db] text-white rounded-tr-none self-end'
+                  }`}
+                >
+                  {msg.text}
+                </div>
+              ))}
+            </div>
+            <div className="p-4 bg-white border-t border-slate-200">
               <form onSubmit={handleSendChat} className="flex gap-2">
                 <input 
                   type="text" 
                   value={chatMessage}
                   onChange={e => setChatMessage(e.target.value)}
-                  placeholder="Type a message..." 
-                  className="flex-1 border border-slate-200 rounded-xl px-4 py-2 focus:outline-none focus:border-blue-500"
+                  placeholder="Type your message..." 
+                  className="flex-1 border border-slate-200 bg-slate-50 rounded-xl px-4 py-2.5 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors"
                 />
-                <button type="submit" className="bg-[#1a56db] text-white px-4 py-2 rounded-xl hover:bg-blue-700">
-                  <Send className="w-4 h-4" />
+                <button type="submit" className="bg-[#1a56db] text-white px-5 py-2.5 rounded-xl hover:bg-blue-700 transition-colors shadow-sm">
+                  <Send className="w-5 h-5" />
                 </button>
               </form>
             </div>

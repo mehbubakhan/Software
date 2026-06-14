@@ -50,4 +50,25 @@ router.put('/parent/:id/read', auth, async (req, res) => {
   res.json({ ok: true });
 });
 
+router.get('/admin', auth, async (req, res) => {
+  try {
+    const [notifications] = await pool.query(
+      "SELECT * FROM admin_notifications ORDER BY created_at DESC LIMIT 50"
+    );
+    res.json({ ok: true, data: notifications });
+  } catch (err) {
+    console.error("Error fetching admin notifications:", err.message);
+    res.json({ ok: true, data: [] });
+  }
+});
+
+router.put('/admin/:id/read', auth, async (req, res) => {
+  try {
+    await pool.query("UPDATE admin_notifications SET is_read = TRUE WHERE id = ?", [req.params.id]);
+  } catch (err) {
+    console.error("Error updating admin notification DB:", err.message);
+  }
+  res.json({ ok: true });
+});
+
 module.exports = router;
