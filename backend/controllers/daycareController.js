@@ -1,7 +1,20 @@
-const DaycareModel = require('../models/DaycareModel')
+const DaycareModel = require('../models/DaycareModel');
+const fs = require('fs');
+const path = require('path');
 
-const getDaycares = (req, res) => {
-  const daycares = [
+const mockFilePath = path.join(__dirname, '../mockDaycares.json');
+
+// Initialize from file if exists
+try {
+  if (fs.existsSync(mockFilePath)) {
+    global.mockDaycares = JSON.parse(fs.readFileSync(mockFilePath, 'utf8'));
+  }
+} catch (e) {
+  console.error('Failed to load mockDaycares.json', e);
+}
+
+if (!global.mockDaycares) {
+  global.mockDaycares = [
     {
       id: 1,
       name: "Little Stars Daycare",
@@ -55,27 +68,43 @@ const getDaycares = (req, res) => {
       tags: ["Verified", "Live CCTV"]
     }
   ];
+}
 
-  res.json({ success: true, data: daycares });
+const saveMockDaycares = () => {
+  try {
+    fs.writeFileSync(mockFilePath, JSON.stringify(global.mockDaycares, null, 2));
+  } catch (e) {
+    console.error('Failed to save mockDaycares.json', e);
+  }
+};
+
+const getDaycares = (req, res) => {
+  res.json({ success: true, data: global.mockDaycares });
 };
 
 const getDaycareById = (req, res) => {
   const { id } = req.params;
   
+  // Look up in mock directory
+  let mockMatch = null;
+  if (global.mockDaycares) {
+    mockMatch = global.mockDaycares.find(d => d.id == id);
+  }
+
   const daycare = {
-    id: parseInt(id),
-    name: "Little Stars Daycare",
-    rating: 4.8,
-    reviews: 124,
-    price: "$1,200/mo",
+    id: parseInt(id) || id,
+    name: mockMatch?.name || "Little Stars Daycare",
+    rating: mockMatch?.rating || 4.8,
+    reviews: mockMatch?.reviews || 124,
+    price: mockMatch?.price || "$1,200/mo",
     careType: "Full-Time Care",
-    address: "456 Park Avenue, New York, NY 10022",
-    email: "info@littlestarsdaycare.com",
-    enrolledInfo: "42/50 enrolled • Ages 6 months - 5 years",
+    address: mockMatch?.location || "456 Park Avenue, New York, NY 10022",
+    email: `info@${(mockMatch?.name || "littlestars").replace(/\s+/g, '').toLowerCase()}.com`,
+    enrolledInfo: mockMatch?.childrenEnrolled || "42/50 enrolled • Ages 6 months - 5 years",
     phone: "+1 (555) 987-6543",
-    website: "www.littlestarsdaycare.com",
-    hours: "Monday - Friday: 7:00 AM - 6:00 PM",
-    about: "Little Stars Daycare provides a safe, nurturing, and stimulating environment for children. Our experienced staff focuses on early childhood development through play-based learning and structured routines. We believe in fostering each child's natural curiosity while ensuring their safety and happiness.\\n\\nEstablished in 2010, we have been serving the community for over 10 years with dedication and excellence. Our modern facility is equipped with state-of-the-art security systems, educational resources, and age-appropriate play areas.",
+    website: `www.${(mockMatch?.name || "littlestars").replace(/\s+/g, '').toLowerCase()}.com`,
+    hours: mockMatch?.hours || "Monday - Friday: 7:00 AM - 6:00 PM",
+    about: `${mockMatch?.name || "Little Stars Daycare"} provides a safe, nurturing, and stimulating environment for children. Our experienced staff focuses on early childhood development through play-based learning and structured routines. We believe in fostering each child's natural curiosity while ensuring their safety and happiness.\n\nEstablished in 2010, we have been serving the community for over 10 years with dedication and excellence. Our modern facility is equipped with state-of-the-art security systems, educational resources, and age-appropriate play areas.`,
     coreValues: [
       "Safety and security as top priority",
       "Individualized attention for each child",
@@ -112,6 +141,14 @@ const getDaycareById = (req, res) => {
         "Mobile app for iOS and Android"
       ]
     },
+    facilities: [
+      { icon: "🏰", name: "Indoor Play Area", desc: "Climate-controlled play zones with soft flooring." },
+      { icon: "🌳", name: "Outdoor Playground", desc: "Secure outdoor space with safety surfacing and shade." },
+      { icon: "🛏️", name: "Nap Rooms", desc: "Quiet, darkened rooms with individual cots." },
+      { icon: "🍳", name: "On-site Kitchen", desc: "Commercial kitchen preparing fresh, nutritious meals." },
+      { icon: "📚", name: "Learning Center", desc: "Library and educational activity stations." },
+      { icon: "🩺", name: "Medical Room", desc: "First aid equipped room with trained staff." }
+    ],
     schedule: {
       daily: [
         { time: "7:00 AM", title: "Arrival & Free Play", desc: "Children arrive and engage in self-directed play" },
@@ -282,14 +319,65 @@ const updateProfile = async (req, res) => {
 }
 
 const createProfile = async (req, res) => {
+  let daycareId = Date.now();
+  
   try {
     const existing = await DaycareModel.getDaycareByOwnerId(req.user.id)
     if (existing) return res.json({ success: false, message: 'Profile already exists' })
     const id = await DaycareModel.createDaycare(req.user.id, req.body)
-    res.json({ success: true, message: 'Profile created successfully', id })
+    daycareId = id;
   } catch (err) {
-    res.status(500).json({ success: false, error: (typeof err !== 'undefined' ? err.message : (typeof error !== 'undefined' ? error.message : 'Internal error')) })
+    console.error('DB createDaycare failed, using mock fallback', err.message);
   }
+
+  const { name, phone, address } = req.body;
+  const newDaycare = {
+    id: daycareId,
+    name: name || "New Daycare",
+    rating: 5.0,
+    reviews: 0,
+    location: address || "Local",
+    hours: "Flexible",
+    childrenEnrolled: "0 children enrolled",
+    price: "Contact for pricing",
+    transportAvailable: false,
+    image: "🏫",
+    tags: ["New"]
+  };
+
+  if (!global.mockDaycares) global.mockDaycares = [];
+  global.mockDaycares.push(newDaycare);
+  saveMockDaycares();
+
+  // Dispatch notification to parents
+  const profileLink = `/dashboard/parent/daycare/${daycareId}`;
+  const notifObj = {
+    id: 'd_' + Date.now(),
+    sender_role: 'daycare',
+    title: 'New Daycare Available',
+    message: `${newDaycare.name} has just registered and is now accepting enrollments.`,
+    link: profileLink,
+    created_at: new Date().toISOString()
+  };
+
+  try {
+    const pool = require('../config/db');
+    await pool.query(
+      "INSERT INTO parent_notifications (parent_id, sender_role, title, message, link) VALUES (NULL, ?, ?, ?, ?)",
+      [notifObj.sender_role, notifObj.title, notifObj.message, notifObj.link]
+    );
+  } catch(err) { 
+    if (!global.mockParentNotifications) global.mockParentNotifications = [];
+    global.mockParentNotifications.push(notifObj);
+  }
+
+  try {
+    const { getIo } = require('../socket');
+    const io = getIo();
+    io.emit('notification', notifObj);
+  } catch(e) { console.error('Socket error:', e) }
+
+  res.json({ success: true, message: 'Profile created successfully', id: daycareId });
 }
 
 const getPackages = async (req, res) => {
@@ -575,6 +663,7 @@ const addApplication = async (req, res) => {
 }
 
 module.exports = {
+  saveMockDaycares,
   getDaycares,
   getDaycareById,
   getChildReport,

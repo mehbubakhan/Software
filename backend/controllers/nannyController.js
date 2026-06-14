@@ -32,13 +32,32 @@ const saveProfile = async (req, res) => {
     const r = await upsertProfile(profileData)
     
     // Send global notification
+    const profileLink = `/dashboard/parent/hire-nanny/${nanny_id}`;
+    const notifObj = {
+      id: 'm_' + Date.now(),
+      sender_role: 'nanny',
+      title: 'New Nanny Profile',
+      message: `${name} just joined and created a nanny profile.`,
+      link: profileLink,
+      created_at: new Date().toISOString()
+    };
+
     try {
       const pool = require('../config/db');
       await pool.query(
-        "INSERT INTO parent_notifications (sender_role, title, message) VALUES (?, ?, ?)",
-        ['nanny', 'New Nanny Profile', `${name} just joined and created a nanny profile.`]
+        "INSERT INTO parent_notifications (parent_id, sender_role, title, message, link) VALUES (NULL, ?, ?, ?, ?)",
+        [notifObj.sender_role, notifObj.title, notifObj.message, notifObj.link]
       );
-    } catch(err) { console.error('Notification error', err) }
+    } catch(err) { 
+      if (!global.mockParentNotifications) global.mockParentNotifications = [];
+      global.mockParentNotifications.push(notifObj);
+    }
+
+    try {
+      const { getIo } = require('../socket');
+      const io = getIo();
+      io.emit('notification', notifObj);
+    } catch(e) { console.error('Socket error:', e) }
 
     return res.json({ ok:true, data: r })
   }catch(err){ 
@@ -49,23 +68,33 @@ const saveProfile = async (req, res) => {
     saveMockProfiles();
 
     // Send global notification
+    const profileLink = `/dashboard/parent/hire-nanny/${nanny_id}`;
+    const notifObjMock = {
+      id: 'm_' + Date.now(),
+      sender_role: 'nanny',
+      title: 'New Nanny Profile',
+      message: `${name} just joined and created a nanny profile.`,
+      link: profileLink,
+      created_at: new Date().toISOString()
+    };
+
     try {
       const pool = require('../config/db');
       await pool.query(
-        "INSERT INTO parent_notifications (sender_role, title, message) VALUES (?, ?, ?)",
-        ['nanny', 'New Nanny Profile', `${name} just joined and created a nanny profile.`]
+        "INSERT INTO parent_notifications (parent_id, sender_role, title, message, link) VALUES (NULL, ?, ?, ?, ?)",
+        [notifObjMock.sender_role, notifObjMock.title, notifObjMock.message, notifObjMock.link]
       );
     } catch(err) { 
       console.error('Notification error', err.message);
       if (!global.mockParentNotifications) global.mockParentNotifications = [];
-      global.mockParentNotifications.push({
-        id: 'm_' + Date.now(),
-        sender_role: 'nanny',
-        title: 'New Nanny Profile',
-        message: `${name} just joined and created a nanny profile.`,
-        created_at: new Date().toISOString()
-      });
+      global.mockParentNotifications.push(notifObjMock);
     }
+
+    try {
+      const { getIo } = require('../socket');
+      const io = getIo();
+      io.emit('notification', notifObjMock);
+    } catch(e) { console.error('Socket error:', e) }
 
     return res.json({ ok:true, data: mockNannyProfiles[nanny_id], mock: true }) 
   }
@@ -190,20 +219,70 @@ const getFeaturedNannies = async (req, res) => {
 
 const getNannyDetails = async (req, res) => {
   const { id } = req.params;
+  const parsedId = parseInt(id);
+
+  // Pool of all hardcoded nannies
+  const allNannies = [
+    { id: 7, name: 'Adiba Irin', photo: '👩', experience: '5 years', rating: 4.8, reviews: 27, location: 'Dhaka', rate: '$25/hr', skills: ['Newborn Care'] },
+    { id: 8, name: 'Fairuj Smiha', photo: '👩‍🦰', experience: '6 years', rating: 4.9, reviews: 54, location: 'Mirpur, Dhaka', rate: '$22/hr', skills: ['Toddler Care'] },
+    { id: 9, name: 'Tamanna Khan', photo: '👩‍🦱', experience: '5 years', rating: 4.8, reviews: 56, location: 'Dhanmondi, Dhaka', rate: '$20/hr', skills: ['Teaching'] },
+    { id: 10, name: 'Nargis Akter', photo: '👩', experience: '5 years', rating: 4.9, reviews: 82, location: 'Kakrail, Dhaka', rate: '$24/hr', skills: ['Cooking'] },
+    { id: 101, name: 'Kamrun Nahar', photo: '👩', experience: '4+ years', rating: 4.8, reviews: 42, location: 'Kuril, Dhaka', type: 'Full-time', rate: '$25/hour', skills: ['Newborn Care', 'Teaching'] },
+    { id: 102, name: 'Deedhity Dhara', photo: '👩‍🦰', experience: '7+ years', rating: 4.9, reviews: 78, location: 'Notun Bazar, Dhaka', type: 'Part-time', rate: '$40/hour', skills: ['Toddler Care', 'Cooking'] },
+    { id: 103, name: 'Nusrat Parvin', photo: '👩‍🦱', experience: '3+ years', rating: 4.7, reviews: 35, location: 'Mirpur, Dhaka', type: 'Hourly', rate: '$22/hour', skills: ['Newborn Care', 'Teaching'] },
+    { id: 104, name: 'Sadia Afrin', photo: '👩‍🦱', experience: '5+ years', rating: 4.8, reviews: 56, location: 'Chittagong', type: 'Full-time', rate: '$28/hour', skills: ['Toddler Care', 'Special Needs'] },
+    { id: 105, name: 'Samanta Khan', photo: '👩', experience: '6+ years', rating: 5.0, reviews: 92, location: 'Tangail', type: 'Part-time', rate: '$32/hour', skills: ['Newborn Care', 'Cooking'] },
+    { id: 106, name: 'Maria Mim', photo: '👩‍🦰', experience: '4+ years', rating: 4.6, reviews: 48, location: 'Gulshan, Dhaka', type: 'Full-time', rate: '$26/hour', skills: ['Teaching', 'Activities'] },
+  ];
+
+  let nanny = allNannies.find(n => n.id === parsedId);
+  
+  if (!nanny) {
+    const mockProfile = mockNannyProfiles[parsedId] || mockNannyProfiles[id];
+    if (mockProfile) {
+      nanny = {
+        id: parsedId,
+        name: mockProfile.name || 'Nanny',
+        photo: mockProfile.photo_url || '👩',
+        experience: mockProfile.experience || 'New',
+        rating: 5.0,
+        reviews: 0,
+        location: mockProfile.location || 'Remote/Local',
+        rate: mockProfile.rate || 'Negotiable',
+        skills: mockProfile.skills || []
+      };
+    }
+  }
+
+  // Fallback if still not found
+  if (!nanny) {
+    nanny = {
+      id: parsedId || id,
+      name: 'Independent Nanny',
+      photo: '👩',
+      experience: 'Experienced',
+      rating: 4.5,
+      reviews: 10,
+      location: 'Local',
+      rate: 'Negotiable',
+      skills: ['Childcare']
+    };
+  }
+
   const details = {
-    id: id,
-    name: 'Kamrun Nahar',
+    id: nanny.id,
+    name: nanny.name,
     title: 'Professional Childcare Specialist',
-    photo: '👩',
-    rating: 4.8,
-    reviews: 42,
-    location: 'Kuril, Dhaka',
-    availability: 'Full-time',
-    rate: '$25/hr',
-    experience: '4+ years',
+    photo: nanny.photo,
+    rating: nanny.rating,
+    reviews: nanny.reviews,
+    location: nanny.location,
+    availability: nanny.type || 'Full-time',
+    rate: nanny.rate,
+    experience: nanny.experience,
     languages: 3,
-    about: 'Experienced and dedicated nanny with over 4 years of professional childcare experience. I have a passion for nurturing children\'s development through play-based learning and creating a safe, loving environment.',
-    specializations: ['Newborn Care', 'Teaching'],
+    about: `Experienced and dedicated nanny with ${nanny.experience} of professional childcare experience. I have a passion for nurturing children's development through play-based learning and creating a safe, loving environment.`,
+    specializations: nanny.skills || ['Newborn Care', 'Teaching'],
     weeklyAvailability: [
       { day: 'Monday', time: '8:00 AM - 6:00 PM', available: true },
       { day: 'Tuesday', time: '8:00 AM - 6:00 PM', available: true },
@@ -252,11 +331,91 @@ const { sendSos } = require('../models/Sos')
 const postNannyJob = async (req, res) => {
   try {
     const nanny_id = req.user.id
-    const { title, description, availability_date } = req.body
+    const { title, description, availability_date, location, type, rate, skills, experience } = req.body
+    
+    // Create job entry
     const job = await createJob({ nanny_id, title, description, availability_date })
+
+    // Also update their mock profile so they appear in parent searches (since we use a combined mock+db list in getIndividualNannies)
+    if (!mockNannyProfiles[nanny_id]) {
+      mockNannyProfiles[nanny_id] = { nanny_id, name: req.user.name || 'New Nanny' }
+    }
+    mockNannyProfiles[nanny_id].experience = experience || 'New'
+    mockNannyProfiles[nanny_id].location = location || 'Remote/Local'
+    mockNannyProfiles[nanny_id].type = type || 'Flexible'
+    mockNannyProfiles[nanny_id].rate = rate || 'Negotiable'
+    if (skills) mockNannyProfiles[nanny_id].skills = [skills]
+    saveMockProfiles()
+
+    // Dispatch notification to parents
+    const nannyName = req.user.name || 'A Nanny';
+    const profileLink = `/dashboard/parent/hire-nanny/${nanny_id}`;
+    
+    const notificationObj = {
+      id: 'n_' + Date.now(),
+      sender_role: 'nanny',
+      title: 'New Nanny Profile',
+      message: `${nannyName} has created a new profile and is available for hire.`,
+      link: profileLink,
+      created_at: new Date().toISOString()
+    };
+
+    try {
+      const pool = require('../config/db');
+      await pool.query(
+        "INSERT INTO parent_notifications (parent_id, sender_role, title, message, link) VALUES (NULL, 'nanny', 'New Nanny Profile', ?, ?)",
+        [notificationObj.message, profileLink]
+      );
+    } catch(err) {
+      if (!global.mockParentNotifications) global.mockParentNotifications = [];
+      global.mockParentNotifications.push(notificationObj);
+    }
+
+    try {
+      const { getIo } = require('../socket');
+      const io = getIo();
+      io.emit('notification', notificationObj);
+    } catch(e) { console.error('Socket emit error:', e) }
+
     return res.json({ ok: true, data: job })
   } catch (err) {
-    return res.status(500).json({ ok: false, error: err.message })
+    // If DB fails (like NannyJob model not existing), still update mock profile and return mock success
+    const nanny_id = req.user.id
+    const { title, description, availability_date, location, type, rate, skills, experience } = req.body
+    
+    if (!mockNannyProfiles[nanny_id]) {
+      mockNannyProfiles[nanny_id] = { nanny_id, name: req.user.name || 'New Nanny' }
+    }
+    mockNannyProfiles[nanny_id].experience = experience || description || 'New'
+    mockNannyProfiles[nanny_id].location = location || 'Remote/Local'
+    mockNannyProfiles[nanny_id].type = type || 'Flexible'
+    mockNannyProfiles[nanny_id].rate = rate || 'Negotiable'
+    if (skills) mockNannyProfiles[nanny_id].skills = [skills]
+    saveMockProfiles()
+
+    // Dispatch notification to parents (Mock Fallback)
+    const nannyNameMock = req.user.name || 'A Nanny';
+    const profileLinkMock = `/dashboard/parent/hire-nanny/${nanny_id}`;
+    
+    const notificationObjMock = {
+      id: 'n_' + Date.now(),
+      sender_role: 'nanny',
+      title: 'New Nanny Profile',
+      message: `${nannyNameMock} has created a new profile and is available for hire.`,
+      link: profileLinkMock,
+      created_at: new Date().toISOString()
+    };
+
+    if (!global.mockParentNotifications) global.mockParentNotifications = [];
+    global.mockParentNotifications.push(notificationObjMock);
+
+    try {
+      const { getIo } = require('../socket');
+      const io = getIo();
+      io.emit('notification', notificationObjMock);
+    } catch(e) { console.error('Socket emit error:', e) }
+
+    return res.json({ ok: true, data: { nanny_id, title, description, availability_date }, mock: true })
   }
 }
 

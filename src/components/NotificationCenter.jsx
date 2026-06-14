@@ -18,6 +18,13 @@ export default function NotificationCenter() {
   const handleNotificationClick = (notif) => {
     if (!notif.is_read) markNotificationRead(notif.id, notif.source);
     
+    setIsOpen(false);
+    
+    if (notif.link) {
+      navigate(notif.link);
+      return;
+    }
+
     const title = (notif.title || '').toLowerCase();
     const message = (notif.message || '').toLowerCase();
     const content = title + ' ' + message;

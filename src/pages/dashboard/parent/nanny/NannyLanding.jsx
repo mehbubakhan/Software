@@ -35,10 +35,6 @@ export default function NannyLanding() {
           <p className="text-slate-600 max-w-2xl mx-auto mb-8">
             Connect directly with quality, independent caregivers and verified nannies.
           </p>
-          <div className="flex justify-center gap-4">
-            <button className="bg-fuchsia-600 hover:bg-fuchsia-700 px-6 py-2 rounded-lg font-semibold text-white transition">Get Started</button>
-            <button className="bg-white hover:bg-slate-50 px-6 py-2 rounded-lg font-semibold text-slate-700 transition border border-slate-300">Learn More</button>
-          </div>
         </div>
       </div>
 

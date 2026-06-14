@@ -1,0 +1,81 @@
+[
+  {
+    "id": 1,
+    "name": "Little Stars Daycare",
+    "rating": 4.8,
+    "reviews": 124,
+    "location": "2.5 miles",
+    "hours": "7:00 AM - 6:00 PM",
+    "childrenEnrolled": "42 children enrolled",
+    "price": "$1200/month",
+    "transportAvailable": true,
+    "image": "🏠",
+    "tags": [
+      "Verified",
+      "Live CCTV"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Bright Beginnings Center",
+    "rating": 4.9,
+    "reviews": 86,
+    "location": "3.2 miles",
+    "hours": "7:30 AM - 5:30 PM",
+    "childrenEnrolled": "35 children enrolled",
+    "price": "$1100/month",
+    "transportAvailable": true,
+    "image": "☀️",
+    "tags": [
+      "Featured",
+      "Live CCTV"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Happy Hearts Childcare",
+    "rating": 4.7,
+    "reviews": 92,
+    "location": "4.0 miles",
+    "hours": "7:00 AM - 6:00 PM",
+    "childrenEnrolled": "50 children enrolled",
+    "price": "$1050/month",
+    "transportAvailable": false,
+    "image": "❤️",
+    "tags": [
+      "Verified",
+      "Live CCTV"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Rainbow Learning Center",
+    "rating": 4.6,
+    "reviews": 75,
+    "location": "4.5 miles",
+    "hours": "7:00 AM - 6:00 PM",
+    "childrenEnrolled": "60 children enrolled",
+    "price": "$950/month",
+    "transportAvailable": true,
+    "image": "🌈",
+    "tags": [
+      "Verified",
+      "Live CCTV"
+    ]
+  },
+  {
+    "id": 166,
+    "name": "La la Daycare",
+    "rating": 5,
+    "reviews": 0,
+    "location": "Local",
+    "hours": "Flexible",
+    "childrenEnrolled": "0 children enrolled",
+    "price": "Contact for pricing",
+    "transportAvailable": false,
+    "image": "🏫",
+    "tags": [
+      "New"
+    ]
+  }
+]

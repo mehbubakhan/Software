@@ -8,6 +8,7 @@ export default function DaycareProfile() {
   const [daycare, setDaycare] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('About');
+  const [tourBooked, setTourBooked] = useState(false);
 
   useEffect(() => {
     const fetchDaycare = async () => {
@@ -90,8 +91,12 @@ export default function DaycareProfile() {
             <button onClick={() => navigate('apply')} className="flex-1 min-w-[200px] bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold py-3 rounded-xl shadow-sm transition text-sm">
               Apply for Admission
             </button>
-            <button className="flex-1 min-w-[150px] bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold py-3 rounded-xl shadow-sm transition text-sm">
-              Book a Tour
+            <button 
+              onClick={() => setTourBooked(true)}
+              disabled={tourBooked}
+              className={`flex-1 min-w-[150px] font-bold py-3 rounded-xl shadow-sm transition text-sm ${tourBooked ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' : 'bg-white hover:bg-slate-50 border border-slate-200 text-slate-700'}`}
+            >
+              {tourBooked ? 'Tour Requested! ✅' : 'Book a Tour'}
             </button>
             <button onClick={() => navigate('cctv')} className="flex-1 min-w-[150px] bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold py-3 rounded-xl shadow-sm transition text-sm flex items-center justify-center gap-2">
               📷 Live CCTV
@@ -138,8 +143,17 @@ export default function DaycareProfile() {
           )}
 
           {activeTab === 'Facilities' && (
-            <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-8 text-center text-slate-500 py-12">
-              Facilities content not fully specified in mockups, placeholder area.
+            <div>
+              <h3 className="text-xl font-bold mb-4 text-slate-900">Our Facilities</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {daycare.facilities?.map((fac, idx) => (
+                  <div key={idx} className="bg-white border border-slate-200 shadow-sm rounded-xl p-6 hover:shadow-md transition">
+                    <div className="text-4xl mb-4">{fac.icon}</div>
+                    <h4 className="font-bold text-slate-900 mb-2">{fac.name}</h4>
+                    <p className="text-sm text-slate-600 leading-relaxed">{fac.desc}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 

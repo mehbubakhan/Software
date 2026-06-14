@@ -62,7 +62,7 @@ const signup = async (req, res) => {
       try {
         await upsertProfile(profileData);
       } catch (err) {
-        // Fallback to storing in mock if DB is down. Since we are in authController, we'll just require the nanny controller module and update its mock map.
+        // Fallback to storing in mock if DB is down.
         const nannyController = require('./nannyController');
         if (nannyController.mockNannyProfiles) {
            nannyController.mockNannyProfiles[user.id] = profileData;
@@ -71,6 +71,68 @@ const signup = async (req, res) => {
            }
         }
       }
+
+      // Dispatch notification
+      const profileLink = `/dashboard/parent/hire-nanny/${user.id}`;
+      const notifObj = {
+        id: 'n_' + Date.now(),
+        sender_role: 'nanny',
+        title: 'New Nanny Profile',
+        message: `${name || 'A Nanny'} just joined and created a nanny profile.`,
+        link: profileLink,
+        created_at: new Date().toISOString()
+      };
+
+      if (!global.mockParentNotifications) global.mockParentNotifications = [];
+      global.mockParentNotifications.push(notifObj);
+
+      try {
+        const { getIo } = require('../socket');
+        const io = getIo();
+        io.emit('notification', notifObj);
+      } catch(e) { console.error('Socket error during nanny signup:', e) }
+    }
+    if (role === 'daycare') {
+      const daycareController = require('./daycareController');
+      const newDaycare = {
+        id: user.id,
+        name: name + " Daycare",
+        rating: 5.0,
+        reviews: 0,
+        location: "Local",
+        hours: "Flexible",
+        childrenEnrolled: "0 children enrolled",
+        price: "Contact for pricing",
+        transportAvailable: false,
+        image: "🏫",
+        tags: ["New"]
+      };
+
+      if (!global.mockDaycares) global.mockDaycares = [];
+      global.mockDaycares.push(newDaycare);
+      if (daycareController.saveMockDaycares) {
+        daycareController.saveMockDaycares();
+      }
+
+      // Dispatch notification
+      const profileLink = `/dashboard/parent/daycare/${user.id}`;
+      const notifObj = {
+        id: 'd_' + Date.now(),
+        sender_role: 'daycare',
+        title: 'New Daycare Available',
+        message: `${newDaycare.name} has just registered and is now accepting enrollments.`,
+        link: profileLink,
+        created_at: new Date().toISOString()
+      };
+
+      if (!global.mockParentNotifications) global.mockParentNotifications = [];
+      global.mockParentNotifications.push(notifObj);
+
+      try {
+        const { getIo } = require('../socket');
+        const io = getIo();
+        io.emit('notification', notifObj);
+      } catch(e) { console.error('Socket error during daycare signup:', e) }
     }
     console.log('User created:', user.id)
     const token = jwt.sign({ id: user.id, role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '7d' })

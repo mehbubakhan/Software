@@ -11,8 +11,17 @@ router.get('/parent', auth, async (req, res) => {
       "SELECT * FROM parent_notifications WHERE parent_id = ? OR parent_id IS NULL ORDER BY created_at DESC LIMIT 50",
       [parent_id]
     );
+    // Combine with mock notifications if any
+    let allNotifications = [...notifications];
+    if (global.mockParentNotifications) {
+      const filtered = global.mockParentNotifications.filter(n => !n.parent_id || n.parent_id === req.user.id);
+      allNotifications = [...allNotifications, ...filtered];
+    }
+    
+    // Sort combined array by created_at descending
+    allNotifications.sort((a, b) => new Date(b.created_at || Date.now()) - new Date(a.created_at || Date.now()));
 
-    res.json({ ok: true, data: notifications });
+    res.json({ ok: true, data: allNotifications.slice(0, 50) });
   } catch (err) {
     console.error("Error fetching parent notifications, using fallback:", err.message);
     if (!global.mockParentNotifications) {
