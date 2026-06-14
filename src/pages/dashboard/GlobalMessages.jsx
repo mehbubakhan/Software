@@ -62,6 +62,7 @@ export default function GlobalMessages() {
 
   useEffect(() => {
     fetchConversations()
+    fetchContacts()
   }, [])
 
   useEffect(() => {
@@ -118,7 +119,6 @@ export default function GlobalMessages() {
       avatar: contactOrConv.avatar || `https://i.pravatar.cc/150?img=${contactOrConv.id}`
     })
     setThemTyping(false)
-    setShowNewChat(false)
     
     // If we just clicked a conversation, optimistically mark it as read locally
     setConversations(prev => prev.map(c => c.id === contactOrConv.id ? { ...c, unread: 0 } : c))
@@ -173,56 +173,59 @@ export default function GlobalMessages() {
     }
   }
 
-  const handleNewChatClick = () => {
-    setShowNewChat(true)
-    fetchContacts()
-  }
-
   const isUserOnline = (userId) => {
     return onlineUsers?.includes(userId.toString())
   }
 
-  const filteredContacts = contacts.filter(c => {
+  // Filter and merge contacts and conversations
+  let mergedList = [...contacts];
+  conversations.forEach(conv => {
+    const idx = mergedList.findIndex(c => c.id === conv.id);
+    if (idx !== -1) {
+      mergedList[idx] = { ...mergedList[idx], ...conv };
+    } else {
+      mergedList.push(conv);
+    }
+  });
+
+  // Sort: Unread first, then by timestamp (most recent), then alphabetically
+  mergedList.sort((a, b) => {
+    if ((a.unread > 0) && !(b.unread > 0)) return -1;
+    if (!(a.unread > 0) && (b.unread > 0)) return 1;
+    
+    if (a.timestamp && b.timestamp) return b.timestamp - a.timestamp;
+    if (a.timestamp) return -1;
+    if (b.timestamp) return 1;
+
+    return (a.name || '').localeCompare(b.name || '');
+  });
+
+  const filteredMerged = mergedList.filter(c => {
     const matchesSearch = c.name?.toLowerCase().includes(searchQuery.toLowerCase()) || c.role?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesRole = roleFilter === 'all' || c.role === roleFilter;
     return matchesSearch && matchesRole;
-  })
+  });
 
   // Get unique roles for the filter dropdown
-  const uniqueRoles = ['all', ...new Set(contacts.map(c => c.role))];
+  const uniqueRoles = ['all', ...new Set(mergedList.map(c => c.role))];
 
   return (
     <div className="flex h-[calc(100vh-100px)] max-w-6xl mx-auto my-6 bg-white rounded-3xl shadow-xl shadow-fuchsia-900/5 border border-slate-100 overflow-hidden text-slate-800">
       
-      {/* Sidebar: Conversations or Contacts */}
+      {/* Sidebar: Unified Contacts List */}
       <div className="w-1/3 border-r border-slate-100 flex flex-col bg-slate-50/30">
         
         {/* Header */}
         <div className="p-6 border-b border-slate-100 bg-white">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-black text-slate-900 tracking-tight">Chats</h2>
-            {!showNewChat ? (
-              <button 
-                onClick={handleNewChatClick}
-                className="w-10 h-10 rounded-full bg-fuchsia-100 text-fuchsia-600 hover:bg-fuchsia-600 hover:text-white flex items-center justify-center transition-colors shadow-sm"
-              >
-                <Plus className="w-5 h-5" />
-              </button>
-            ) : (
-              <button 
-                onClick={() => setShowNewChat(false)}
-                className="w-10 h-10 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center transition-colors shadow-sm"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            )}
           </div>
           
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input 
               type="text" 
-              placeholder={showNewChat ? "Search contacts..." : "Search conversations..."} 
+              placeholder="Search contacts..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-slate-100 border-transparent rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:bg-white transition-all" 
@@ -232,77 +235,45 @@ export default function GlobalMessages() {
 
         {/* List Content */}
         <div className="flex-1 overflow-y-auto">
-          {showNewChat ? (
-            <div>
-              <div className="px-6 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider bg-white sticky top-0 z-10 flex justify-between items-center">
-                <span>All Contacts</span>
-                <select 
-                  value={roleFilter}
-                  onChange={(e) => setRoleFilter(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 text-slate-600 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-fuchsia-500 capitalize"
-                >
-                  {uniqueRoles.map(role => (
-                    <option key={role} value={role}>{role === 'all' ? 'All Roles' : role.replace('_', ' ')}</option>
-                  ))}
-                </select>
-              </div>
-              {filteredContacts.length === 0 ? (
-                <div className="p-6 text-center text-slate-500 text-sm">No contacts found.</div>
-              ) : (
-                filteredContacts.map(c => (
-                  <div
-                    key={c.id}
-                    onClick={() => openChat(c)}
-                    className="p-4 px-6 border-b border-slate-50 cursor-pointer hover:bg-white transition-colors flex items-center gap-4"
-                  >
-                    <div className="relative shrink-0">
-                      <img src={c.avatar} alt={c.name} className="w-12 h-12 rounded-full object-cover shadow-sm border border-slate-200" />
-                      {isUserOnline(c.id) && <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></span>}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-slate-900 truncate">{c.name}</h4>
-                      <p className="text-xs font-semibold text-fuchsia-600 capitalize">{c.role.replace('_', ' ')}</p>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
+          <div className="px-6 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider bg-white flex justify-between items-center border-b border-slate-100">
+            <span>Contacts</span>
+            <select 
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              className="bg-slate-50 border border-slate-200 text-slate-600 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-fuchsia-500 capitalize"
+            >
+              {uniqueRoles.map(role => (
+                <option key={role || 'unknown'} value={role}>{role === 'all' ? 'All Roles' : (role || 'unknown').replace('_', ' ')}</option>
+              ))}
+            </select>
+          </div>
+
+          {filteredMerged.length === 0 ? (
+            <div className="p-6 text-center text-slate-500 text-sm">No contacts found.</div>
           ) : (
-            <div>
-              {conversations.length === 0 ? (
-                <div className="p-10 flex flex-col items-center text-center text-slate-500">
-                  <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                    <MessageCircle className="w-8 h-8 text-slate-300" />
-                  </div>
-                  <p className="text-sm font-medium">No conversations yet.</p>
-                  <p className="text-xs mt-1">Click the + button to start chatting.</p>
+            filteredMerged.map(c => (
+              <div
+                key={`contact-${c.id}`}
+                onClick={() => openChat(c)}
+                className={`p-4 px-6 border-b border-slate-50 cursor-pointer hover:bg-white transition-colors flex items-center gap-4 ${activeChat?.id === c.id ? 'bg-fuchsia-50/50' : ''}`}
+              >
+                <div className="relative shrink-0">
+                  <img src={c.avatar || `https://i.pravatar.cc/150?img=${c.id}`} alt={c.name} className="w-12 h-12 rounded-full object-cover shadow-sm border-2 border-white" />
+                  {isUserOnline(c.id) && <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></span>}
                 </div>
-              ) : (
-                conversations.map(c => (
-                  <div
-                    key={c.id}
-                    onClick={() => openChat(c)}
-                    className={`p-4 px-6 border-b border-slate-50 cursor-pointer hover:bg-white transition-colors flex items-center gap-4 ${activeChat?.id === c.id ? 'bg-fuchsia-50/50' : ''}`}
-                  >
-                    <div className="relative shrink-0">
-                      <img src={c.avatar || `https://i.pravatar.cc/150?img=${c.id}`} alt={c.name} className="w-14 h-14 rounded-full object-cover shadow-sm border-2 border-white" />
-                      {isUserOnline(c.id) && <span className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></span>}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-baseline mb-0.5">
-                        <h4 className="font-bold text-slate-900 truncate pr-2">{c.name || 'User'}</h4>
-                        <span className="text-[10px] font-medium text-slate-400 whitespace-nowrap">{c.time}</span>
-                      </div>
-                      <p className="text-[10px] font-bold text-fuchsia-600 capitalize mb-1">{c.role?.replace('_', ' ') || 'Member'}</p>
-                      <div className="flex justify-between items-center">
-                        <p className={`text-xs truncate ${c.unread > 0 ? 'text-slate-900 font-semibold' : 'text-slate-500'}`}>{c.lastMsg || c.lastMessage}</p>
-                        {c.unread > 0 && <span className="w-5 h-5 ml-2 bg-fuchsia-600 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm shrink-0">{c.unread}</span>}
-                      </div>
-                    </div>
+                <div className="flex-1 min-w-0 flex justify-between items-center">
+                  <div>
+                    <h4 className={`font-bold truncate ${c.unread > 0 ? 'text-slate-900' : 'text-slate-700'}`}>{c.name || 'User'}</h4>
+                    <p className="text-[10px] font-bold text-fuchsia-600 capitalize">{c.role?.replace('_', ' ') || 'Member'}</p>
                   </div>
-                ))
-              )}
-            </div>
+                  {c.unread > 0 && (
+                    <span className="w-5 h-5 bg-fuchsia-600 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm shrink-0">
+                      {c.unread}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))
           )}
         </div>
       </div>

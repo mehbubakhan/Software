@@ -1,45 +1,107 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import api from '../../../../services/api';
+import { useSocket } from '../../../../context/SocketContext';
+import { useAuth } from '../../../../context/AuthContext';
 
 export default function DaycareChat() {
   const navigate = useNavigate();
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: 'daycare',
-      text: 'Hello! Welcome to Little Stars Daycare. How can we help you today?',
-      time: '10:15 AM'
-    },
-    {
-      id: 2,
-      sender: 'user',
-      text: "Hi! I'm interested in enrolling my daughter. She's 3 years old.",
-      time: '10:18 AM'
-    },
-    {
-      id: 3,
-      sender: 'daycare',
-      text: "That's wonderful! We have spots available in our preschool program. Would you like to schedule a tour?",
-      time: '10:20 AM'
-    }
-  ]);
+  const { id } = useParams();
+  const [daycare, setDaycare] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const { socket, sendMessage } = useSocket() || {};
+  const { user } = useAuth();
+  
+  const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
 
-  const handleSend = (e) => {
-    e.preventDefault();
-    if (!inputValue.trim()) return;
+  useEffect(() => {
+    const fetchDaycareAndMessages = async () => {
+      try {
+        const response = await api.get(`/daycare/${id}`);
+        const data = response.data.data;
+        setDaycare(data);
+        
+        // Fetch historical messages from unified messaging
+        const msgRes = await api.get(`/messages/${id}`);
+        let history = [];
+        if (msgRes.data && msgRes.data.data) {
+          history = msgRes.data.data.map(m => ({
+            id: m.id,
+            sender: m.sender_id === user?.id ? 'user' : 'daycare',
+            text: m.content,
+            time: new Date(m.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }));
+        }
 
+        // Add welcome message if chat is empty
+        if (history.length === 0) {
+          history.push({
+            id: 'welcome_1',
+            sender: 'daycare',
+            text: `Hello! Welcome to ${data.name}. How can we help you today?`,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          });
+        }
+        setMessages(history);
+      } catch (err) {
+        console.error('Error fetching chat data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDaycareAndMessages();
+  }, [id, user?.id]);
+
+  useEffect(() => {
+    if (!socket) return;
+    const handler = (msg) => {
+      if (msg.sender_id == id) {
+        setMessages(prev => [...prev, {
+          id: msg.id,
+          sender: 'daycare',
+          text: msg.content,
+          time: new Date(msg.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }]);
+      }
+    };
+    socket.on('receive_message', handler);
+    return () => socket.off('receive_message', handler);
+  }, [socket, id]);
+
+  const handleSend = async (e) => {
+    e.preventDefault();
+    if (!inputValue.trim() || !sendMessage) return;
+
+    const currentInput = inputValue;
+    setInputValue('');
+
+    // Optimistic UI update
     setMessages(prev => [
       ...prev,
       {
         id: Date.now(),
         sender: 'user',
-        text: inputValue,
+        text: currentInput,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
     ]);
-    setInputValue('');
+
+    try {
+      await sendMessage(id, currentInput, 'direct');
+    } catch (err) {
+      console.error('Failed to send message:', err);
+    }
   };
+
+  if (loading) {
+    return <div className="text-center text-slate-500 py-12">Loading chat...</div>;
+  }
+
+  if (!daycare) {
+    return <div className="text-center text-slate-500 py-12">Daycare not found.</div>;
+  }
 
   return (
     <div className="bg-slate-50 min-h-[calc(100vh-68px)] text-slate-800 -m-6 p-8 font-sans pb-24">
@@ -52,16 +114,16 @@ export default function DaycareChat() {
               ← Back to Details
             </button>
             <div className="flex items-center gap-3">
-              <h1 className="text-xl font-bold text-slate-800">Little Stars Daycare</h1>
+              <h1 className="text-xl font-bold text-slate-800">{daycare.name}</h1>
               <span className="text-sm text-slate-500 flex items-center gap-1">
-                <span className="text-yellow-400 leading-none">★</span> 4.8 (124 reviews)
+                <span className="text-yellow-400 leading-none">★</span> {daycare.rating} ({Array.isArray(daycare.reviews) ? daycare.reviews.length : daycare.reviews} reviews)
               </span>
               <span className="bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded text-xs font-semibold flex items-center gap-1">🔴 Live CCTV</span>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-xl font-bold text-slate-800">$1,200/mo</div>
-            <div className="text-xs text-slate-500">Full-Time Care</div>
+            <div className="text-xl font-bold text-slate-800">{daycare.price}</div>
+            <div className="text-xs text-slate-500">{daycare.careType || 'Full-Time Care'}</div>
           </div>
         </div>
 
